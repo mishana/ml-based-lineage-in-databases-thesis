@@ -1,224 +1,837 @@
-@book{Knuth1981,
-  author      = {Donald E. Knuth},
-  title       = {The Art of Computer Programming, Volume II: Seminumerical
-                 Algorithms, 2nd Edition},
-  publisher   = {Addison-Wesley},
-  year        = {1981},
-  isbn        = {0-201-03822-6},
+%-------------Why, How and Where provenance definitions-----%
+@article{cheney2009provenance,
+  title={Provenance in databases: Why, how, and where},
+  author={Cheney, James and Chiticariu, Laura and Tan, Wang-Chiew and others},
+  journal={Foundations and Trends{\textregistered} in Databases},
+  volume={1},
+  number={4},
+  pages={379--474},
+  year={2009},
+  publisher={Now Publishers, Inc.}
 }
 
-@book{Knuth1973,
-  author      = {Donald E. Knuth},
-  title       = {The Art of Computer Programming, Volume I: Fundamental Algorithms,
-                 2nd Edition.},
-  publisher   = {Addison-Wesley},
-  year        = {1973},
-  bibsource   = {DBLP, http://dblp.uni-trier.de}
-}
-
-@book{Papadimitriou1994,
-  title       = {Computational Complexity},
-  booktitle   = {Computational Complexity},
-  author      = {Christos M. Papadimitriou},
-  ISBN        = {0201530821},
-  publisher   = {Addison-Wesley},
-  address     = {Reading, Massachusetts},
-  year        = {1994},
-}
-
-@book{AHU1982,
-  author      = {Alfred V. Aho and
-                 John E. Hopcroft and
-                 Jeffrey D. Ullman},
-  title       = {Data Structures and Algorithms},
-  year        = {1982},
-  publisher   = {Addison-Wesley},
-  series      = {Addison-Wesley Series in Computer Science and Information Processing},
+@misc{prov_dict,
+   author = {provenance},    
+   title = {In {Meriam-Webster.com}},
+   howpublished  = {Meriam-Webster},
+   year = {2020},
+   note = {Retrieved April 20, 2020, from https://www.merriam-webster.com/dictionary/provenance}
  }
 
-@book{AHU1974,
-  author      = {Alfred V. Aho and
-                 John E. Hopcroft and
-                 Jeffrey D. Ullman},
-  title       = {The Design and Analysis of Computer Algorithms},
-  year        = {1974},
-  publisher   = {Addison-Wesley},
-  series      = {Addison-Wesley Series in Computer Science and Information Processing},
+@article{Cui:2000:TLV:357775.357777,
+ author = {Cui, Yingwei and Widom, Jennifer and Wiener, Janet L.},
+ title = {Tracing the Lineage of View Data in a Warehousing Environment},
+ journal = {ACM Trans. Database Syst.},
+ issue_date = {June 2000},
+ volume = {25},
+ number = {2},
+ month = jun,
+ year = {2000},
+ issn = {0362-5915},
+ pages = {179--227},
+ numpages = {49},
+ url = {http://doi.acm.org/10.1145/357775.357777},
+ doi = {10.1145/357775.357777},
+ acmid = {357777},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {data warehouse, derviation, lineage, materialized views},
+} 
+
+@inproceedings{DBLP:conf/icdt/BunemanKT01,
+  author    = {Peter Buneman and
+               Sanjeev Khanna and
+               Wang Chiew Tan},
+  editor    = {Jan Van den Bussche and
+               Victor Vianu},
+  title     = {Why and Where: {A} Characterization of Data Provenance},
+  booktitle = {Database Theory - {ICDT} 2001, 8th International Conference, London,
+               UK, January 4-6, 2001, Proceedings},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {1973},
+  pages     = {316--330},
+  publisher = {Springer},
+  year      = {2001},
+  url       = {https://doi.org/10.1007/3-540-44503-X\_20},
+  doi       = {10.1007/3-540-44503-X\_20},
+  timestamp = {Tue, 14 May 2019 10:00:54 +0200},
+  biburl    = {https://dblp.org/rec/conf/icdt/BunemanKT01.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{DBLP:journals/vldb/BhagwatCTV05,
+  author    = {Deepavali Bhagwat and
+               Laura Chiticariu and
+               Wang Chiew Tan and
+               Gaurav Vijayvargiya},
+  title     = {An annotation management system for relational databases},
+  journal   = {{VLDB} J.},
+  volume    = {14},
+  number    = {4},
+  pages     = {373--396},
+  year      = {2005},
+  url       = {https://doi.org/10.1007/s00778-005-0156-6},
+  doi       = {10.1007/s00778-005-0156-6},
+  timestamp = {Sun, 28 May 2017 13:19:15 +0200},
+  biburl    = {https://dblp.org/rec/bib/journals/vldb/BhagwatCTV05},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+%-------------Provenance Semirings---------------------------%
+@inproceedings{green2007provenance,
+  title={Provenance semirings},
+  author={Green, Todd J and Karvounarakis, Grigoris and Tannen, Val},
+  booktitle={Proceedings of the twenty-sixth ACM SIGMOD-SIGACT-SIGART symposium on Principles of database systems},
+  pages={31--40},
+  year={2007},
+  organization={ACM}
+}
+
+@article{Karvounarakis:2012:SDQ:2380776.2380778,
+ author = {Karvounarakis, Grigoris and Green, Todd J.},
+ title = {Semiring-annotated Data: Queries and Provenance?},
+ journal = {SIGMOD Rec.},
+ issue_date = {September 2012},
+ volume = {41},
+ number = {3},
+ month = oct,
+ year = {2012},
+ issn = {0163-5808},
+ pages = {5--14},
+ numpages = {10},
+ url = {http://doi.acm.org/10.1145/2380776.2380778},
+ doi = {10.1145/2380776.2380778},
+ acmid = {2380778},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
+
+%--------------ProvSQL--------------------------------------%
+@article{Senellart2018,
+    author = {Senellart, Pierre and Jachiet, Louis and Ens, D I},
+    doi = {10.14778/3229863.3236253},
+    file = {:home/misha/Downloads/senellart2018provsql.pdf:pdf},
+    issn = {2150-8097},
+    journal = {Vldb},
+    pages = {2034--2037},
+    title = {{ProvSQL : Provenance and Probability Management in PostgreSQL}},
+    year = {2018}
+}
+
+@article{Senellart2017,
+    author = {Senellart, Pierre},
+    doi = {10.1145/3186549.3186551},
+    file = {:home/misha/Downloads/p5-senellart.pdf:pdf},
+    issn = {01635808},
+    journal = {ACM SIGMOD Record},
+    pages = {5--15},
+    title = {{Provenance and Probabilities in Relational Databases : From Theory to Practice}},
+    year = {2017}
+}
+
+@misc{provsql_github,
+    author = {Senellart, Pierre},
+    title = {{ProvSQL on Github}},
+    note = {https://github.com/PierreSenellart/provsql}
+}
+
+@article{Deutch2014,
+    author = {Deutch, Daniel and Milo, Tova and Roy, Sudeepa and Tannen, Val},
+    journal = {Icdt},
+    keywords = {circuit,datalog,provenance,semiring,time complexity},
+    title = {{Circuits for Datalog Provenance}},
+    year = {2014}
+}
+
+@unpublished{postgre_hooks,
+    author = {Lelarge, Guillaume},
+    title = {{Hooks in PostgreSQL}},
+    note = {Talk at FOSDEM 2012 and pgCon 2012},
+    year = {2012}
+}
+
+@article{monus_k_relations,
+    title = "On database query languages for K-relations",
+    journal = "Journal of Applied Logic",
+    volume = "8",
+    number = "2",
+    pages = "173 - 185",
+    year = "2010",
+    note = "Selected papers from the Logic in Databases Workshop 2008",
+    issn = "1570-8683",
+    doi = "https://doi.org/10.1016/j.jal.2009.09.001",
+    url = "http://www.sciencedirect.com/science/article/pii/S157086830900041X",
+    author = "Floris Geerts and Antonella Poggi",
+    keywords = "Relational model, Query language, Annotations, Provenance, Language completeness"
+}
+
+%-------------------Approximate/Summarized Provenance - Prior Works--------------%
+@article{approx_lineage,
+author = {R\'{e}, Christopher and Suciu, Dan},
+title = {Approximate Lineage for Probabilistic Databases},
+year = {2008},
+issue_date = {August 2008},
+publisher = {VLDB Endowment},
+volume = {1},
+number = {1},
+issn = {2150-8097},
+url = {https://doi.org/10.14778/1453856.1453943},
+doi = {10.14778/1453856.1453943},
+journal = {Proc. VLDB Endow.},
+month = aug,
+pages = {797–808},
+numpages = {12}
+}
+  
+@inproceedings{approx_PROX,
+author = {Ainy, Eleanor and Bourhis, Pierre and Davidson, Susan B. and Deutch, Daniel and Milo, Tova},
+title = {Approximated Summarization of Data Provenance},
+year = {2015},
+isbn = {9781450337946},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/2806416.2806429},
+doi = {10.1145/2806416.2806429},
+booktitle = {Proceedings of the 24th ACM International on Conference on Information and Knowledge Management},
+pages = {483–492},
+numpages = {10},
+keywords = {provenance, provisioning, crowd-sourcing applications},
+location = {Melbourne, Australia},
+series = {CIKM ’15}
+}
+  
+@article{approx_why_and_why_not,
+author = {Lee, Seokki and Lud\"{a}scher, Bertram and Glavic, Boris},
+title = {Provenance Summaries for Answers and Non-Answers},
+year = {2018},
+issue_date = {August 2018},
+publisher = {VLDB Endowment},
+volume = {11},
+number = {12},
+issn = {2150-8097},
+url = {https://doi.org/10.14778/3229863.3236233},
+doi = {10.14778/3229863.3236233},
+journal = {Proc. VLDB Endow.},
+month = aug,
+pages = {1954–1957},
+numpages = {4}
+}
+  
+@inproceedings{approx_summary,
+author = {Lee, Seokki and Niu, Xing and Lud\"{a}scher, Bertram and Glavic, Boris},
+title = {Integrating Approximate Summarization with Provenance Capture},
+year = {2017},
+publisher = {USENIX Association},
+address = {USA},
+booktitle = {Proceedings of the 9th USENIX Conference on Theory and Practice of Provenance},
+pages = {2},
+numpages = {1},
+location = {Seattle, WA},
+series = {TaPP’17}
+}
+
+%-------------------NLProv and SelP---------------------------%
+@article{Deutch2017,
+    author = {Deutch, Daniel and Frost, Nave and Gilad, Amir},
+    doi = {10.14778/3055540.3055550},
+    issn = {21508097},
+    journal = {Vldb},
+    number = {5},
+    pages = {577--588},
+    pmid = {27540690},
+    title = {{Provenance for Natural Language Queries}},
+    volume = {10},
+    year = {2017}
+}
+
+@article{Deutch2015,
+    author = {Deutch, Daniel and Gilad, Amir and Moskovitch, Yuval},
+    doi = {10.14778/2824032.2824039},
+    issn = {21508097},
+    journal = {Proceedings of the VLDB Endowment},
+    title = {{Selective provenance for datalog programs using top-k queries}},
+    year = {2015}
+}
+
+%------------Past Provenance implementations-----------%
+@article{Ives2008,
+    author = {Ives, Zachary G. and Green, Todd J. and Karvounarakis, Grigoris and Taylor, Nicholas E. and Tannen, Val and Talukdar, Partha Pratim and Jacob, Marie and Pereira, Fernando},
+    doi = {10.1145/1462571.1462577},
+    isbn = {0163-5808},
+    issn = {01635808},
+    journal = {ACM SIGMOD Record},
+    title = {{The ORCHESTRA Collaborative Data Sharing System}},
+    year = {2008}
+}
+
+@inproceedings{Karvounarakis2010,
+    author = {Karvounarakis, Grigoris and Ives, Zachary G. and Tannen, Val},
+    booktitle = {Proceedings of the 2010 international conference on Management of data - SIGMOD '10},
+    doi = {10.1145/1807167.1807269},
+    isbn = {9781450300322},
+    issn = {07308078},
+    title = {{Querying data provenance}},
+    year = {2010}
+}
+
+%-----------New Provenance-related works---------------% 
+@inproceedings{DBLP:conf/cidr/IvesZHZ19,
+  author    = {Zack Ives and
+               Yi Zhang and
+               Soonbo Han and
+               Nan Zheng},
+  title     = {Dataset Relationship Management},
+  booktitle = {{CIDR} 2019, 9th Biennial Conference on Innovative Data Systems Research,
+               Asilomar, CA, USA, January 13-16, 2019, Online Proceedings},
+  publisher = {www.cidrdb.org},
+  year      = {2019},
+  url       = {http://cidrdb.org/cidr2019/papers/p55-ives-cidr19.pdf},
+  timestamp = {Thu, 12 Mar 2020 11:32:31 +0100},
+  biburl    = {https://dblp.org/rec/conf/cidr/IvesZHZ19.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+%----------Classic NLP------------------------------%
+@book{melcuk1988,
+  added-at = {2012-10-19T15:13:43.000+0200},
+  author = {Mel'{\v{c}}uk, Igor},
+  biburl = {https://www.bibsonomy.org/bibtex/23f648a9a81197eb7ecea995c6a2700b0/jil},
+  interhash = {27c498ae5720a8d58e4b1443d3cbdb0e},
+  intrahash = {3f648a9a81197eb7ecea995c6a2700b0},
+  keywords = {book dependency grammar head melcuk noun},
+  publisher = {State University of New York Press},
+  timestamp = {2013-11-23T20:11:51.000+0100},
+  title = {Dependency Syntax: Theory and Practice},
+  year = 1988
+}
+
+@inproceedings{klein-manning-2004-corpus,
+    title = "Corpus-Based Induction of Syntactic Structure: Models of Dependency and Constituency",
+    author = "Klein, Dan  and
+      Manning, Christopher",
+    booktitle = "Proceedings of the 42nd Annual Meeting of the Association for Computational Linguistics ({ACL}-04)",
+    month = jul,
+    year = "2004",
+    address = "Barcelona, Spain",
+    url = "https://www.aclweb.org/anthology/P04-1061",
+    doi = "10.3115/1218955.1219016",
+    pages = "478--485",
+}
+
+%----------Modern NLP-------------------------------%
+@misc{wu2016googles,
+    title={Google's Neural Machine Translation System: Bridging the Gap between Human and Machine Translation},
+    author={Yonghui Wu and Mike Schuster and Zhifeng Chen and Quoc V. Le and Mohammad Norouzi and Wolfgang Macherey and Maxim Krikun and Yuan Cao and Qin Gao and Klaus Macherey and Jeff Klingner and Apurva Shah and Melvin Johnson and Xiaobing Liu and Łukasz Kaiser and Stephan Gouws and Yoshikiyo Kato and Taku Kudo and Hideto Kazawa and Keith Stevens and George Kurian and Nishant Patil and Wei Wang and Cliff Young and Jason Smith and Jason Riesa and Alex Rudnick and Oriol Vinyals and Greg Corrado and Macduff Hughes and Jeffrey Dean},
+    year={2016},
+    eprint={1609.08144},
+    archivePrefix={arXiv},
+    primaryClass={cs.CL}
+}
+
+@article{Gillick_2016,
+   title={Multilingual Language Processing From Bytes},
+   url={http://dx.doi.org/10.18653/v1/N16-1155},
+   DOI={10.18653/v1/n16-1155},
+   journal={Proceedings of the 2016 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies},
+   publisher={Association for Computational Linguistics},
+   author={Gillick, Dan and Brunk, Cliff and Vinyals, Oriol and Subramanya, Amarnag},
+   year={2016}
+}
+
+@inproceedings{Maas:2011:LWV:2002472.2002491,
+ author = {Maas, Andrew L. and Daly, Raymond E. and Pham, Peter T. and Huang, Dan and Ng, Andrew Y. and Potts, Christopher},
+ title = {Learning Word Vectors for Sentiment Analysis},
+ booktitle = {Proceedings of the 49th Annual Meeting of the Association for Computational Linguistics: Human Language Technologies - Volume 1},
+ series = {HLT '11},
+ year = {2011},
+ isbn = {978-1-932432-87-9},
+ location = {Portland, Oregon},
+ pages = {142--150},
+ numpages = {9},
+ url = {http://dl.acm.org/citation.cfm?id=2002472.2002491},
+ acmid = {2002491},
+ publisher = {Association for Computational Linguistics},
+ address = {Stroudsburg, PA, USA},
+} 
+
+%----------Word Embeddings and Word2Vec-------------%
+@article{harris1954,
+    author = {Zellig S. Harris},
+    title = {Distributional Structure},
+    journal = {<i>WORD</i>},
+    volume = {10},
+    number = {2-3},
+    pages = {146-162},
+    year  = {1954},
+    publisher = {Routledge},
+    doi = {10.1080/00437956.1954.11659520},
+    URL = {https://doi.org/10.1080/00437956.1954.11659520},
+    eprint = {https://doi.org/10.1080/00437956.1954.11659520}
+}
+
+@article{firth1957,
+    author = {Firth, J. R.},
+    title = {Applications of General Linguistics},
+    journal = {Transactions of the Philological Society},
+    volume = {56},
+    number = {1},
+    pages = {1-14},
+    doi = {10.1111/j.1467-968X.1957.tb00568.x},
+    url = {https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-968X.1957.tb00568.x},
+    eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1467-968X.1957.tb00568.x},
+    year = {1957}
+}
+
+@phdthesis{sahlgren06,
+  added-at = {2015-05-30T15:44:53.000+0200},
+  address = {Stockholm, Sweden},
+  author = {Sahlgren, Magnus},
+  biburl = {https://www.bibsonomy.org/bibtex/23f5e578b8802f11723e3e6729236cc1e/jimmycallin},
+  description = {articles relating to my research, mainly},
+  interhash = {e15c5fc9c4ce57db86e6ee25001ee3b8},
+  intrahash = {3f5e578b8802f11723e3e6729236cc1e},
+  keywords = {distributional-semantics word-space},
+  school = {Stockholm University},
+  timestamp = {2015-05-30T15:44:53.000+0200},
+  title = {The Word-Space Model: Using Distributional Analysis to Represent Syntagmatic and Paradigmatic Relations between Words in High-Dimensional Vector Spaces},
+  year = 2006
+}
+
+@article{Turney_2010,
+   title={From Frequency to Meaning: Vector Space Models of Semantics},
+   volume={37},
+   ISSN={1076-9757},
+   url={http://dx.doi.org/10.1613/jair.2934},
+   DOI={10.1613/jair.2934},
+   journal={Journal of Artificial Intelligence Research},
+   publisher={AI Access Foundation},
+   author={Turney, P. D. and Pantel, P.},
+   year={2010},
+   month={Feb},
+   pages={141–188}
+}
+
+@inproceedings{DBLP:journals/corr/abs-1301-3781,
+  author    = {Tomas Mikolov and
+               Kai Chen and
+               Greg Corrado and
+               Jeffrey Dean},
+  editor    = {Yoshua Bengio and
+               Yann LeCun},
+  title     = {Efficient Estimation of Word Representations in Vector Space},
+  booktitle = {1st International Conference on Learning Representations, {ICLR} 2013,
+               Scottsdale, Arizona, USA, May 2-4, 2013, Workshop Track Proceedings},
+  year      = {2013},
+  url       = {http://arxiv.org/abs/1301.3781},
+  timestamp = {Thu, 25 Jul 2019 14:25:36 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-1301-3781.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{DBLP:conf/nips/MikolovSCCD13,
+  author    = {Tomas Mikolov and
+               Ilya Sutskever and
+               Kai Chen and
+               Gregory S. Corrado and
+               Jeffrey Dean},
+  editor    = {Christopher J. C. Burges and
+               L{\'{e}}on Bottou and
+               Zoubin Ghahramani and
+               Kilian Q. Weinberger},
+  title     = {Distributed Representations of Words and Phrases and their Compositionality},
+  booktitle = {Advances in Neural Information Processing Systems 26: 27th Annual
+               Conference on Neural Information Processing Systems 2013. Proceedings
+               of a meeting held December 5-8, 2013, Lake Tahoe, Nevada, United States},
+  pages     = {3111--3119},
+  year      = {2013},
+  url       = {http://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality},
+  timestamp = {Fri, 06 Mar 2020 17:00:12 +0100},
+  biburl    = {https://dblp.org/rec/conf/nips/MikolovSCCD13.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{DBLP:conf/naacl/MikolovYZ13,
+  author    = {Tomas Mikolov and
+               Wen{-}tau Yih and
+               Geoffrey Zweig},
+  editor    = {Lucy Vanderwende and
+               Hal Daum{\'{e}} III and
+               Katrin Kirchhoff},
+  title     = {Linguistic Regularities in Continuous Space Word Representations},
+  booktitle = {Human Language Technologies: Conference of the North American Chapter
+               of the Association of Computational Linguistics, Proceedings, June
+               9-14, 2013, Westin Peachtree Plaza Hotel, Atlanta, Georgia, {USA}},
+  pages     = {746--751},
+  publisher = {The Association for Computational Linguistics},
+  year      = {2013},
+  url       = {https://www.aclweb.org/anthology/N13-1090/},
+  timestamp = {Mon, 16 Sep 2019 17:08:53 +0200},
+  biburl    = {https://dblp.org/rec/conf/naacl/MikolovYZ13.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{GoldbergL14,
+  author    = {Yoav Goldberg and
+               Omer Levy},
+  title     = {word2vec Explained: deriving Mikolov et al.'s negative-sampling word-embedding
+               method},
+  journal   = {CoRR},
+  volume    = {abs/1402.3722},
+  year      = {2014},
+  url       = {http://arxiv.org/abs/1402.3722},
+  archivePrefix = {arXiv},
+  eprint    = {1402.3722},
+  timestamp = {Mon, 13 Aug 2018 16:47:34 +0200},
+  biburl    = {https://dblp.org/rec/bib/journals/corr/GoldbergL14},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{LevyG14,
+  author    = {Omer Levy and
+               Yoav Goldberg},
+  title     = {Neural Word Embedding as Implicit Matrix Factorization},
+  booktitle = {Advances in Neural Information Processing Systems 27: Annual Conference
+               on Neural Information Processing Systems 2014, December 8-13 2014,
+               Montreal, Quebec, Canada},
+  pages     = {2177--2185},
+  year      = {2014},
+  crossref  = {DBLP:conf/nips/2014},
+  url       = {http://papers.nips.cc/paper/5477-neural-word-embedding-as-implicit-matrix-factorization},
+  timestamp = {Wed, 10 Dec 2014 21:34:12 +0100},
+  biburl    = {https://dblp.org/rec/bib/conf/nips/LevyG14},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+
+@article{DBLP:journals/corr/Rong14,
+  author    = {Xin Rong},
+  title     = {word2vec Parameter Learning Explained},
+  journal   = {CoRR},
+  volume    = {abs/1411.2738},
+  year      = {2014},
+  url       = {http://arxiv.org/abs/1411.2738},
+  archivePrefix = {arXiv},
+  eprint    = {1411.2738},
+  timestamp = {Mon, 13 Aug 2018 16:45:57 +0200},
+  biburl    = {https://dblp.org/rec/bib/journals/corr/Rong14},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{pennington2014glove,
+  author = {Jeffrey Pennington and Richard Socher and Christopher D. Manning},
+  booktitle = {Empirical Methods in Natural Language Processing (EMNLP)},
+  title = {GloVe: Global Vectors for Word Representation},
+  year = {2014},
+  pages = {1532--1543},
+  url = {http://www.aclweb.org/anthology/D14-1162},
+}
+
+@article{Cer2018UniversalSE,
+  title={Universal Sentence Encoder},
+  author={Daniel Cer and Yinfei Yang and Sheng-yi Kong and Nan Hua and Nicole Limtiaco and Rhomni St. John and Noah Constant and Mario Guajardo-Cespedes and Steve Yuan and Chris Tar and Yun-Hsuan Sung and Brian Strope and Ray Kurzweil},
+  journal={ArXiv},
+  year={2018},
+  volume={abs/1803.11175}
+}
+
+@article{devlin2018bert,
+  title={BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding},
+  author={Devlin, Jacob and Chang, Ming-Wei and Lee, Kenton and Toutanova, Kristina},
+  journal={arXiv preprint arXiv:1810.04805},
+  year={2018}
+}
+
+%----------Word enbeddings software-------------------%
+@misc{word2vec_github,
+    author = {Mikolov, Tomas},
+    title = {{Word2Vec on Github}},
+    url = {https://github.com/tmikolov/word2vec}
+}
+
+@misc{glove_github,
+    author = {Jeffrey Pennington,   Richard Socher,   Christopher D. Manning},
+    title = {{GloVe model for distributed word representation}},
+    url = {https://github.com/stanfordnlp/GloVe}
+}
+
+@inproceedings{rehurek_lrec,
+      title = {{Software Framework for Topic Modelling with Large Corpora}},
+      author = {Radim {\v R}eh{\r u}{\v r}ek and Petr Sojka},
+      booktitle = {{Proceedings of the LREC 2010 Workshop on New
+           Challenges for NLP Frameworks}},
+      pages = {45--50},
+      year = 2010,
+      month = May,
+      day = 22,
+      publisher = {ELRA},
+      address = {Valletta, Malta},
+      note={\url{http://is.muni.cz/publication/884893/en}},
+      language={English}
+}
+
+@misc{spacy_github,
+    author = {explosion.ai},
+    title = {{spaCy: Industrial-strength NLP}},
+    url = {https://github.com/explosion/spaCy}
+}
+
+@misc{use_github,
+    author = {Daniel Cer et al.},
+    title = {{Universal Sentence Encoder}},
+    url = {https://github.com/tensorflow/tfjs-models/tree/master/universal-sentence-encoder}
+}
+
+%----------Cognitive Intelligence Database and Relational Embeddings------------%
+@article{DBLP:journals/corr/BordawekarS16,
+  author    = {Rajesh Bordawekar and
+               Oded Shmueli},
+  title     = {Enabling Cognitive Intelligence Queries in Relational Databases using
+               Low-dimensional Word Embeddings},
+  journal   = {CoRR},
+  volume    = {abs/1603.07185},
+  year      = {2016},
+  url       = {http://arxiv.org/abs/1603.07185},
+  archivePrefix = {arXiv},
+  eprint    = {1603.07185},
+  timestamp = {Mon, 13 Aug 2018 16:47:59 +0200},
+  biburl    = {https://dblp.org/rec/bib/journals/corr/BordawekarS16},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{DBLP:journals/corr/abs-1712-07199,
+  author    = {Rajesh Bordawekar and
+               Bortik Bandyopadhyay and
+               Oded Shmueli},
+  title     = {Cognitive Database: {A} Step towards Endowing Relational Databases
+               with Artificial Intelligence Capabilities},
+  journal   = {CoRR},
+  volume    = {abs/1712.07199},
+  year      = {2017},
+  url       = {http://arxiv.org/abs/1712.07199},
+  archivePrefix = {arXiv},
+  eprint    = {1712.07199},
+  timestamp = {Mon, 13 Aug 2018 16:47:10 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-1712-07199.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{DBLP:conf/sigmod/BordawekarS17,
+  author    = {Rajesh Bordawekar and
+               Oded Shmueli},
+  editor    = {Sebastian Schelter and
+               Reza Zadeh},
+  title     = {Using Word Embedding to Enable Semantic Queries in Relational Databases},
+  booktitle = {Proceedings of the 1st Workshop on Data Management for End-to-End
+               Machine Learning, DEEM@SIGMOD 2017, Chicago, IL, USA, May 14, 2017},
+  pages     = {5:1--5:4},
+  publisher = {{ACM}},
+  year      = {2017},
+  url       = {https://doi.org/10.1145/3076246.3076251},
+  doi       = {10.1145/3076246.3076251},
+  timestamp = {Fri, 05 Apr 2019 12:15:55 +0200},
+  biburl    = {https://dblp.org/rec/conf/sigmod/BordawekarS17.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{DBLP:journals/corr/abs-1803-01384,
+  author    = {Saravanan Thirumuruganathan and
+               Nan Tang and
+               Mourad Ouzzani},
+  title     = {Data Curation with Deep Learning [Vision]: Towards Self Driving Data
+               Curation},
+  journal   = {CoRR},
+  volume    = {abs/1803.01384},
+  year      = {2018},
+  url       = {http://arxiv.org/abs/1803.01384},
+  archivePrefix = {arXiv},
+  eprint    = {1803.01384},
+  timestamp = {Mon, 13 Aug 2018 16:46:45 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-1803-01384.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{sigmod2020_keynote,
+    author =       {Martin Grohe},
+    title =        {word2vec, node2vec, graph2vec, X2vec: Towards a Theory of Vector Embeddings of Structured Data},
+    booktitle = {{Keynote talk of the 2020 ACM SIGMOD/PODS Conference on Management of Data}},
+    url =         {{https://sigmod2020.org/keynote.pdf}},
+    year = {2020}
+}
+
+@inproceedings{pie2020_keynote,
+    author =       {Oded Shmueli},
+    title =        {Exploiting Latent Information in Databases via Database Embedding: Technology, Applications, Ethics},
+    booktitle = {{Keynote talk at the 2nd International Workshop on Processing Information Ethically (PIE)}},
+    year = {2020}
+}
+
+%-----------Python Software----------------------------%
+@incollection{sqlalchemy,
+  place={Mountain View},
+  title={SQLAlchemy},
+  booktitle={The Architecture of Open Source Applications Volume II: Structure, Scale, and a Few More Fearless Hacks},
+  publisher={aosabook.org},
+  url="http://aosabook.org/en/sqlalchemy.html",
+  author={Bayer, Michael},
+  editor={Brown, Amy and Wilson, Greg},
+  year={2012}
+}
+
+@InProceedings{ mckinney-proc-scipy-2010,
+  author    = { Wes McKinney },
+  title     = { Data Structures for Statistical Computing in Python },
+  booktitle = { Proceedings of the 9th Python in Science Conference },
+  pages     = { 51 - 56 },
+  year      = { 2010 },
+  editor    = { St\'efan van der Walt and Jarrod Millman }
+}
+
+@Article{PER-GRA:2007,
+  Author    = {P\'erez, Fernando and Granger, Brian E.},
+  Title     = {{IP}ython: a System for Interactive Scientific Computing},
+  Journal   = {Computing in Science and Engineering},
+  Volume    = {9},
+  Number    = {3},
+  Pages     = {21--29},
+  month     = may,
+  year      = 2007,
+  url       = "https://ipython.org",
+  ISSN      = "1521-9615",
+  doi       = {10.1109/MCSE.2007.53},
+  publisher = {IEEE Computer Society},
+}
+
+%-----------------------Data Structures------------------------------------
+@article{scalable-bloom-filters,
+author = {Almeida, Paulo S\'{e}rgio and Baquero, Carlos and Pregui\c{c}a, Nuno and Hutchison, David},
+title = {Scalable Bloom Filters},
+year = {2007},
+issue_date = {March, 2007},
+publisher = {Elsevier North-Holland, Inc.},
+address = {USA},
+volume = {101},
+number = {6},
+issn = {0020-0190},
+journal = {Inf. Process. Lett.},
+month = mar,
+pages = {255–261},
+numpages = {7},
+keywords = {Data structures, Randomized algorithms, Bloom filters, Distributed systems}
+}
+
+%-----------------------Datasets------------------------------------
+@article{usda_bfpd-dataset,
+title = "A partnership for public health: USDA branded food products database",
+journal = "Journal of Food Composition and Analysis",
+volume = "64",
+pages = "10 - 12",
+year = "2017",
+note = "The 39th National Nutrient Databank Conference: The Future of Food and Nutrient Databases: Invention, Innovation, and Inspiration",
+issn = "0889-1575",
+doi = "https://doi.org/10.1016/j.jfca.2017.07.019",
+url = "http://www.sciencedirect.com/science/article/pii/S0889157517301734",
+author = "Alison Kretser and Delia Murphy and Pamela Starke-Reed",
+keywords = "Nutrient database, Food composition, Public-private partnership, Open data, Collaboration, Nutrition research",
+abstract = "“A Partnership for Public Health: USDA Branded Food Products Database” is a public-private partnership between the US Department of Agriculture (USDA), the North American Branch of the International Life Sciences Institute, GS1 US, 1WorldSync, and Label Insight. The goal of the public-private partnership is to enhance public health and the sharing of open data by augmenting the USDA National Nutrient Database with nutrient composition and ingredient information on branded and store-brand food products. The USDA Branded Food Products Database officially launched on September 16, 2016, and is publicly available."
+}
+
+@article{movielens-dataset,
+author = {Harper, F. Maxwell and Konstan, Joseph A.},
+title = {The MovieLens Datasets: History and Context},
+year = {2015},
+issue_date = {January 2016},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {5},
+number = {4},
+issn = {2160-6455},
+url = {https://doi.org/10.1145/2827872},
+doi = {10.1145/2827872},
+journal = {ACM Trans. Interact. Intell. Syst.},
+month = dec,
+articleno = {19},
+numpages = {19},
+keywords = {Datasets, recommendations, ratings, MovieLens}
+}
+  
+@misc{movielens-recommender-website,
+    title = {{The MovieLens Web-based Recommender System}},
+    note = {http://movielens.org},
+    key = {movielens-recommender-website}
+}
+
+
+%----------------------------NN for query representation-------------
+@inproceedings{DBLP:conf/cidr/KipfKRLBK19,
+  author    = {Andreas Kipf and
+               Thomas Kipf and
+               Bernhard Radke and
+               Viktor Leis and
+               Peter A. Boncz and
+               Alfons Kemper},
+  title     = {Learned Cardinalities: Estimating Correlated Joins with Deep Learning},
+  booktitle = {{CIDR} 2019, 9th Biennial Conference on Innovative Data Systems Research,
+               Asilomar, CA, USA, January 13-16, 2019, Online Proceedings},
+  publisher = {www.cidrdb.org},
+  year      = {2019},
+  url       = {http://cidrdb.org/cidr2019/papers/p101-kipf-cidr19.pdf},
+  timestamp = {Thu, 12 Mar 2020 11:32:34 +0100},
+  biburl    = {https://dblp.org/rec/conf/cidr/KipfKRLBK19.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@article{DBLP:journals/corr/abs-2004-07009,
+  author    = {Rojeh Hayek and
+               Oded Shmueli},
+  title     = {{NN}-based Transformation of Any {SQL} Cardinality Estimator for Handling
+               DISTINCT, AND, {OR} and {NOT}},
+  journal   = {CoRR},
+  volume    = {abs/2004.07009},
+  year      = {2020},
+  url       = {https://arxiv.org/abs/2004.07009},
+  archivePrefix = {arXiv},
+  eprint    = {2004.07009},
+  timestamp = {Tue, 21 Apr 2020 16:51:52 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-2004-07009.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+
+%----------------------------- DB Technologies ------------------------------
+@misc{ wiki:Materialized_view,
+   author = "{Wikipedia contributors}",
+   title = "Plagiarism --- {W}ikipedia{,} The Free Encyclopedia",
+   year = "2020",
+   url = "https://en.wikipedia.org/wiki/Materialized_view",
+   note = "[Online; accessed 18-July-2020]"
  }
-
-@book{CLR,
-  author      = {Thomas H. Cormen and
-                 Clifford Stein and
-                 Ronald L. Rivest and
-                 Charles E. Leiserson},
-  title       = {Introduction to Algorithms},
-  year        = {2001},
-  isbn        = {0070131511},
-  publisher   = {McGraw-Hill Higher Education},
+ 
+ %------------------------- Vectors search - LSH based ----------------------
+ @inproceedings{lsh,
+    author = {Gionis, Aristides and Indyk, Piotr and Motwani, Rajeev},
+    title = {Similarity Search in High Dimensions via Hashing},
+    year = {1999},
+    isbn = {1558606157},
+    publisher = {Morgan Kaufmann Publishers Inc.},
+    address = {San Francisco, CA, USA},
+    booktitle = {Proceedings of the 25th International Conference on Very Large Data Bases},
+    pages = {518–529},
+    numpages = {12},
+    series = {VLDB ’99}
 }
 
-@book{HU,
-  author      = {John E. Hopcroft and
-                 Jeffrey D. Ullman},
-  year        = {1979},
-  title       = {Introduction to Automata Theory, Languages, and Computation},
-  publisher   = {Addison-Wesley},
-  address     = {Reading, Massachusetts}
+@inproceedings{sugawara-etal-2016-approximately,
+    title = "On Approximately Searching for Similar Word Embeddings",
+    author = "Sugawara, Kohei  and
+      Kobayashi, Hayato  and
+      Iwasaki, Masajiro",
+    booktitle = "Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = aug,
+    year = "2016",
+    address = "Berlin, Germany",
+    publisher = "Association for Computational Linguistics",
+    url = "https://www.aclweb.org/anthology/P16-1214",
+    doi = "10.18653/v1/P16-1214",
+    pages = "2265--2275",
 }
 
-@Book{ASE,
-  author      = {Noga Alon and Joel H. Spencer and Paul Erd{\H{o}}s},
-  title       = {The Probabilistic Method},
-  publisher   = {John Wiley and Sons, Inc.},
-  year        = {1992},
-  series      = {Wiley-Interscience Series in Discrete Mathematics and Optimization},
-}
-
-@article{Gowers2007,
-  author      = {William Timothy Gowers},
-  title       = {Hypergraph regularity and the multidimensional Szemer\'{e}di theorem},
-  journal     = {Annals of Mathematics},
-  volume      = {166},
-  number      = {3},
-  year        = {2007},
-  pages       = {897--946},
-  doi         = {http://dx.doi.org/10.4007/annals.2007.166.897 },
-  publisher   = {Princeton University & Institute of Advanced Studies},
-  address     = {Princeton, NJ, USA}
-}
-
-@article{Gowers2006,
-  author      = {William Timothy Gowers},
-  title       = {Quasirandomness, Counting and Regularity for 3-Uniform Hypergraphs},
-  journal     = {Combinatorics, Probability and Computing},
-  volume      = {15},
-  issue       = {1-2},
-  month       = {January},
-  year        = {2006},
-  issn        = {0963-5483},
-  pages       = {143--184},
-  numpages    = {42},
-  doi         = {10.1017/S0963548305007236},
-  publisher   = {Cambridge University Press},
-  address     = {New York, NY, USA},
-}
-
-@article{Pikhurko2010,
-  author      = {Oleg Pikhorko},
-  title       = {An analytic approach to stability},
-  journal     = {Discrete Mathematics},
-  volume      = {310},
-  number      = {21},
-  pages       = {2951 - 2964},
-  year        = {2010},
-}
-
-@article{NN,
-  author      = {Joseph (Seffi) Naor and
-                 Moni Naor},
-  title       = {Small-bias probability spaces: efficient constructions and applications},
-  journal     = {SIAM Journal on Computing},
-  volume      = {22},
-  issue       = {4},
-  month       = {August},
-  year        = {1993},
-  pages       = {838--856},
-  publisher   = {Society for Industrial and Applied Mathematics},
-  address     = {Philadelphia, PA, USA},
-  note        = {An earlier version appeared in the proceedings of the 22\xnd STOC, 1990},
-}
-
-@article {AGHP,
-  author      = {Noga Alon and
-                 Oded Goldreich and
-                 Johan H{\aa}stad and
-                 Ren\'{e} Peralta},
-  title       = {Simple Constructions of Almost k-wise Independent Random Variables},
-  journal     = {Random Structures \& Algorithms},
-  volume      = {3},
-  number      = {3},
-  publisher   = {Wiley Subscription Services, Inc., A Wiley Company},
-  pages       = {289--304},
-  year        = {1992},
-}
-
-@book{Papadimitriou,
-  author      = {Christos H. Papadimitriou},
-  address     = {Massachussetts},
-  publisher   = {Addison Wesley Publishing Company},
-  title       = {Computational Complexity},
-  year        = {1994}
-}
-
-@incollection{Shaltiel,
-  author      = {Ronen Shaltiel},
-  title       = {Recent Developments in Explicit Constructions of Extractors},
-  booktitle   = {Current Trends in Theoretical Computer Science: The Challenge of the New Century},
-  editor      = {G. Paun and G. Rozenberg and A. Salomaa},
-  publisher   = {World Scientific Publishing},
-  year        = {2004},
-  volume      = {1},
-  pages       = {229--264},
-}
-
-@inproceedings{Yao1977,
-  author      = {Andrew Chi-Chih Yao},
-  title       = {Probabilistic Computations: Toward a Unified Measure of
-                 Complexity (Extended Abstract)},
-  booktitle   = {18th FOCS},
-  year        = {1977},
-  pages       = {222-227},
-}
-
-@article{Behrend,
-  author      = {Felix A. Behrend},
-  title       = {On sets of integers which contain no three terms in arithmetical progression},
-  journal     = {Proceedings of the National Academy of Sciences of the USA},
-  volume      = {32},
-  year        = {1946},
-  pages       = {331--332},
-}
-
-@article{ABI,
-  author      = {Noga Alon and
-                 Laszlo Babai and
-                 Alon Itai},
-  title       = {A fast and simple randomized parallel algorithm for the maximal independent set problem},
-  journal     = {Journal of Algorithms},
-  volume      = {7},
-  number      = {4},
-  pages       = {567--583},
-  year        = {1986},
-  issn        = {0196-6774},
-  url         = {http://www.sciencedirect.com/science/article/pii/0196677486900192},
-}
-
-@misc{Ishigami,
-  author      = {Yoshiyasu Ishigami},
-  title       = {A Simple Regularization of Hypergraphs},
-  year        = {2009},
-  note        = {available from the following URL:\\ \url{http://arxiv.org/abs/math/0612838}},
-}
-
-@article {NRS,
-  author      = {Brendan Nagle and
-                 Vojt\v{e}ch R\"{o}dl and
-                 Mathias Schacht},
-  title       = {The counting lemma for regular k-uniform hypergraphs},
-  journal     = {Random Structures \& Algorithms},
-  volume      = {28},
-  number      = {2},
-  publisher   = {Wiley Subscription Services, Inc., A Wiley Company},
-  pages       = {113--179},
-  year        = {2006},
-}
-
-
-@article{Hoeffding,
-  author      = {Wassily Hoeffding},
-  title       = {Probability inequalities for sums of bounded random variables},
-  journal     = {Journal of the American Statistical Association},
-  volume      = {58},
-  pages       = {13--30},
-  year        = {1963},
-}

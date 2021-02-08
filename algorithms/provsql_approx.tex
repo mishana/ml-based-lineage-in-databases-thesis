@@ -1,0 +1,26 @@
+\begin{algorithm2e}[t]
+\SetAlgoLined
+% \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+% \SetKwFunction{ClusterVectorsUsingKMeans}{\fncolor{ClusterVectorsUsingKMeans}}
+\SetKwData{token}{token$_3$}
+% \SetKwInOut{HP}{Hyper-Parameters}
+
+% \HP{\textit{max\_vectors\_num} - maximum number of vectors per-tuple}
+\KwIn{a pair of tokens $token_1, token_2$ 
+and their associated sets of lineage vectors $LV_1, LV_2$\newline
+an operation $op \in \{+, \cdot\}$}
+\KwResult{a new token \token, that is associated with the new set of lineage vectors $LV_3$ = $LV_1\:op\:LV_2$}
+\BlankLine
+\BlankLine
+ \BlankLine
+ \Switch{$op$}{
+    \Case{$+$}{
+        $LV_3$ = $LV_1 + LV_2$ \cmtcolor{\tcp*{see Algorithm \ref{algo:add_approx}}}
+    }
+    \Case{$\cdot$}{
+        $LV_3$ = $LV_1 \cdot LV_2$ \cmtcolor{\tcp*{see Algorithm \ref{algo:mul_approx}}}
+    }
+ }
+ tag the newly generated $LV_3$ as \token\;
+\caption{Incorporating lineage vectors in ProvSQL}\label{algo:provsql_online_approx}
+\end{algorithm2e}

@@ -1,0 +1,18 @@
+\begin{algorithm2e}[bh]
+\SetAlgoLined
+% \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\SetKwFunction{WeightedAverage}{\fncolor{WeightedAverage}}
+\SetKwData{vt}{v$_t$}
+
+\KwIn{a pre-trained word embeddings model $M$, an input database $D$}
+\KwResult{calculate an initial lineage vector \vt for every tuple $t$ in $D$}
+\BlankLine
+\BlankLine
+ \For{$t \in D.tuples$}{
+  \cmtcolor{\tcc{$M$ is a pre-trained word embeddings model and $t$ is a DB tuple}}
+  $word\_vectors_t = \{M(w)\mid w \in t\}$\;
+  \cmtcolor{\tcc{Now, perform a "smart" averaging over the word vectors of every word in $t$}}%\label{cmt}
+  \vt = \WeightedAverage{\paramcolor{$word\_vectors_t$}}\;
+}
+\caption{Lineage vectors: initialization}\label{algo:init_approx}
+\end{algorithm2e}

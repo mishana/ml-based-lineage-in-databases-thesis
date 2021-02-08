@@ -7,16 +7,15 @@
 % so you can safely delete this when creating your own
 % thesis
 
-\usepackage{lipsum}
+\usepackage{centernot}
 
-% Another dummy text generator...
-\def\qbfox#1{%
-  \count1=0%
-  \loop%
-    \ifnum\count1<#1%
-      \advance\count1 by 1%
-      The quick brown fox jumped over the lazy dog. %
-      \repeat%
-  \relax%
-}
+\newcommand{\notimplies}{\centernot\implies}
+
+\theoremstyle{definition}
+\newtheorem{runexample}{Running Example}
+\newtheorem{example-withrun}{Example}[runexample]
+
+\newcommand{\fncolor}[1]{\textcolor{YellowOrange}{#1}}
+\newcommand{\paramcolor}[1]{\textcolor{JungleGreen}{#1}}
+\newcommand{\cmtcolor}[1]{\textcolor{Gray}{#1}}
 

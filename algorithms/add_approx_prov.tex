@@ -1,0 +1,21 @@
+\begin{algorithm2e}[t]
+\SetAlgoLined
+% \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\SetKwFunction{ClusterVectorsUsingKMeans}{\fncolor{ClusterVectorsUsingKMeans}}
+\SetKwData{pv}{LV$_3$}
+\SetKwInOut{HP}{Hyper-Parameters}
+
+\HP{\textit{max\_vectors\_num} - maximum number of vectors per-tuple}
+\KwIn{two sets of lineage vectors $LV_1, LV_2$ that represent the lineage of two tuples $t_1$ and $t_2$, respectively}
+\KwResult{a new set of lineage vectors \pv, that represents $t_1 + t_2$}
+\BlankLine
+\BlankLine
+ \cmtcolor{\tcc{Call this algorithm via $+(LV_1,LV_2)$ or using the infix notation $LV_1 + LV_2$}}
+ \BlankLine
+ $\pv = LV_1 \cup LV_2$\;
+ \If{$|\pv| > max\_vectors\_num$}{
+    \cmtcolor{\tcc{Perform K-Means clustering over the vectors into \textit{max\_vectors\_num} groups and return the centers (i.e., each center is a vector) of each group}}%\label{cmt}
+    \pv = \ClusterVectorsUsingKMeans{\paramcolor{$\pv$}}\;
+ }
+\caption{Lineage vectors: $\boldsymbol+$ \small{(addition)}}\label{algo:add_approx}
+\end{algorithm2e}

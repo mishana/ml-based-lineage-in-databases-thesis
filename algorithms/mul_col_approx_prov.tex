@@ -1,0 +1,31 @@
+\begin{algorithm2e}
+\SetAlgoLined
+% \DontPrintSemicolon
+% \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\SetKwFunction{ClusterVectorsUsingKMeans}{\fncolor{ClusterVectorsUsingKMeans}}
+\SetKwFunction{Avg}{\fncolor{Avg}}
+\SetKwFunction{CartesianProduct}{\fncolor{CartesianProduct}}
+\SetKwData{pv}{CV$_3$}
+\SetKwInOut{HP}{Hyper-Parameters}
+
+% \HP{\textit{max\_vectors\_num} - maximum number of vectors per-tuple}
+\KwIn{two maps of: \textit{columns $\rightarrow$ sets of lineage vectors} $CV_1, CV_2$ that represent the lineage of two tuples $t_1$ and $t_2$, respectively}
+\KwResult{a new map of: \textit{columns $\rightarrow$ sets of lineage vectors} \pv, that represents $t_1 \cdot t_2$}
+\BlankLine
+\BlankLine
+ \pv = \{\} $\rightarrow$ \{\}\cmtcolor{\tcp*{an empty map of: \textit{columns $\rightarrow$ sets of lineage vectors}}}
+ \ForEach{column $c \in (CV_1.columns \cup CV_2.columns)$}{
+    \cmtcolor{\tcc{$CV_i.columns$ is the domain and $CV_i[c]$ is the corresponding \textit{set of lineage vectors} of tuple $t_i$ for the column $c$}}
+    \uIf{$c \in (CV_1.columns \cap CV_2.columns)$}{
+        $\pv[c]$ = $\paramcolor{CV_1[c]} \:\fncolor{\boldsymbol\cdot}\: \paramcolor{CV_2[c]}$\cmtcolor{\tcp*{see Algorithm \ref{algo:mul_approx}}}
+        % \cmtcolor{\tcp*{an inline call to $\boldsymbol\cdot$ operation defined in Algorithm \ref{algo:mul_approx}}}
+    }
+    \uElseIf{$c \in CV_1.columns$}{
+        $\pv[c]$ = $CV_1[c]$\;
+    }
+    \Else{
+        $\pv[c]$ = $CV_2[c]$\;
+    }
+ }
+\caption{Column Lineage vectors: $\boldsymbol\cdot$ \small{(multiplication)}}\label{algo:mul_col_approx}
+\end{algorithm2e}
