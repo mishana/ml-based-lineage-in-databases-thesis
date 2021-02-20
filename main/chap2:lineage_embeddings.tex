@@ -18,15 +18,16 @@ A few problems become apparent when considering \textit{Distant Provenance} (i.e
 
 \section{Proposed Solution}\label{sec:proposed_solution_approx}
 % Our proposal - encode provenance information using word embeddings
-\par We devise a novel approach to provenance tracking, which is based on ML and NLP techniques. The main idea is summarizing, and thereby approximating, the lineage of every tuple with a set of up to $max\_vectors\_num$ (a hyperparameter) vectors. For tuples that are inserted explicitly into the DB, the vectors are obtained using a pre-trained word embeddings model $M$ over the underlying ``text" of the tuple (see Algorithm \ref{algo:init_approx}).
-During a query execution process we form the lineage of new query result tuples in a similar fashion to that of provenance semirings \cite{green2007provenance}. We extend the + and $\cdot$ operations (see Algorithms \ref{algo:add_approx} and
+\par We devise a novel approach to provenance tracking, which is based on ML and NLP techniques. The main idea is summarizing, and thereby approximating, the lineage of every tuple with a set of up to $max\_vectors\_num$ (a hyperparameter) vectors. For tuples that are inserted explicitly into the DB, the vectors are obtained using a pre-trained word embeddings model $M$ over the underlying ``text" of the tuple (see Figure \ref{algo:init_approx}).
+During a query execution process we form the lineage of new query result tuples in a similar fashion to that of provenance semirings \cite{green2007provenance}. We extend the + and $\cdot$ operations (see Figures \ref{algo:add_approx} and
 \ref{algo:mul_approx}, respectively) to generate lineage embeddings, while emphasizing the ability to propagate information and preserve the representation of lineage via a set of up to $max\_vectors\_num$, constant-size vectors. We obtain lineage embeddings for query output tuples by using this process. These new tuples (and their lineage) may be later inserted into the DB (depending on the specific application). 
-\par A real world provenance system like ProvSQL \cite{provsql_github} can make use of our lineage vectors during the construction of provenance circuits. Recall that each node in a provenance circuit is associated with some annotation/token, either representing a tuple from the input DB or an intermediate calculation (see section \ref{sec:provsql}). Lineage vectors can be incorporated in such a system by calling Algorithm \ref{algo:provsql_online_approx}, for instance. This is an ``online" approach, meaning the lineage vectors are generated during the query execution process. Another approach to incorporating lineage vectors in a real world provenance system might be using such a system as a black box, generating a provenance how-formula for each query output tuple. Later, this formula can be analyzed ``offline", parsed, and converted to lineage vectors by evaluating the parsed expression in a hierarchical manner. Each intermediate evaluation step would call either Algorithm \ref{algo:add_approx} or \ref{algo:mul_approx}, based on the parsing of the formula, mimicking the online nature of algorithm \ref{algo:provsql_online_approx}.
+\par A real world provenance system like ProvSQL \cite{provsql_github} can make use of our lineage vectors during the construction of provenance circuits. Recall that each node in a provenance circuit is associated with some annotation/token, either representing a tuple from the input DB or an intermediate calculation (see section \ref{sec:provsql}). Lineage vectors can be incorporated in such a system by calling the Algorithm in Figure \ref{algo:provsql_online_approx}, for instance. This is an ``online" approach, meaning the lineage vectors are generated during the query execution process. Another approach to incorporating lineage vectors in a real world provenance system might be using such a system as a black box, generating a provenance how-formula for each query output tuple. Later, this formula can be analyzed ``offline", parsed, and converted to lineage vectors by evaluating the parsed expression in a hierarchical manner. Each intermediate evaluation step would call either Figure \ref{algo:add_approx} or \ref{algo:mul_approx}, based on the parsing of the formula, mimicking the online nature of algorithm \ref{algo:provsql_online_approx}.
 
 
 \begin{runexample}
     % Show examples of addition and multiplication constructions
-    Next, we show examples of the addition and multiplication lineage vectors constructions (Algorithms 2 and 3, respectively).
+    Next, we show examples of the addition and multiplication lineage vectors constructions (Figures \ref{algo:add_approx} and
+\ref{algo:mul_approx}, respectively).
     Let $\vec v_1, \vec v_2, \vec v_3, \vec v_4 \in \mathbb{R}^2$ be vectors, such that:
     \begin{equation*}
         \vec v_1 = \begin{pmatrix} -1\\ 0.5 \end{pmatrix},
@@ -45,7 +46,7 @@ During a query execution process we form the lineage of new query result tuples 
 \end{runexample}
 % addition
 \begin{example-withrun}
-    Let us follow the construction of $LV_3$, which represents the lineage embeddings of $t_1 + t_2$ using Algorithm \ref{algo:add_approx} (corresponds to alternative use of data, i.e., OR in the query):
+    Let us follow the construction of $LV_3$, which represents the lineage embeddings of $t_1 + t_2$ using the addition Algorithm in Figure \ref{algo:add_approx} (corresponds to alternative use of data, i.e., OR in the query):
     \begin{enumerate}
         \item $LV_1 \cup LV_2 = \{\vec v_1, \vec v_2, \vec v_3\} \cup \{\vec v_4\} = \{\vec v_1, \vec v_2, \vec v_3, \vec v_4\}$
         \item $|\{\vec v_1, \vec v_2, \vec v_3, \vec v_4\}| = 4 > 3 = max\_vectors\_num$
@@ -61,7 +62,7 @@ During a query execution process we form the lineage of new query result tuples 
 \end{example-withrun}
 % multiplication
 \begin{example-withrun}
-    Let us follow the construction of $LV_3$, that represents the lineage embeddings of $t_1 \cdot t_2$ using Algorithm \ref{algo:mul_approx} (corresponds to joint use of data, i.e., AND in the query):
+    Let us follow the construction of $LV_3$, that represents the lineage embeddings of $t_1 \cdot t_2$ using the multiplication Algorithm in Figure \ref{algo:mul_approx} (corresponds to joint use of data, i.e., AND in the query):
     \begin{enumerate}
         \item $\operatorname{CartesianProduct}(LV_1, LV_2) = \{(\vec v_1, \vec v_4), (\vec v_2, \vec v_4), (\vec v_3, \vec v_4)\}$
         \item $\{\operatorname{Avg}(\vec v_1, \vec v_4), \operatorname{Avg}(\vec v_2, \vec v_4), \operatorname{Avg}(\vec v_3, \vec v_4)\} = \{\vec a_1, \vec a_2, \vec a_3\}$\\
@@ -126,14 +127,14 @@ As in Bordawekar et al. \cite{DBLP:journals/corr/BordawekarS16}, we train a \tex
 A naive transformation of a DB to unstructured text (a sequence of sentences) can be achieved by simply concatenating the textual representation of the different columns of each tuple into a separate sentence. This approach has several problems \cite{DBLP:journals/corr/BordawekarS16}:
 \begin{itemize}
     \item When dealing with natural language text, there is an assumption that the semantic influence of a word on a nearby word is inversely proportional to the distance between them. However, not only that a sentence extracted from a tuple does not necessarily correspond to any natural language structure, but, it can be actually thought of as ``a bag of columns"; i.e., the order between different columns in a sentence has no semantic implications.
-    \item All columns are not the same. That is, some columns may hold more semantic importance than others in the same sentence (generated from a tuple). For instance, a primary key column, a foreign key column, or an important domain-specific column (e.g., a manufacturer column in a products table). This implies that in order to derive meaningful embeddings from the trained word vectors, we need to consider inter-column discrimination, during both training (i.e., when constructing initial lineage vectors for every tuple in the DB - see Algorithm \ref{algo:init_approx}) and evaluation phases.
+    \item All columns are not the same. That is, some columns may hold more semantic importance than others in the same sentence (generated from a tuple). For instance, a primary key column, a foreign key column, or an important domain-specific column (e.g., a manufacturer column in a products table). This implies that in order to derive meaningful embeddings from the trained word vectors, we need to consider inter-column discrimination, during both training (i.e., when constructing initial lineage vectors for every tuple in the DB - see Figure \ref{algo:init_approx}) and evaluation phases.
 \end{itemize}
 We solve these problems by properly setting hyperparameters (e.g., window size), artificially (and carefully) injecting repeated text inside a sentence, and dividing the training into multiple, different stages. 
 A detailed outline of the ``textification" and training processes follows:
 \begin{enumerate}
     \item Generate a \texttt{Key} column with unique values for each table in the DB.
     \item Extract two corpora from the DB, one with columns (except the \texttt{Key} columns) as sentences, and the other with tuples as sentences.
-    \item Transform each numerical value in the generated corpora by concatenating the relevant column name to the number. Other methods of dealing with numerical values exist as well, and are discussed in section \ref{sec:discussion}.
+    \item Transform each numerical value in the generated corpora by concatenating the relevant column name to the number. Other methods of dealing with numerical values exist as well, and are discussed in chapter \ref{chap:discussion}.
     \item Transform each sentence in the generated corpora by injecting the corresponding \texttt{Key} value repeatedly after every $k$ (a separate hyperparameter for the columns corpus and the tuples corpus) words in the sentence. The idea is to encode more information about each tuple in its corresponding \texttt{Key} value vector.
     \item Incrementally train a \textsc{Word2Vec} model on the generated corpora. First, train on the columns corpus and then on the tuples corpus. One may question why we have the same model for both the tuple-based and the column-based (see section \ref{sec:column-vectors}) lineage vectors. The answer is that experimentally the models that are restricted to only the tuples corpus or the columns corpus gave inferior results.
 \end{enumerate}
@@ -158,7 +159,7 @@ where $ps$ is the set of pair-wise similarities between a pair of vectors, one t
 
 
 \section{Interim Findings and Hurdles}
-We conducted a series of experiments (see section \ref{evaluation}) and came to the following interim conclusions:
+We conducted a series of experiments (see chapter \ref{chap:experimental_evaluation}) and came to the following interim conclusions:
 \begin{itemize}
     \item Our explanations encode the text and not the tuples. Thus, relations with many similar tuples (text-wise) result in our system performing poorly. We assume that most of the problems listed below are symptoms of the same root cause.
     \item Analysis of direct provenance (i.e., \textit{direct} explanations for the existence of tuples in a query result in terms of existing DB tuples, regardless of their historical raison d'être) on simple, complex (ones that might involve multiple tables with non-trivial joins and non-trivial ``where" conditions) and composite (that contain sub-queries) queries gives good results ($> 90\%$ accuracy for ``top $50\%$'' of the tuples in the lineage) generally. However, results suffer from inconsistencies sometimes, identifying tuples incorrectly as part of the linaege due to thier textual similarity to actual lineage tuples.

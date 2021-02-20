@@ -1,0 +1,18 @@
+\begin{adjustbox}{width=\columnwidth,center}
+\pgfplotstabletypeset[
+    color cells={min=0.7,max=1.0,  textcolor=white}, format index, format table, format userId, format movieId, format tag, format Lineage,
+    col sep=comma,
+    /pgfplots/colormap={purple}{
+        rgb255(0cm)=(239,237,245);
+        rgb255(1cm)=(106,81,163)},
+    assign column name/.code=\pgfkeyssetvalue{/pgfplots/table/column
+        name}{{\textbf{#1}}},
+]{
+    index,     userId, movieId,               tag,       {Similarity}                    ,Lineage       
+    0,     282405,    152081 (Zootopia),    funny ,     0.896420          ,Yes
+    1,     282405,    164909 (La La Land),      music ,      0.882717          ,Yes
+    2,     282405,    152081 (Zootopia),          acceptance ,     0.862564           ,No   	
+
+
+}
+\end{adjustbox}

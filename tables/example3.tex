@@ -1,0 +1,21 @@
+\begin{table*}
+\centering
+\pgfplotstabletypeset[
+    color cells={min=0.45,max=1.0}, format index, format table, format manufacturer, format method,
+    col sep=comma,
+    /pgfplots/colormap={orange}{
+        rgb255(0cm)=(255,245,235);
+        rgb255(1cm)=(253,141,60)},
+    assign column name/.code=\pgfkeyssetvalue{/pgfplots/table/column
+        name}{{\textbf{#1}}},
+]{
+    index,  Provenance Method,       manufacturer, {Lin. size},  {1.00$^{Top}$},            {0.75$^{Top}$},        {0.50$^{Top}$},        {0.25$^{Top}$}
+    0,      Tuple Vectors,   general mills sales, 1966,           0.457782 ,        0.486102 ,     0.54878 ,       0.658537
+    1,      Column Vectors (CV),   general mills sales, 1966,          0.806205 ,        0.911864 ,     0.961382 ,       1.0
+    2,      CV + Bloom filters,   general mills sales, 1966,          1.0 ,        1.0 ,     1.0 ,       1.0
+}
+\textbf{\caption{\label{tab:3}
+                A comparison of different approximate lineage computation methods on a single query-result tuple (\textit{general mills sales}). Lin. size is the size of the exact lineage for a result tuple (containing only tuples from the \texttt{serving\_size} table). $p^{Top}$ shows the precision of various methods for the top $p\cdot|Lineage|$ tuples in the approximate lineage. For example, 0.50$^{Top}$ is the precision for the top 983 ($=0.5\cdot1996$) tuples in the approximate lineage.
+                }
+        }
+\end{table*}

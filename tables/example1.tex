@@ -1,0 +1,39 @@
+\begin{table}
+\centering
+\begin{adjustbox}{width=\columnwidth,center}
+\pgfplotstabletypeset[
+    color cells={min=0.45,max=1.0}, format index, format table, format userId,
+    col sep=comma,
+    /pgfplots/colormap={orange}{
+        rgb255(0cm)=(255,245,235);
+        rgb255(1cm)=(253,141,60)},
+    assign column name/.code=\pgfkeyssetvalue{/pgfplots/table/column
+        name}{{\textbf{#1}}},
+]{
+    % index,     userId, {lineage size},  {tuple$_{all}$}, {tuple$_{half}$}, {cols$_{all}$}, {cols$_{half}$}                      
+    % 0,     275402,            3,          0.667 ,        1.0 ,            1.0 ,           1.0
+    % 1,     275707,            1,          1.000 ,        1.0 ,            1.0 ,           1.0
+    % 2,     275980,            1,          1.000 ,        1.0 ,            1.0 ,           1.0
+    % 3,     278069,            1,          0.845 ,        1.0 ,            0.92 ,           1.0
+    % 4,     279177,            1,          1.000 ,        1.0 ,            1.0 ,           1.0
+    % 5,     280810,            1,          1.000 ,        1.0 ,            1.0 ,           1.0
+    % 6,     282342,            3,          0.667 ,        1.0 ,            1.0 ,           1.0
+    % 7,     282405,            2,          1.000 ,        1.0 ,            1.0 ,           1.0
+    
+    index,     userId, {Lin. size},  {Precision$^{tuples}$},  {Precision$^{cols}$}                 
+    0,     275402,            3,          0.667 ,                  1.0  
+    1,     275707,            1,          1.000 ,                  1.0  
+    2,     275980,            1,          1.000 ,                  1.0  
+    3,     278069,            1,          1.000 ,                  1.0     
+    4,     279177,            1,          1.000 ,                  1.0  
+    5,     280810,            1,          1.000 ,                  1.0  
+    6,     282342,            3,          0.667 ,                  1.0  
+    7,     282405,            2,          1.000 ,                  1.0  
+
+}
+\end{adjustbox}
+\textbf{\caption{\label{tab:1}
+                \texttt{userId} indicates the unique user's identifier returned by the query. Lin. size is the size of the exact lineage for a result tuple (containing only tuples from the \texttt{tags} table). Precision$^{tuples}$ and Precision$^{cols}$ display our system's precision for each tuple in the result, for both ``lineage tuple vectors" and ``lineage column vectors" (with query-specific column weighting), respectively. Precision computations are done for the top $n = |Lineage\_tags(t)\protect\footnotemark|$ tuples in the approximate lineage for each result tuple $t$.
+                }
+        }
+\end{table}

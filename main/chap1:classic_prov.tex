@@ -79,7 +79,7 @@ As shown previously by Green et al. \cite{green2007provenance} and Karvounarakis
 % PostgreSQL Hooks
 \subsection{PostgreSQL Hooks} PostgreSQL (Postgres) hooks \cite{postgre_hooks} make it possible to extend/modify its behaviour without rebuilding Postgres, by interrupting the execution process at certain points. Similarly to Postgres itself, the hooks API is written in C. Every hook is accessible via a global function pointer, initially set to \texttt{NULL}. During an extension's loading (following a \texttt{CREATE EXTENSION} command) Postgres calls the extension's own \texttt{\_PG\_init} function (if implemented), which has access to the hooks handler pointers (at this point, a hook function can be registered). When Postgres needs to call a hook, it checks the relevant function pointer, and calls the registered function, if the pointer is set.
 % Implementation
-\input{graphics/provsql_architecture}
+\input{figures/provsql_architecture}
 \subsection{Implementation} ProvSQL \cite{provsql_github} uses the \texttt{planner\_hook}, which is called after a query has been parsed, and before it is sent to the query planner. The system architecture (as part of Postgres's query execution pipeline) is depicted in Figure \ref{fig:provsql_architecture}.
 ProvSQL currently supports a wide range of non-aggregate SQL queries (for more details see \cite{provsql_github, Senellart2018}). The generated query result includes a \texttt{provsql} column of unique\footnotemark
 \footnotetext{128-bit universally unique identifiers (UUIDs) that are generated using the \texttt{uuid-ossp} PostgreSQL module.}

@@ -9,6 +9,136 @@
 
 \usepackage{centernot}
 
+\usepackage{adjustbox}
+\usepackage{float}
+\usepackage{pgfplotstable}
+\pgfplotstableset{
+    /color cells/min/.initial=0,
+    /color cells/max/.initial=1000,
+    /color cells/textcolor/.initial=,
+    %
+    % Usage: 'color cells={min=<value which is mapped to lowest color>, 
+    %   max = <value which is mapped to largest>}
+    color cells/.code={%
+        \pgfqkeys{/color cells}{#1}%
+        \pgfkeysalso{%
+            postproc cell content/.code={%
+                %
+                \begingroup
+                %
+                % acquire the value before any number printer changed
+                % it:
+                \pgfkeysgetvalue{/pgfplots/table/@preprocessed
+                  cell content}\value
+                \ifx\value\empty
+                    \endgroup
+                \else
+                \pgfmathfloatparsenumber{\value}%
+                \pgfmathfloattofixed{\pgfmathresult}%
+                \let\value=\pgfmathresult
+                %
+                % map that value:
+                \pgfplotscolormapaccess
+                    [\pgfkeysvalueof{/color cells/min}:\pgfkeysvalueof{/color
+                      cells/max}]
+                    {\value}
+                    {\pgfkeysvalueof{/pgfplots/colormap name}}%
+                % now, \pgfmathresult contains {<R>,<G>,<B>}
+                % 
+                % acquire the value AFTER any preprocessor or
+                % typesetter (like number printer) worked on it:
+                \pgfkeysgetvalue{/pgfplots/table/@cell content}\typesetvalue
+                \pgfkeysgetvalue{/color cells/textcolor}\textcolorvalue
+                %
+                % tex-expansion control
+                % see http://tex.stackexchange.com/questions/12668/
+                \toks0=\expandafter{\typesetvalue}%
+                \xdef\temp{%
+                    \noexpand\pgfkeysalso{%
+                        @cell content={%
+                            \noexpand\cellcolor[rgb]{\pgfmathresult}%
+                            \noexpand\definecolor{mapped
+                              color}{rgb}{\pgfmathresult}%
+                            \ifx\textcolorvalue\empty
+                            \else
+                                \noexpand\color{\textcolorvalue}%
+                            \fi
+                            \the\toks0 %
+                        }%
+                    }%
+                }%
+                \endgroup
+                \temp
+                \fi
+            }%
+        }%
+    },
+    format index/.style={
+        columns/index/.style={
+            column name={},
+            string type,
+            postproc cell content/.code={},
+            postproc cell  content/.append style={
+            @cell content/.add={\bfseries \ttfamily \small}{}
+            },
+        },
+    },
+    format userId/.style={
+        columns/userId/.style={
+            % column name={},
+            string type,
+            postproc cell content/.code={}
+        },
+    },
+    format movieId/.style={
+        columns/movieId/.style={
+            % column name={},
+            string type,
+            postproc cell content/.code={}
+        },
+    },
+    format tag/.style={
+        columns/tag/.style={
+            % column name={},
+            string type,
+            postproc cell content/.code={}
+        },
+    },
+    format manufacturer/.style={
+        columns/manufacturer/.style={
+            % column name={},
+            string type,
+            postproc cell content/.code={}
+        },
+    },
+    format Lineage/.style={
+        columns/Lineage/.style={
+            % column name={},
+            string type,
+            postproc cell content/.code={}
+        },
+    },
+    format method/.style={
+        columns/{Provenance Method}/.style={
+            % column name={},
+            string type,
+            postproc cell content/.code={},
+            postproc cell  content/.append style={
+            @cell content/.add={\bfseries}{}
+            },
+        },
+    },
+    format table/.style={
+        columns/{Lin. size}/.style={
+            % column name={},
+            postproc cell content/.code={}
+        },
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+        every odd row/.style={before row={\rowcolor{gray!10}}},
+    }
+}
+
 \newcommand{\notimplies}{\centernot\implies}
 
 \theoremstyle{definition}
@@ -18,4 +148,8 @@
 \newcommand{\fncolor}[1]{\textcolor{YellowOrange}{#1}}
 \newcommand{\paramcolor}[1]{\textcolor{JungleGreen}{#1}}
 \newcommand{\cmtcolor}[1]{\textcolor{Gray}{#1}}
+
+\makeatletter
+\newcommand{\removelatexerror}{\let\@latex@error\@gobble}
+\makeatother
 

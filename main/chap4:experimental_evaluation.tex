@@ -1,0 +1,120 @@
+\chapter{Experimental Evaluation}
+\label{chap:experimental_evaluation}
+
+In this chapter we first describe the datasets on which we conducted the experiments, and establish an objective explanation quality measure. We then present and analyze a few results of our approximate lineage system.
+
+
+\section{Experimental Setup}\label{sec:evaluation-setup}
+We used two datasets from different domains (food and movies) to compare the performance of our approximate lineage system against ProvSQL. The goal of these experiments is evaluating the precision of our approximate explanations against an ``exact provenance tracking system".
+\par\textbf{Note.} \textit{max\_vectors\_num} (see section \ref{sec:proposed_solution_approx}) was chosen manually to be 4. The optimization of hyperparameters, and, specifically, \textit{max\_vectors\_num} - is the subject of ongoing research.\\
+
+% USDA BFPD and MovieLens
+\subsection{Datasets}
+\begin{enumerate}
+    \item The USDA Branded Food Products Database (BFPDB) \cite{usda_bfpd-dataset} is the result of a Public-Private Partnership, whose goal is to enhance public health and the sharing of open data by complementing USDA Food Composition Databases with nutrient composition of branded foods and private label data, provided by the food industry. Among others, the dataset includes three tables:
+    \begin{itemize}
+        \item \texttt{products} - contains basic information on branded products (manufacturer, name, ingredients).
+        \item \texttt{serving\_size} - each tuple contains information about a product's serving size (as well as unit of measure) and food preparation state.
+        \item \texttt{nutrients} - each tuple contains all nutrient value information about a product.
+    \end{itemize}
+    Each product in the BFPDB dataset has a unique identifier, \texttt{ndb\_no}.
+    
+    \item The MovieLens dataset \cite{movielens-dataset} describes people’s preferences for movies. These preferences are entered by way of the MovieLens website \cite{movielens-recommender-website} — a recommender system that asks its users to provide movie ratings in order to receive personalized movie recommendations. Among others, the dataset includes three tables:
+    \begin{itemize}
+        \item \texttt{movies} - each tuple contains basic information about a movie (title, genres).
+        \item \texttt{ratings} - each tuple contains information about a user's expressed preference of a movie (a 0-5 star rating).
+        \item \texttt{tags} - each tuple contains information about a user's classifying tag of a movie (silly, funny, etc.).
+    \end{itemize}
+    Each movie in the MovieLens dataset has a unique identifier, \texttt{movieId}.
+\end{enumerate}
+
+% Explain how the precision evaluation process works (test against lineage from provsql)
+\subsection{Precision Calculation} In section \ref{sec:proposed_solution_approx} we stated that we expect our explanations to approximate the exact lineage of query result tuples. 
+Thus, in order to test the aforementioned algorithms and implementation, we devised an explanation quality measure for explaining a single tuple $t$: 
+\begin{equation*}
+    \operatorname{Precision}(t, n) = \frac{|ApproxLineage(t, n) \cap ExactLineage(t)|}{|ApproxLineage(t, n)|}\\
+\end{equation*}
+where $ApproxLineage(t, n)$ is the set of the top $n$ (by lineage similarity) tuples, returned as explanations (i.e., approximate lineage) for $t$ by our system. $ExactLineage(t)$ is the set of tuples that comprise the exact lineage of $t$, calculated from the semiring polynomial that is returned by the ProvSQL system. 
+The parameter $n$ is set by us at each experiment, that is, it is a parameter of the experiment. 
+Observe that $\operatorname{Precision(t, n)}$ is tunable via the parameter $n$, i.e., when $n$ is small we test for precision of the "top" explanations we found.\\
+\par Classically, we are usually interested in precision and recall (e.g., in classic statistics and classification problems). However, here the situation is slightly different, what we really are interested in is to assess the quality of our explanations by measuring ``how many of the top $n$ (by lineage similarity) tuples are actually part of the exact lineage?". By contrast, recall does not seem to be a meaningful metric in our case, as many query-result tuples might have long histories. Hence, a top-N justifications result is preferred over ``returning all the correct lineage tuples", and this is what we measure.
+
+
+\section{Examples}
+
+Having established an objective explanation quality measure, we conducted a series of experiments. In particular, we tested the precision on direct provenance of different queries, varying from ``simple" (examples \ref{experiment:1} and \ref{experiment:2}) to ``complex" (example \ref{experiment:3}) queries. We show some of the experimental results and present a qualitative analysis.
+\par\textbf{Note.} In all the examples, the lineage (and its size - `Lin. size' column) of a tuple, is calculated as a subset of the exact lineage. That is, if we compare a query result tuple with all the tuples in the \texttt{products} table (in order to find the top $N$ most similar tuples) - we use only \texttt{product} tuples in the exact lineage for precision calculations ($Lineage\_products(t)$ = $ExactLineage(t) \cap \texttt{products}.tuples$).
+
+
+\begin{runexample}
+We test queries on a small subset of the MovieLens dataset. Each table (i.e., \texttt{movies}, \texttt{ratings}, \texttt{tags}) consists of about 10,000 tuples.
+\end{runexample}
+%%% Present here all the queries? Figure? I think NO
+
+% Example 1
+% MovieLens tuples vs. columns.
+% \input{tables/example1}
+% "Toy" example
+\begin{example-withrun}\label{experiment:1}
+\input{tables/example1}
+\footnotetext{$Lineage\_tags(t) = ExactLineage(t) \cap \texttt{tags}.tuples$.}
+\input{tables/example2}
+\input{tables/example3}
+We ask for distinct \texttt{users} that tagged a Comedy/Romance genre \texttt{movie} as one of \textit{funny}, \textit{superhero}, \textit{family}, \textit{music}. The results are shown in Table \ref{tab:1}. Precision calculation is discussed in section \ref{sec:evaluation-setup}. The approximate lineage is calculated from comparing result tuples to tuples from the \texttt{tags} table (see preceding Note). Right away, it is evident that provenance column vectors produce better approximate lineages than tuple vectors.\\
+\par In this example tuples No.\texttt{0} and No.\texttt{6} display superior precision for column vectors. Tuple No.\texttt{7} is  interesting as it is a case of lineage size $>$ 1 for which both methods (tuple and column vectors) produce an accuracy of 1.0.
+It is interesting to examine tuple No.\texttt{7} more closely to gain a better grasp of the differences between tuple and column vectors.
+Now, let us analyze the top \textbf{3} (by similarity) tuples from the \texttt{tags} table, which are returned by our system for tuple No.\texttt{7} in Table \ref{tab:1} (\texttt{userId}=282405, Lin. size=\textbf{2}) for both the tuple-based and column vectors-based methods:\\\\\\
+\par\textbf{Tuple Vectors:}\\
+\input{tables/res2}\\
+\par\textbf{Column Vectors:}\\
+\input{tables/res1}
+\\
+As shown in the two tables above, both methods give maximal similarity (top 2) for the correct tuples in the exact lineage. However, the ``column vectors" method produces better separation in terms of similarity between correct and incorrect lineage tuples. Another interesting point of distinction between the two methods is the 3$^{rd}$ most similar tuple returned:
+\begin{itemize}
+    \item The ``tuple vectors" method returns a tuple which describes a tag of a correct movie (Zootopia) by the correct user (282405) with an incorrect label - \textit{acceptance}.
+    \item The ``column vectors" method returns a tuple which describes a tag of an incorrect movie (Coco - not a Romance/Comedy movie) by the correct user (282405) with a correct label - \textit{music}.
+\end{itemize}
+The reason for this dissimilarity in behavior might be the result of giving the \texttt{tag} column more weight when comparing lineage column vectors (as discussed in section \ref{sec:query-dependent-weighting}).
+
+\end{example-withrun}
+
+
+\begin{runexample}
+We test queries on a small subset of the BFPDB dataset. Each table (\texttt{products}, \texttt{nutrients}, \texttt{serving\_size}) consists of about 10,000 tuples.
+\end{runexample}
+
+% Example 2
+% BFPD tuples vs. columns.
+% Examine top mistakes and discuss column weighting.
+\begin{example-withrun}\label{experiment:2}
+% \input{tables/example2}
+We ask for distinct \texttt{manufacturers} of products that have \textit{cholesterol} value information in the \texttt{nutrients} table. Let us first look at the query:
+\input{figures/q1}
+
+Now, by parsing the query we conclude that the columns \texttt{manufacturer, ndb\_no, nutrient\_name} are the ``columns of interest" (discussed in section \ref{sec:query-dependent-weighting}). Thus, when comparing lineage column vectors of a query result tuple with another tuple from the DB - we give the columns of interest more weight. The results (and comparisons between the different techniques) are shown in Table \ref{tab:2}. The approximate lineage is calculated from comparing result tuples to tuples from the \texttt{nutrients} table. As evident from the presented results, incorporating query-based column weighting can significantly improve the precision of our system. 
+\par\textbf{Note.} This example displays lineage querying for result tuples with more than just a few tuples in their exact lineage (i.e., hundreds).
+
+\end{example-withrun}
+
+% Example 3
+% BFPD tuples vs. columns vs. Bloom
+% Explain why Bloom helps
+\begin{example-withrun}\label{experiment:3}
+% \input{tables/example3}
+We ask for distinct \texttt{manufacturers} of products that have \textit{reeses} in their name and contain \textit{protein}
+                         \texttt{nutrient} information.
+                Also, these \texttt{manufacturers} must produce \textit{unprepared} \texttt{products} (this information is stored in the \texttt{serving\_size} table).
+The only \texttt{manufacturer} in the BFPDB dataset that satisfies the (albeit a complex one) query is \textit{general mills sales}. Moreover, its exact lineage size (obtained by ProvSQL) is a relatively big number - \textbf{1966}; hence, it makes an interesting case study for the existence of drift errors in the construction of lineage vectors. That is, there is a potential for noise accumulation when combining a large number of lineage vectors with $+,\cdot$ and clustering operations (as discussed in section \ref{sec:proposed_solution_approx}). 
+The results are shown in Table \ref{tab:3}. The approximate lineage is calculated from comparing result tuples to tuples from the \texttt{serving\_size} table. As evident from the results, our solution (with query-based weighted column vectors and Bloom filters of queries) does not suffer from drift errors (limiting drift errors for distant provenance and direct provenance at scale are the subjects of ongoing research).
+\par\textbf{Notes.} 
+\begin{itemize}
+    \item The query-result tuple for \textit{general mills sales} has a lineage of size - 1966, which is ${\sim}20\%$ of the tuples in the \texttt{serving\_size} table in our experiments (in a production setting, it can be orders of magnitude larger). Instead, we approximate the lineage with a small (and bounded) number of vectors. We argue that if lineage is huge our method makes more sense for direct provenance calculation than exact lineage calculations.
+    \item In this example the query accesses three tables in a non-trivial way, which suggests the way more complex queries would behave.
+\end{itemize}
+
+\footnotetext{
+$Lineage\_nutrients(t) = ExactLineage(t) \cap \texttt{nutrients}.tuples.$
+}
+
+
+\end{example-withrun}
