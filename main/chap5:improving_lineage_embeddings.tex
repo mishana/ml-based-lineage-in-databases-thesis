@@ -1,118 +1,118 @@
 \chapter{Improving Lineage Embeddings}
 \label{chap:improving_lineage_embeddings}
 
-\section{Per-Column Lineage Vectors}\label{sec:column-vectors}
-\subsection{Rationale} Database relations do not behave like natural language text, and a sequence of columns values in a tuple does not usually construct a natural language sentence. Thus, building lineage vectors at the tuple level and comparing tuples on this basis - is noisy and potentially lossy in terms of information. Instead, we devise a genetics-influenced approach. Suppose a tuple represents the genetic code of an entity (a living organism in the DB world). The columns of an entity are its basic properties, i.e., the genes that combine to construct its genetic code. In this setting, querying the direct lineage of a result tuple is analogous to finding its predecessors through DNA testing. Following the approach presented above, we design an alternative lineage tracking mechanism, that of keeping track of and querying lineage (via embeddings) at the column (gene) level. This way, we manage to better distinguish between the provenance features and the textual characteristics of a tuple.\\ 
+% \section{Per-Column Lineage Vectors}\label{sec:column-vectors}
+% \subsection{Rationale} Database relations do not behave like natural language text, and a sequence of columns values in a tuple does not usually construct a natural language sentence. Thus, building lineage vectors at the tuple level and comparing tuples on this basis - is noisy and potentially lossy in terms of information. Instead, we devise a genetics-influenced approach. Suppose a tuple represents the genetic code of an entity (a living organism in the DB world). The columns of an entity are its basic properties, i.e., the genes that combine to construct its genetic code. In this setting, querying the direct lineage of a result tuple is analogous to finding its predecessors through DNA testing. Following the approach presented above, we design an alternative lineage tracking mechanism, that of keeping track of and querying lineage (via embeddings) at the column (gene) level. This way, we manage to better distinguish between the provenance features and the textual characteristics of a tuple.\\ 
 
-\subsection{Implementation} 
-\begin{enumerate}
-    \item Each tuple has a set of (up to \textit{max\_vectors\_num}) \textit{column lineage vectors} per-column, instead of a single set of tuple vectors (per-tuple). Let us denote the set of columns (features, characteristics) for which a tuple $t$ has lineage embeddings as $t.lineage\_columns$.
-    \item From now on, we formally denote a column name, using the \textit{full name} notation, as $T.\texttt{Attr}$, such that $T$ is a relation name and \texttt{Attr} is a column name. This is meant to achieve better distinction at the lineage vectors level between tuples that originate from different relations with the same column names. 
-    \item Given a tuple $t$, we say that $t.lineage\_columns = $
-        \begin{equation*}
-            t.native\_columns \cup t.distant\_columns,
-        \end{equation*}
-    such that $t.native\_columns$ is the set of columns that construct $t$ and $t.distant\_columns$ is the set of columns (features, characteristics) that $t$ ``inherited" from its predecessors, but are not reflected as data columns in $t$.
-    Note that the same column name may be in $t$ and inherited from its predecessors as well. This issue will be dealt with shortly.\\
-    In the following examples we use \texttt{A}, \texttt{B}, \texttt{C}, \texttt{D} to represent the full name of a column for brevity. For example, suppose a tuple $t \in T_{AB}$ (a table with only two columns - \texttt{A} and \texttt{B}) has the column lineage vectors $CV_t = \{\texttt{A}\!: LV_A,\: \texttt{B}\!: LV_B,\: \texttt{C}\!: LV_C,\: \texttt{D}\!: LV_D\}$ (a map of: \textit{columns $\rightarrow$ sets of lineage vectors}). We say that $t.native\_columns$ = $\{\texttt{A}, \texttt{B}\}$, $t.distant\_columns$ = $\{\texttt{C}, \texttt{D}\}$ and $t.lineage\_columns$ = $\{\texttt{A}, \texttt{B}, \texttt{C}, \texttt{D}\}$.
-    \item When combining lineage embeddings (see Algorithms \ref{algo:add_col_approx},\ref{algo:mul_col_approx}), all calculations are done at the column level.
-    \item After constructing a new tuple $t \in T$ via a query $q$ and its per-column lineage vectors $CV_t$ (via a series of + and $\cdot$ operations, see Algorithms \ref{algo:add_col_approx} and \ref{algo:mul_col_approx}, respectively) - special care must be taken in dealing with $native\_columns$ of $t$.
-    That is, for every column $\texttt{A} \in t.native\_columns$ (\texttt{A} represents the full name of a column for brevity):
-    % and $\texttt{A} \notin CV_t.columns$ (after either Algorithm \ref{algo:add_col_approx} or \ref{algo:mul_col_approx} was applied at the last step of constructing $CV_t$)
-    \begin{enumerate}
-        \item If $\texttt{A} \notin CV_t.columns$ and $t.\texttt{A}$ is set to an existing value from some column in the DB, e.g., $q$ = \texttt{(INSERT INTO T SELECT A' FROM ...)} then we set $CV_t[\texttt{A}] = CV_t[\texttt{A'}]$.
-        \item If $\texttt{A} \notin CV_t.columns$ and $t.\texttt{A}$ is set to some constant value, e.g., $q$ = \texttt{(INSERT INTO T SELECT \textit{const} FROM ...)} then we set $CV_t[\texttt{A}]$ = $\{initial\_vector($ $const)\}$, such that $initial\_vector(const)$ is calculated according to Algorithm \ref{algo:init_approx} with the ``textified" (see section \ref{sec:latent_wv_model}) form of \textit{const} as input data.
-        \item If $\texttt{A} \in CV_t.columns$ and $t.\texttt{A}$ is set to some constant value, e.g., $q$ = \texttt{(INSERT INTO T SELECT \textit{const} FROM ...)} then we set $CV_t[\texttt{A}]$ = $CV_t[\texttt{A}]\; \cdot \; \{initial\_$ $vector(const)\}$. This way, we incorporate both the existing lineage data and the newly calculated one for the column \texttt{A}.
-    \end{enumerate}
-    % \footnotetext{In the following examples we use the notation \texttt{A}, \texttt{B}, \texttt{C}, \texttt{D} to represent the full name of a column for brevity.}
-    % For example, if $t_1$ has lineage vectors for columns \texttt{A},\texttt{B} and $t_2$ has lineage vectors for the columns \texttt{B},\texttt{C} then $t_1 + t_2$ will have lineage vectors $t_1.\texttt{A}$, $(t_1.\texttt{B} + t_2.\texttt{B})$\footnotemark, $t_2.\texttt{C}$ for the columns \texttt{A},\texttt{B},\texttt{C}, respectively. 
-    \item When comparing a tuple $t$ (and its lineage embeddings) to a set of other tuples $T'$:
-    \begin{enumerate}
-        \item If $t'.lineage\_columns \nsubseteq t.lineage\_columns$ ($t' \in T'$) then $t'$ is definitely not a part of the lineage of $t$. Otherwise, all of the ``genes" (columns) of $t'$ would be reflected in $t$.
-        \item The similarity between $t$ and $t' \in T'$ is averaged over the pair-wise similarities of their respective mutual genes (lineage columns).
-        For example, say a tuple $t$ that has lineage vectors for columns \texttt{A},\texttt{B},\texttt{C} is compared to another tuple $t'$ that has lineage vectors for columns \texttt{B},\texttt{C},\texttt{D}:\\
-        \begin{equation*}
-            \operatorname{sim}(t, t') = avg(\{\operatorname{sim}(t.\texttt{B}, t'.\texttt{B}), 
-            \operatorname{sim}(t.\texttt{C}, t'.\texttt{C})\})\\
-        \end{equation*}
-        where $avg$ is a function that returns the average of a collection of numbers. $\operatorname{sim}(t.\texttt{B}, t'.\texttt{B})$ is the calculated similarity between the lineage vectors for column \texttt{B} of $t$ and $t'$ (similarly for column \texttt{C}). Observe that \texttt{A} and \texttt{D} are not mutual ``genes" of the tuples $t$ and $t'$, and, thus they do not hold lineage information that is valuable to the similarity calculation.
-    \end{enumerate}
+% \subsection{Implementation} 
+% \begin{enumerate}
+%     \item Each tuple has a set of (up to \textit{max\_vectors\_num}) \textit{column lineage vectors} per-column, instead of a single set of tuple vectors (per-tuple). Let us denote the set of columns (features, characteristics) for which a tuple $t$ has lineage embeddings as $t.lineage\_columns$.
+%     \item From now on, we formally denote a column name, using the \textit{full name} notation, as $T.\texttt{Attr}$, such that $T$ is a relation name and \texttt{Attr} is a column name. This is meant to achieve better distinction at the lineage vectors level between tuples that originate from different relations with the same column names. 
+%     \item Given a tuple $t$, we say that $t.lineage\_columns = $
+%         \begin{equation*}
+%             t.native\_columns \cup t.distant\_columns,
+%         \end{equation*}
+%     such that $t.native\_columns$ is the set of columns that construct $t$ and $t.distant\_columns$ is the set of columns (features, characteristics) that $t$ ``inherited" from its predecessors, but are not reflected as data columns in $t$.
+%     Note that the same column name may be in $t$ and inherited from its predecessors as well. This issue will be dealt with shortly.\\
+%     In the following examples we use \texttt{A}, \texttt{B}, \texttt{C}, \texttt{D} to represent the full name of a column for brevity. For example, suppose a tuple $t \in T_{AB}$ (a table with only two columns - \texttt{A} and \texttt{B}) has the column lineage vectors $CV_t = \{\texttt{A}\!: LV_A,\: \texttt{B}\!: LV_B,\: \texttt{C}\!: LV_C,\: \texttt{D}\!: LV_D\}$ (a map of: \textit{columns $\rightarrow$ sets of lineage vectors}). We say that $t.native\_columns$ = $\{\texttt{A}, \texttt{B}\}$, $t.distant\_columns$ = $\{\texttt{C}, \texttt{D}\}$ and $t.lineage\_columns$ = $\{\texttt{A}, \texttt{B}, \texttt{C}, \texttt{D}\}$.
+%     \item When combining lineage embeddings (see Algorithms \ref{algo:add_col_approx},\ref{algo:mul_col_approx}), all calculations are done at the column level.
+%     \item After constructing a new tuple $t \in T$ via a query $q$ and its per-column lineage vectors $CV_t$ (via a series of + and $\cdot$ operations, see Algorithms \ref{algo:add_col_approx} and \ref{algo:mul_col_approx}, respectively) - special care must be taken in dealing with $native\_columns$ of $t$.
+%     That is, for every column $\texttt{A} \in t.native\_columns$ (\texttt{A} represents the full name of a column for brevity):
+%     % and $\texttt{A} \notin CV_t.columns$ (after either Algorithm \ref{algo:add_col_approx} or \ref{algo:mul_col_approx} was applied at the last step of constructing $CV_t$)
+%     \begin{enumerate}
+%         \item If $\texttt{A} \notin CV_t.columns$ and $t.\texttt{A}$ is set to an existing value from some column in the DB, e.g., $q$ = \texttt{(INSERT INTO T SELECT A' FROM ...)} then we set $CV_t[\texttt{A}] = CV_t[\texttt{A'}]$.
+%         \item If $\texttt{A} \notin CV_t.columns$ and $t.\texttt{A}$ is set to some constant value, e.g., $q$ = \texttt{(INSERT INTO T SELECT \textit{const} FROM ...)} then we set $CV_t[\texttt{A}]$ = $\{initial\_vector($ $const)\}$, such that $initial\_vector(const)$ is calculated according to Algorithm \ref{algo:init_approx} with the ``textified" (see section \ref{sec:latent_wv_model}) form of \textit{const} as input data.
+%         \item If $\texttt{A} \in CV_t.columns$ and $t.\texttt{A}$ is set to some constant value, e.g., $q$ = \texttt{(INSERT INTO T SELECT \textit{const} FROM ...)} then we set $CV_t[\texttt{A}]$ = $CV_t[\texttt{A}]\; \cdot \; \{initial\_$ $vector(const)\}$. This way, we incorporate both the existing lineage data and the newly calculated one for the column \texttt{A}.
+%     \end{enumerate}
+%     % \footnotetext{In the following examples we use the notation \texttt{A}, \texttt{B}, \texttt{C}, \texttt{D} to represent the full name of a column for brevity.}
+%     % For example, if $t_1$ has lineage vectors for columns \texttt{A},\texttt{B} and $t_2$ has lineage vectors for the columns \texttt{B},\texttt{C} then $t_1 + t_2$ will have lineage vectors $t_1.\texttt{A}$, $(t_1.\texttt{B} + t_2.\texttt{B})$\footnotemark, $t_2.\texttt{C}$ for the columns \texttt{A},\texttt{B},\texttt{C}, respectively. 
+%     \item When comparing a tuple $t$ (and its lineage embeddings) to a set of other tuples $T'$:
+%     \begin{enumerate}
+%         \item If $t'.lineage\_columns \nsubseteq t.lineage\_columns$ ($t' \in T'$) then $t'$ is definitely not a part of the lineage of $t$. Otherwise, all of the ``genes" (columns) of $t'$ would be reflected in $t$.
+%         \item The similarity between $t$ and $t' \in T'$ is averaged over the pair-wise similarities of their respective mutual genes (lineage columns).
+%         For example, say a tuple $t$ that has lineage vectors for columns \texttt{A},\texttt{B},\texttt{C} is compared to another tuple $t'$ that has lineage vectors for columns \texttt{B},\texttt{C},\texttt{D}:\\
+%         \begin{equation*}
+%             \operatorname{sim}(t, t') = avg(\{\operatorname{sim}(t.\texttt{B}, t'.\texttt{B}), 
+%             \operatorname{sim}(t.\texttt{C}, t'.\texttt{C})\})\\
+%         \end{equation*}
+%         where $avg$ is a function that returns the average of a collection of numbers. $\operatorname{sim}(t.\texttt{B}, t'.\texttt{B})$ is the calculated similarity between the lineage vectors for column \texttt{B} of $t$ and $t'$ (similarly for column \texttt{C}). Observe that \texttt{A} and \texttt{D} are not mutual ``genes" of the tuples $t$ and $t'$, and, thus they do not hold lineage information that is valuable to the similarity calculation.
+%     \end{enumerate}
 
-\end{enumerate}
-% \footnotetext{Here, $(t_1.\texttt{B} + t_2.\texttt{B})$ means applying Algorithm \ref{algo:add_approx} on the respective column lineage vectors.}
+% \end{enumerate}
+% % \footnotetext{Here, $(t_1.\texttt{B} + t_2.\texttt{B})$ means applying Algorithm \ref{algo:add_approx} on the respective column lineage vectors.}
 
-\subsection{Notes} 
-\begin{itemize}
-    \item The rationale behind this method is partially inspired by the construction of ``tuple vectors" by means of averaging the ``sentence vectors" of the columns (as discussed in section \ref{sec:latent_wv_model}).
-    % \item Given a tuple $t$, we say that $t.lineage\_columns = $
-    %     \begin{equation*}
-    %         t.native\_columns \cup t.distant\_columns,
-    %     \end{equation*}
-    % such that $t.native\_columns$ is the set of columns that construct $t$ and $t.distant\_columns$ is the set of columns (features, characteristics) that $t$ ``inherited" from its predecessors, but are not reflected as data columns in $t$.
-    % Note that the same column name may be in $t$ and inherited from its predecessors as well. This issue will be dealt with shortly.\\
-    % In the following examples we use \texttt{A}, \texttt{B}, \texttt{C}, \texttt{D} to represent the full name of a column for brevity. For example, suppose a tuple $t \in T_{AB}$ (a table with only two columns - \texttt{A} and \texttt{B}) has the column lineage vectors $CV_t = \{\texttt{A}\!: LV_A,\: \texttt{B}\!: LV_B,\: \texttt{C}\!: LV_C,\: \texttt{D}\!: LV_D\}$ (a map of: \textit{columns $\rightarrow$ sets of lineage vectors}). We say that $t.native\_columns$ = $\{\texttt{A}, \texttt{B}\}$, $t.distant\_columns$ = $\{\texttt{C}, \texttt{D}\}$ and $t.lineage\_columns$ = $\{\texttt{A}, \texttt{B}, \texttt{C}, \texttt{D}\}$.
-    % \item After constructing a new tuple $t \in T$ via a query $q$ and its per-column lineage vectors $CV_t$ (via a series of + and $\cdot$ operations, see Algorithms \ref{algo:add_col_approx} and \ref{algo:mul_col_approx}, respectively) - special care must be taken in dealing with $native\_columns$ of $t$.
-    % That is, for every column $\texttt{A} \in t.native\_columns$ (\texttt{A} represents the full name of a column for brevity):
-    % % and $\texttt{A} \notin CV_t.columns$ (after either Algorithm \ref{algo:add_col_approx} or \ref{algo:mul_col_approx} was applied at the last step of constructing $CV_t$)
-    % \begin{enumerate}
-    %     \item If $\texttt{A} \notin CV_t.columns$ and $t.\texttt{A}$ is set to an existing value from some column in the DB, e.g., $q$ = \texttt{(INSERT INTO T SELECT A' FROM ...)} then we set $CV_t[\texttt{A}] = CV_t[\texttt{A'}]$.
-    %     \item If $\texttt{A} \notin CV_t.columns$ and $t.\texttt{A}$ is set to some constant value, e.g., $q$ = \texttt{(INSERT INTO T SELECT \textit{const} FROM ...)} then we set $CV_t[\texttt{A}]$ = $\{initial\_vector($ $const)\}$, such that $initial\_vector(const)$ is calculated according to Algorithm \ref{algo:init_approx} with the ``textified" (see section \ref{sec:latent_wv_model}) form of \textit{const} as input data.
-    %     \item If $\texttt{A} \in CV_t.columns$ and $t.\texttt{A}$ is set to some constant value, e.g., $q$ = \texttt{(INSERT INTO T SELECT \textit{const} FROM ...)} then we set $CV_t[\texttt{A}]$ = $CV_t[\texttt{A}]\; \cdot \; \{initial\_$ $vector(const)\}$. This way, we incorporate both the existing lineage data and the newly calculated one for the column \texttt{A}.
-    % \end{enumerate}
-    \item $t.lineage\_columns$ (for a tuple $t$) might get large and include (almost) all the columns in the DB. This can render this solution impractical, since large modern systems may operate with hundreds and even more columns across the DB. There are various practical techniques that aim to limit the number of lineage columns per tuple:
-    \begin{enumerate}
-        \item Set a bound (hyperparameter) on the number of $lineage\_columns$.
-        \item Give native priority. That is, prefer keeping $native$\mbox{-} $\_columns$ and cutting-off $distant\_columns$, whose influence on \textit{this} tuple is more remote, when the bound is reached (see example \ref{example:generational_priority} below).
-        \item Remove the relation name prefix from a column name, i.e., consider all $T.\texttt{Attr}$ as simply \texttt{Attr}. This might result in a loss of information, but hopefully not too harmful to the overall performance of the method.
-    \end{enumerate}
+% \subsection{Notes} 
+% \begin{itemize}
+%     \item The rationale behind this method is partially inspired by the construction of ``tuple vectors" by means of averaging the ``sentence vectors" of the columns (as discussed in section \ref{sec:latent_wv_model}).
+%     % \item Given a tuple $t$, we say that $t.lineage\_columns = $
+%     %     \begin{equation*}
+%     %         t.native\_columns \cup t.distant\_columns,
+%     %     \end{equation*}
+%     % such that $t.native\_columns$ is the set of columns that construct $t$ and $t.distant\_columns$ is the set of columns (features, characteristics) that $t$ ``inherited" from its predecessors, but are not reflected as data columns in $t$.
+%     % Note that the same column name may be in $t$ and inherited from its predecessors as well. This issue will be dealt with shortly.\\
+%     % In the following examples we use \texttt{A}, \texttt{B}, \texttt{C}, \texttt{D} to represent the full name of a column for brevity. For example, suppose a tuple $t \in T_{AB}$ (a table with only two columns - \texttt{A} and \texttt{B}) has the column lineage vectors $CV_t = \{\texttt{A}\!: LV_A,\: \texttt{B}\!: LV_B,\: \texttt{C}\!: LV_C,\: \texttt{D}\!: LV_D\}$ (a map of: \textit{columns $\rightarrow$ sets of lineage vectors}). We say that $t.native\_columns$ = $\{\texttt{A}, \texttt{B}\}$, $t.distant\_columns$ = $\{\texttt{C}, \texttt{D}\}$ and $t.lineage\_columns$ = $\{\texttt{A}, \texttt{B}, \texttt{C}, \texttt{D}\}$.
+%     % \item After constructing a new tuple $t \in T$ via a query $q$ and its per-column lineage vectors $CV_t$ (via a series of + and $\cdot$ operations, see Algorithms \ref{algo:add_col_approx} and \ref{algo:mul_col_approx}, respectively) - special care must be taken in dealing with $native\_columns$ of $t$.
+%     % That is, for every column $\texttt{A} \in t.native\_columns$ (\texttt{A} represents the full name of a column for brevity):
+%     % % and $\texttt{A} \notin CV_t.columns$ (after either Algorithm \ref{algo:add_col_approx} or \ref{algo:mul_col_approx} was applied at the last step of constructing $CV_t$)
+%     % \begin{enumerate}
+%     %     \item If $\texttt{A} \notin CV_t.columns$ and $t.\texttt{A}$ is set to an existing value from some column in the DB, e.g., $q$ = \texttt{(INSERT INTO T SELECT A' FROM ...)} then we set $CV_t[\texttt{A}] = CV_t[\texttt{A'}]$.
+%     %     \item If $\texttt{A} \notin CV_t.columns$ and $t.\texttt{A}$ is set to some constant value, e.g., $q$ = \texttt{(INSERT INTO T SELECT \textit{const} FROM ...)} then we set $CV_t[\texttt{A}]$ = $\{initial\_vector($ $const)\}$, such that $initial\_vector(const)$ is calculated according to Algorithm \ref{algo:init_approx} with the ``textified" (see section \ref{sec:latent_wv_model}) form of \textit{const} as input data.
+%     %     \item If $\texttt{A} \in CV_t.columns$ and $t.\texttt{A}$ is set to some constant value, e.g., $q$ = \texttt{(INSERT INTO T SELECT \textit{const} FROM ...)} then we set $CV_t[\texttt{A}]$ = $CV_t[\texttt{A}]\; \cdot \; \{initial\_$ $vector(const)\}$. This way, we incorporate both the existing lineage data and the newly calculated one for the column \texttt{A}.
+%     % \end{enumerate}
+%     \item $t.lineage\_columns$ (for a tuple $t$) might get large and include (almost) all the columns in the DB. This can render this solution impractical, since large modern systems may operate with hundreds and even more columns across the DB. There are various practical techniques that aim to limit the number of lineage columns per tuple:
+%     \begin{enumerate}
+%         \item Set a bound (hyperparameter) on the number of $lineage\_columns$.
+%         \item Give native priority. That is, prefer keeping $native$\mbox{-} $\_columns$ and cutting-off $distant\_columns$, whose influence on \textit{this} tuple is more remote, when the bound is reached (see example \ref{example:generational_priority} below).
+%         \item Remove the relation name prefix from a column name, i.e., consider all $T.\texttt{Attr}$ as simply \texttt{Attr}. This might result in a loss of information, but hopefully not too harmful to the overall performance of the method.
+%     \end{enumerate}
     
-\end{itemize}
-\input{algorithms/add_col_approx_prov.tex}
-\input{algorithms/mul_col_approx_prov.tex}
+% \end{itemize}
+% \input{algorithms/add_col_approx_prov.tex}
+% \input{algorithms/mul_col_approx_prov.tex}
 
-\begin{runexample}
-    % Show examples of addition and multiplication constructions
-    Next, we show examples of the addition and multiplication column lineage vectors constructions (Algorithms 4 and 5, respectively).
-    Suppose we have two tuples $t_1, t_2$ with respective maps of \textit{columns $\rightarrow$ sets of lineage vectors} $CV_1, CV_2$, such that:
-    \begin{equation*}
-        CV_1 = \{\texttt{A}\!: LV_A,\: \texttt{B}\!: LV_{B_1}\},\: CV_2 = \{\texttt{B}\!: LV_{B_2},\: \texttt{C}\!: LV_C\}
-    \end{equation*}
-    $\texttt{A}, \texttt{B}, \texttt{C}$ are full column names and $LV_A, LV_{B_1}, LV_{B_2}, LV_C$ are sets of lineage vectors.
-\end{runexample}
-% addition
-\begin{example-withrun}\label{example:algo_add_col}
-    Let us follow the construction of $CV_3$, which represents the column lineage embeddings of $t_1 + t_2$ using Algorithm \ref{algo:add_col_approx} (corresponds to alternative use of data, i.e., OR in the query):
-    \begin{enumerate}
-        \item $CV_3 = \{\} \rightarrow \{\}$
-        \item $CV_1.columns \,\cup\, CV_2.columns = \{\texttt{A}, \texttt{B}\} \cup \{\texttt{B}, \texttt{C}\} = \{\texttt{A}, \texttt{B}, \texttt{C}\}$
-        \item $\texttt{A} \in CV_1.columns \wedge \texttt{A} \notin CV_2.columns $\\ $\Rightarrow CV_3[\texttt{A}] = CV_1[\texttt{A}] = LV_A$
-        \item $\texttt{B} \in (CV_1.columns \cap CV_2.columns) $\\ $\Rightarrow CV_3[\texttt{B}] = CV_1[\texttt{B}] + CV_2[\texttt{B}] = LV_{B_1} + LV_{B_2}$
-        \item $\texttt{C} \notin CV_1.columns \wedge \texttt{C} \in CV_2.columns $\\ $\Rightarrow CV_3[\texttt{C}] = CV_2[\texttt{C}] = LV_C$
-        \item $CV_3 = \{\texttt{A}\!: LV_A,\: \texttt{B}\!: LV_{B_1} + LV_{B_2},\: \texttt{C}\!: LV_C\}$
-    \end{enumerate}
-\end{example-withrun}
-% multiplication
-\begin{example-withrun}
-    Let us follow the construction of $CV_3$, that represents the column lineage embeddings of $t_1 \cdot t_2$ using Algorithm \ref{algo:mul_col_approx} (corresponds to joint use of data, i.e., AND in the query):
-    \begin{enumerate}
-        \item $CV_3 = \{\} \rightarrow \{\}$
-        \item $CV_1.columns \,\cup\, CV_2.columns = \{\texttt{A}, \texttt{B}\} \cup \{\texttt{B}, \texttt{C}\} = \{\texttt{A}, \texttt{B}, \texttt{C}\}$
-        \item $\texttt{A} \in CV_1.columns \wedge \texttt{A} \notin CV_2.columns $\\ $\Rightarrow CV_3[\texttt{A}] = CV_1[\texttt{A}] = LV_A$
-        \item $\texttt{B} \in (CV_1.columns \cap CV_2.columns) $\\ $\Rightarrow CV_3[\texttt{B}] = CV_1[\texttt{B}] \cdot CV_2[\texttt{B}] = LV_{B_1} \cdot LV_{B_2}$
-        \item $\texttt{C} \notin CV_1.columns \wedge \texttt{C} \in CV_2.columns $\\ $\Rightarrow CV_3[\texttt{C}] = CV_2[\texttt{C}] = LV_C$
-        \item $CV_3 = \{\texttt{A}\!: LV_A,\: \texttt{B}\!: LV_{B_1} \cdot LV_{B_2},\: \texttt{C}\!: LV_C\}$
-    \end{enumerate}
-\end{example-withrun}
-% generational priority
-\begin{example-withrun}\label{example:generational_priority}
-    Let us follow the construction of $CV_3$, that represents the column lineage embeddings of $t_3 = t_1 + t_2$, such that the result is a new tuple $t_3 \in T_{AB}$ (a table with only two columns - \texttt{A} and \texttt{B}). In addition, we use a bound of $b = 2$ on the number of retained $lineage\_columns$ and implement native priority:
-    \begin{enumerate}
-        \item (see exapmle \ref{example:algo_add_col})\\ $CV_3 = \{\texttt{A}\!: LV_A,\: \texttt{B}\!: LV_{B_1} + LV_{B_2},\: \texttt{C}\!: LV_C\}$\\ $\Rightarrow t_3.lineage\_columns = \{\texttt{A}, \texttt{B}, \texttt{C}\}$
-        \item $t_3 \in T_{AB}$ $\Rightarrow t_3.native\_columns = \{\texttt{A}, \texttt{B}\}$, \\$t_3.distant\_columns = \{\texttt{C}\}$
-        \item $|t_3.lineage\_columns| = 3 > 2 = b$
-        \item $CV_3 = \{\texttt{A}\!: LV_A,\: \texttt{B}\!: LV_{B_1} + LV_{B_2}$\}\\ (the \textit{distant\_column} \texttt{C} was eliminated)
-    \end{enumerate}
-\end{example-withrun}
+% \begin{runexample}
+%     % Show examples of addition and multiplication constructions
+%     Next, we show examples of the addition and multiplication column lineage vectors constructions (Algorithms 4 and 5, respectively).
+%     Suppose we have two tuples $t_1, t_2$ with respective maps of \textit{columns $\rightarrow$ sets of lineage vectors} $CV_1, CV_2$, such that:
+%     \begin{equation*}
+%         CV_1 = \{\texttt{A}\!: LV_A,\: \texttt{B}\!: LV_{B_1}\},\: CV_2 = \{\texttt{B}\!: LV_{B_2},\: \texttt{C}\!: LV_C\}
+%     \end{equation*}
+%     $\texttt{A}, \texttt{B}, \texttt{C}$ are full column names and $LV_A, LV_{B_1}, LV_{B_2}, LV_C$ are sets of lineage vectors.
+% \end{runexample}
+% % addition
+% \begin{example-withrun}\label{example:algo_add_col}
+%     Let us follow the construction of $CV_3$, which represents the column lineage embeddings of $t_1 + t_2$ using Algorithm \ref{algo:add_col_approx} (corresponds to alternative use of data, i.e., OR in the query):
+%     \begin{enumerate}
+%         \item $CV_3 = \{\} \rightarrow \{\}$
+%         \item $CV_1.columns \,\cup\, CV_2.columns = \{\texttt{A}, \texttt{B}\} \cup \{\texttt{B}, \texttt{C}\} = \{\texttt{A}, \texttt{B}, \texttt{C}\}$
+%         \item $\texttt{A} \in CV_1.columns \wedge \texttt{A} \notin CV_2.columns $\\ $\Rightarrow CV_3[\texttt{A}] = CV_1[\texttt{A}] = LV_A$
+%         \item $\texttt{B} \in (CV_1.columns \cap CV_2.columns) $\\ $\Rightarrow CV_3[\texttt{B}] = CV_1[\texttt{B}] + CV_2[\texttt{B}] = LV_{B_1} + LV_{B_2}$
+%         \item $\texttt{C} \notin CV_1.columns \wedge \texttt{C} \in CV_2.columns $\\ $\Rightarrow CV_3[\texttt{C}] = CV_2[\texttt{C}] = LV_C$
+%         \item $CV_3 = \{\texttt{A}\!: LV_A,\: \texttt{B}\!: LV_{B_1} + LV_{B_2},\: \texttt{C}\!: LV_C\}$
+%     \end{enumerate}
+% \end{example-withrun}
+% % multiplication
+% \begin{example-withrun}
+%     Let us follow the construction of $CV_3$, that represents the column lineage embeddings of $t_1 \cdot t_2$ using Algorithm \ref{algo:mul_col_approx} (corresponds to joint use of data, i.e., AND in the query):
+%     \begin{enumerate}
+%         \item $CV_3 = \{\} \rightarrow \{\}$
+%         \item $CV_1.columns \,\cup\, CV_2.columns = \{\texttt{A}, \texttt{B}\} \cup \{\texttt{B}, \texttt{C}\} = \{\texttt{A}, \texttt{B}, \texttt{C}\}$
+%         \item $\texttt{A} \in CV_1.columns \wedge \texttt{A} \notin CV_2.columns $\\ $\Rightarrow CV_3[\texttt{A}] = CV_1[\texttt{A}] = LV_A$
+%         \item $\texttt{B} \in (CV_1.columns \cap CV_2.columns) $\\ $\Rightarrow CV_3[\texttt{B}] = CV_1[\texttt{B}] \cdot CV_2[\texttt{B}] = LV_{B_1} \cdot LV_{B_2}$
+%         \item $\texttt{C} \notin CV_1.columns \wedge \texttt{C} \in CV_2.columns $\\ $\Rightarrow CV_3[\texttt{C}] = CV_2[\texttt{C}] = LV_C$
+%         \item $CV_3 = \{\texttt{A}\!: LV_A,\: \texttt{B}\!: LV_{B_1} \cdot LV_{B_2},\: \texttt{C}\!: LV_C\}$
+%     \end{enumerate}
+% \end{example-withrun}
+% % generational priority
+% \begin{example-withrun}\label{example:generational_priority}
+%     Let us follow the construction of $CV_3$, that represents the column lineage embeddings of $t_3 = t_1 + t_2$, such that the result is a new tuple $t_3 \in T_{AB}$ (a table with only two columns - \texttt{A} and \texttt{B}). In addition, we use a bound of $b = 2$ on the number of retained $lineage\_columns$ and implement native priority:
+%     \begin{enumerate}
+%         \item (see exapmle \ref{example:algo_add_col})\\ $CV_3 = \{\texttt{A}\!: LV_A,\: \texttt{B}\!: LV_{B_1} + LV_{B_2},\: \texttt{C}\!: LV_C\}$\\ $\Rightarrow t_3.lineage\_columns = \{\texttt{A}, \texttt{B}, \texttt{C}\}$
+%         \item $t_3 \in T_{AB}$ $\Rightarrow t_3.native\_columns = \{\texttt{A}, \texttt{B}\}$, \\$t_3.distant\_columns = \{\texttt{C}\}$
+%         \item $|t_3.lineage\_columns| = 3 > 2 = b$
+%         \item $CV_3 = \{\texttt{A}\!: LV_A,\: \texttt{B}\!: LV_{B_1} + LV_{B_2}$\}\\ (the \textit{distant\_column} \texttt{C} was eliminated)
+%     \end{enumerate}
+% \end{example-withrun}
 
 
 % \subsection{Multiplication on Join Columns Only}
@@ -188,7 +188,7 @@
 
 \section{Weighting with Query Dependency DAG}
 \subsection{Rationale} We would like to distinguish between very similar/nearly identical tuples (text-wise) during both direct and distant lineage querying (Bloom filters are one way to achieve this for direct lineage). 
-Additionally, we want to enhance the natural ranking of lineage tuples by amplifying the ``generational gaps". The idea is that tuples from earlier generations in the distant lineage tree structure (of a query-inserted tuple) to be assigned a lower similarity score during distant lineage querying. 
+Additionally, we want to enhance the natural ranking of lineage tuples by amplifying the ``generational gaps". The idea is that tuples from earlier generations in the distant lineage tree structure (of a query-inserted tuple) are to be assigned a lower similarity score during distant lineage querying. 
 The technique is keeping track of dependencies between queries in a DAG structure and weighting the similarity scores of query-inserted tuples (during lineage querying) inversely proportional to the distance between their inserting queries in the query dependency DAG. We say that a query $q$ \textit{depends on} a query $p$ if a tuple $t$ that was created by $p$ was meaningfully involved in the evaluation of $q$.
 This approach enables us to give lower similarity scores to tuples that were not involved meaningfully in the evaluation of a query (directly or remotely) and amplify the natural ranking of our results in terms of query creation dependencies.\\
 
@@ -216,8 +216,44 @@ This approach enables us to give lower similarity scores to tuples that were not
 \end{itemize}
 
 
+\section{Limit Provenance Analysis to Specific Base Tables}
+
+\subsection{Rationale}
+% use case for an analyst
+Sometimes, an analyst might be interested only in a \textbf{subset of base tables} for lineage analysis of tuples that were created by a query. That is, an analyst's workflow may be comprised of the following steps:
+\begin{enumerate}
+    \item Choose a tuple of interest $t$ that was created by a query - for analysis.
+    \item Compare the tuple $t$ (via lineage vectors) to tuples from a pre-defined subset of the base tables (e.g., $\{{A, B}\} \subset \{{A,B,C,D,E}\}$, where $A,B,C,D,E$ are base relations in the DB).
+    \item Find the Top-$K$ source tuples (by similarity) that influenced the creation of $t$. 
+\end{enumerate}
+
+This workflow seems useful and worthy of consideration. Note that it entails a relaxed assumption about lineage analysis in our system, and we would like to exploit it to produce better (i.e., more precise) answers.
+% how it (should) helps precision
+\par A modern DB may include a large number of base tables, and new tuples that are created from base tables (by a query). As time goes on and the queries become more complex and involve (directly or indirectly) more base tables - we anticipate a growing amount of ``noise'' in the lineage vectors that we maintain and construct.
+Given an assumption that an analyst is only interested in a (relatively small) subset of the base tables for lineage analysis, we hypothesize that it is possible to diminish the amount of ``noise'' that we propagate over time (via the lineage vectors) by limiting lineage tracking to tuples from base tables that are of interest to the analyst, and tuples that are created from them (by queries).
+
+\subsection{Implementation}
+This technique can be implemented as a wrapper to the addition and multiplication operations on lineage vectors, as presented previously in Algorithms \ref{algo:add_approx} and \ref{algo:mul_approx}: 
+\begin{enumerate}
+    \item Denote the subset of base tables that is of interest to the analyst as $S$.
+    \item Suppose we are given two tuples $t_1$ and $t_2$ with corresponding sets of lineage vectors $LV_1$ and $LV_2$ (either tuple vectors, or column vectors for a specific column) and an operation $op \in \{+, \cdot\}$, such that we are interested in calculating $LV_1 \; op \; LV_2$.
+    \item If $t_1.related\_tables \cap S \neq \emptyset$ and $t_2.related\_tables \cap S \neq \emptyset$, then we proceed as usual, meaning, return $LV_1 \; op \; LV_2$. 
+    \item Otherwise, if only one of $t_1, t_2$ has related tables in $S$, i.e., suppose without loss of generality that $t_1.related\_tables \cap S \neq \emptyset$ and $t_2.related\_tables \cap S = \emptyset$ then we return $LV_1$.
+    That is, we propagate forward only the relevant lineage data.
+    \item Otherwise, if both $t1$ and $t2$ are of no interest to an analyst, then the output value is of no relevance either, and no vector calculation is performed.
+\end{enumerate}
+
+\subsection{Notes}
+\begin{itemize}
+    \item Borrowing from semiring theory, this technique can be analogized to tagging each ``irrelevant" base tuple as additive and multiplicative identity in terms of lineage vectors operations.
+    \item Propagating the ``related tables" information is essential for the correctness of this method.
+    \item Suppose there are analysts $A_1, ..., A_m$ each with their own set of base tables of interest $B_1, ..., B_m$.
+    Then, we may conceivably apply this technique separately to each $A_i$ and $B_i$ (of course, with the implied storage overhead).
+\end{itemize}
+
+
 \section{Where Provenance}
-Recording lineage vectors per fully named columns (see section \ref{sec:column-vectors}) enables implementing a form of \textit{where provenance}. By where provenance we mean the following. Given a tuple $t$ in relation $T$ of the DB, a native column \texttt{A} in $t$ and a value $v_\texttt{A}$ for $t$ in column $T.\texttt{A}$, determine the likely tuples $t’$, the \textit{where tuples} in the DB, from which the value $v_\texttt{A}$ originated. If the \texttt{SELECT} clause of $q$, the query that inserted $t$ into the DB, indicates an assigned constant, then no such where tuples exist. 
+Recording lineage vectors per fully named columns (see chapter \ref{chap:per_column_lineage_vectors}) enables implementing a form of \textit{where provenance}. By where provenance we mean the following. Given a tuple $t$ in relation $T$ of the DB, a native column \texttt{A} in $t$ and a value $v_\texttt{A}$ for $t$ in column $T.\texttt{A}$, determine the likely tuples $t’$, the \textit{where tuples} in the DB, from which the value $v_\texttt{A}$ originated. If the \texttt{SELECT} clause of $q$, the query that inserted $t$ into the DB, indicates an assigned constant, then no such where tuples exist. 
 \par The technique for locating likely where tuples explaining $v_\texttt{A}$ is as follows. Let $CV_t$ be the mapping associated with the tuple $t$:
 \begin{enumerate}
     \item Find the where tuples \textit{candidates} from analyzing the structure of $q$, the query that inserted $t$ into the DB. That is, if $q$ indicates in the \texttt{SELECT} clause that $T'.\texttt{A}'$ is assigned to $T.\texttt{A}$, then the candidates are the tuples $t' \in T'$ that agree with $t$ on the value of $v_\texttt{A}$ (i.e., $v'_{\texttt{A}'}$ = $v_\texttt{A}$, where $v'_{\texttt{A}'}$ is the value for $t'$ in column $T'.\texttt{A}'$). 
@@ -229,6 +265,6 @@ Recording lineage vectors per fully named columns (see section \ref{sec:column-v
     \item A where tuple needs be directly involved in the computation of $t$, namely used by the query $q$ that inserted $t$ into the DB.
     This information is encoded both in $t'$'s Bloom Filter of queries and the query dependency DAG (some redundancy, though the Bloom Filter is more precise in this regard).
     So, if $q \notin t'.bloom\_filter$ or if $t’$ was inserted by a query $p$ and $(q,p)$ is not an edge in the query dependency DAG, $t’$ cannot be a where tuple explaining $v_\texttt{A}$ in $T.\texttt{A}$.
-    \item To test closeness between $t$ and a candidate where tuple $t'$, we simply calculate $\operatorname{sim}$($t$, $t’$), the similarity between these two tuples, using the mappings $CV_t$ and $CV_{t’}$ associated with $t$ and $t'$, respectively (as explained in section \ref{sec:column-vectors}).
+    \item To test closeness between $t$ and a candidate where tuple $t'$, we simply calculate $\operatorname{sim}$($t$, $t’$), the similarity between these two tuples, using the mappings $CV_t$ and $CV_{t’}$ associated with $t$ and $t'$, respectively (as explained in chapter \ref{chap:per_column_lineage_vectors}).
 \end{enumerate}
 % If tuple $t’$ in the DB does not have $T.\texttt{A}$ in $CV_{t’}$ then $t’$ is definitely not a where tuple for column $T.\texttt{A} \in t$. Also, a where tuple needs be directly involved in the computation of $t$, namely used by the query $q$ that inserted $t$ into the DB. So, if $t’$ was inserted by a query $p$ and $(q,p)$ is not an edge in the query dependency DAG, $t’$ cannot be a where tuple explaining $v$ in $T.\texttt{A}$. Otherwise, if tuple $t$ obtained its value $v$ for $T.\texttt{A}$ based, directly or indirectly, on $v’$, the value of $t’$ for column $T.\texttt{A}$, then the vector set $CV_t[T.\texttt{A}]$ is ``close" to the vector set $CV_{t’}[T.\texttt{A}]$. This holds due to the way column vector sets permute through the computation. To test closeness, we simply calculate $\operatorname{sim}$($CV_t[T.\texttt{A}]$, $CV_{t’}[T.\texttt{A}]$), the similarity between these two sets of vectors.

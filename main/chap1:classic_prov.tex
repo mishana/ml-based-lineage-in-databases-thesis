@@ -57,6 +57,16 @@ $\cdot$ is distributive over + and $\forall a, 0 \cdot a = a \cdot 0 = 0$. \\
     \item $(\mathbb{N}[X], 0, 1, +, \cdot)$ - used for a general form of provenance, the provenance polynomials (the universal semiring). $\mathbb{N}[X]$ is the set of multivariate polynomials with coefficients from $\mathbb{N}$ and variables from a set $X$.
 \end{itemize}
 
+
+\section{Provenance for Data-Dependent Processes}
+% what is a data-dependent process?
+A Data-Dependent Process (DDP) is a logical flow that is specified by a finite state machine (FSM) whose transitions are either governed by boolean queries over an underlying database, or otherwise correspond to external effects such as user choices, interacting applications, etc.
+% Deutch's work
+\par Deutch et al. \cite{Deutch_DDP} suggested approaching the problem of analyzing DDPs using known data provenance practices. In particular, in their study they use provenance semirings \cite{green2007provenance} to get a mathematical expression that describes an execution path over the FSM (such a path models a possible execution of a DDP). The transitions on such a path depend on queries over a database or on external user actions. Deutch et al. introduced a new method for generalizing provenance semirings to the context of DDP analysis. This is achieved by using two separate (and potentially, different) semirings - one for user actions and the other for DB tuples, and combining them by a novel \textit{tensor product} construction, as opposed to completely separating the two kinds of provenance semirings by e.g., a simple cartesian product of the two semirings. The proposed method allows to construct a generalized provenance expression (using polynomials) for a possible execution of a DDP and to specialize it using homomorphisms \cite{green2007provenance}.
+\par In terms of methodology, keeping track of provenance of a DDP along an execution path (as long as the path is finite) is similar to tracking provenance of a query result, where each edge on the path is a piece of data (with its own provenance, e.g., an intermediate result), and the whole path corresponds to a joint use of the pieces of data.
+% comparison to a single-query provenance analysis
+
+
 \section{ProvSQL - A Real World Provenance Application}\label{sec:provsql}
 % Goal
 ProvSQL is an open-source project developed by Pierre Senellart et al. \cite{Senellart2018}.

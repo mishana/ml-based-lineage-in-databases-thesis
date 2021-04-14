@@ -1,0 +1,114 @@
+\chapter{Per-Tuple Lineage Vectors}
+\label{chap:per_tuple_lineage_vectors}
+
+\section{Proposed Solution}\label{sec:proposed_solution_approx}
+% Our proposal - encode provenance information using word embeddings
+\par We devise a novel approach to provenance tracking, which is based on ML and NLP techniques. The main idea is summarizing, and thereby approximating, the lineage of every tuple with a set of up to $max\_vectors\_num$ (a hyperparameter) vectors. For tuples that are inserted explicitly into the DB, the vectors are obtained using a pre-trained word embeddings model $M$ over the underlying ``text" of the tuple (see Figure \ref{algo:init_approx}).
+During a query execution process we form the lineage of new query result tuples in a similar fashion to that of provenance semirings \cite{green2007provenance}. We extend the + and $\cdot$ operations (see Figures \ref{algo:add_approx} and
+\ref{algo:mul_approx}, respectively) to generate lineage embeddings, while emphasizing the ability to propagate information and preserve the representation of lineage via a set of up to $max\_vectors\_num$, constant-size vectors. We obtain lineage embeddings for query output tuples by using this process. These new tuples (and their lineage) may be later inserted into the DB (depending on the specific application). 
+\par A real world provenance system like ProvSQL \cite{provsql_github} can make use of our lineage vectors during the construction of provenance circuits. Recall that each node in a provenance circuit is associated with some annotation/token, either representing a tuple from the input DB or an intermediate calculation (see section \ref{sec:provsql}). Lineage vectors can be incorporated in such a system by calling the Algorithm in Figure \ref{algo:provsql_online_approx}, for instance. This is an ``online" approach, meaning the lineage vectors are generated during the query execution process. Another approach to incorporating lineage vectors in a real world provenance system might be using such a system as a black box, generating a provenance how-formula for each query output tuple. Later, this formula can be analyzed ``offline", parsed, and converted to lineage vectors by evaluating the parsed expression in a hierarchical manner. Each intermediate evaluation step would call either Figure \ref{algo:add_approx} or \ref{algo:mul_approx}, based on the parsing of the formula, mimicking the online nature of algorithm \ref{algo:provsql_online_approx}.
+
+
+\begin{runexample}
+    % Show examples of addition and multiplication constructions
+    Next, we show examples of the addition and multiplication lineage vectors constructions (Figures \ref{algo:add_approx} and
+\ref{algo:mul_approx}, respectively).
+    Let $\vec v_1, \vec v_2, \vec v_3, \vec v_4 \in \mathbb{R}^2$ be vectors, such that:
+    \begin{equation*}
+        \vec v_1 = \begin{pmatrix} -1\\ 0.5 \end{pmatrix},
+        \vec v_2 = \begin{pmatrix} 1\\ 1 \end{pmatrix},
+        \vec v_3 = \begin{pmatrix} -0.5\\ 1 \end{pmatrix},
+        \vec v_4 = \begin{pmatrix} 0\\ -1 \end{pmatrix}
+    \end{equation*}
+    Suppose we have two tuples $t_1, t_2$ with respective sets of lineage vectors $LV_1, LV_2$, such that:
+    \begin{equation*}
+        LV_1 = \{\vec v_1, \vec v_2, \vec v_3\}, LV_2 = \{\vec v_4\}
+    \end{equation*}
+    Finally, the hyperparameters are:
+    \begin{equation*}
+        max\_vectors\_num = 3
+    \end{equation*}
+\end{runexample}
+% addition
+\begin{example-withrun}
+    Let us follow the construction of $LV_3$, which represents the lineage embeddings of $t_1 + t_2$ using the addition Algorithm in Figure \ref{algo:add_approx} (corresponds to alternative use of data, i.e., OR in the query):
+    \begin{enumerate}
+        \item $LV_1 \cup LV_2 = \{\vec v_1, \vec v_2, \vec v_3\} \cup \{\vec v_4\} = \{\vec v_1, \vec v_2, \vec v_3, \vec v_4\}$
+        \item $|\{\vec v_1, \vec v_2, \vec v_3, \vec v_4\}| = 4 > 3 = max\_vectors\_num$
+        \item $LV_3 = \operatorname{ClusterVectorsUsingKMeans}(\{\vec v_1, \vec v_2, \vec v_3, \vec v_4\}) = \{\vec c_1, \vec c_2, \vec c_3\}$\\
+        such that: 
+        \begin{equation*}
+            \vec c_1 = \begin{pmatrix} -0.75\\ 0.75 \end{pmatrix},
+            \vec c_2 = \begin{pmatrix} 1\\ 1 \end{pmatrix},
+            \vec c_3 = \begin{pmatrix} 0\\ -1 \end{pmatrix}
+        \end{equation*}
+        are the centroids of the three clusters.
+    \end{enumerate}
+\end{example-withrun}
+% multiplication
+\begin{example-withrun}
+    Let us follow the construction of $LV_3$, that represents the lineage embeddings of $t_1 \cdot t_2$ using the multiplication Algorithm in Figure \ref{algo:mul_approx} (corresponds to joint use of data, i.e., AND in the query):
+    \begin{enumerate}
+        \item $\operatorname{CartesianProduct}(LV_1, LV_2) = \{(\vec v_1, \vec v_4), (\vec v_2, \vec v_4), (\vec v_3, \vec v_4)\}$
+        \item $\{\operatorname{Avg}(\vec v_1, \vec v_4), \operatorname{Avg}(\vec v_2, \vec v_4), \operatorname{Avg}(\vec v_3, \vec v_4)\} = \{\vec a_1, \vec a_2, \vec a_3\}$\\
+        such that:
+        \begin{equation*}
+            \vec a_1 = \begin{pmatrix} -0.5\\ -0.25 \end{pmatrix},
+            \vec a_2 = \begin{pmatrix} 0.5\\ 0 \end{pmatrix},
+            \vec a_3 = \begin{pmatrix} -0.25\\ 0 \end{pmatrix}
+        \end{equation*}
+        are the average vectors, of each pair, in the cartesian product.
+        \item $|\{\vec a_1, \vec a_2, \vec a_3\}| = 3 \leq 3 = max\_vectors\_num$
+        \item $LV_3 = \{\vec a_1, \vec a_2, \vec a_3\}$
+    \end{enumerate}
+\end{example-withrun}
+% Algorithm - use Algorithm2e
+\input{algorithms/init_approx_prov.tex}
+% \footnotetext{The square brackets notation [ ] constructs a list, analogous to set construction. The order of words in the list is arbitrary.}
+\input{algorithms/add_approx_prov.tex}
+\input{algorithms/mul_approx_prov.tex}
+\input{algorithms/provsql_approx.tex}
+% \input{algorithms/formula_approx.tex}
+
+
+% \footnotetext{Perform K-Means clustering over the vectors into \textit{max\_vectors\_num} groups and return the centers of each group.}
+
+% Explain the motivation and process of approx provenance querying
+
+\subsection{Lineage querying} As was mentioned in section \ref{sec:word_embeddings_intro}, word embeddings (i.e., vectors) provide insights into the meaning of words via a word-word similarity score. The similarity measure is the cosine distance between the word vectors. Our goal is to construct and maintain lineage embeddings, which can provide insights to the reasons for the existence of tuples via a tuple-tuple similarity score, which is analogous to word-word similarity score (the tuples of interest are the ones generated by a query, which in turn use previously query-generated tuples as well as explicitly inserted ones).
+\par Consequently, given a tuple and its lineage embeddings, we can calculate the pair-wise similarity against every other tuple in the DB (or a subset, e.g., in a specific table) and return the top $N$ (a parameter) most lineage-similar tuples (these resemble a subset of the lineage \cite{Cui:2000:TLV:357775.357777}). 
+There are many algorithms for approximate vector search, e.g., based on LSH \cite{lsh}. Approximate vector search is a very active area of research and we can utilize known algorithms (see, e.g., \cite{sugawara-etal-2016-approximately}).
+Due to the reliance of lineage embeddings on an underlying statistical ML model, we expect our produced lineage to \textbf{approximate} the exact \textbf{lineage}.\\
+
+% \footnotetext{Call this algorithm via $+(LV1,LV2)$ or using the infix notation $LV1 + LV2$.}
+% \footnotetext{Call this algorithm via $\cdot(LV1,LV2)$ or using the infix notation $LV1 \cdot LV2$.}
+
+% indtended usage clarification
+\subsection{Intended usage} The intended usage of lineage vectors is as follows:
+\begin{itemize}
+    \item Each manually inserted tuple - has a set consisting of a single tuple vector.
+    \item Each tuple in the result of a query - has a set of up to $max\_vectors\_num$ tuple vectors.
+    \item When calculating similarity - we always compare between two sets of lineage vectors, by using the formula we presented in section \ref{sec:latent_wv_model}.
+\end{itemize}
+% Show how our approach addresses the problems listed in the motivation section
+\subsection{Comparison to exact lineage} In section \ref{sec:motivation_approx} we listed some problems that arise when approaching distant (i.e., over the whole DB history) lineage computation with traditional techniques. Our proposed solution addresses these problems as follows:
+\begin{itemize}
+    \item Lineage embeddings require only a constant space per-tuple.
+    \item Lineage embeddings are immutable once computed, and do not get more complex over time (querying time depends only on the number of tuples, with which we compare the target tuple, i.e., the one to be explained via lineage).
+    \item Returned explanations (produced lineage) are simply the top-N justifications, and may assist in further analysis.
+\end{itemize}
+We approximate lineage using embedding techniques. As noted, lineage is a type of provenance, and it can be expressed using semirings. Now, semirings can also express how-provenance, which is more general and informative than lineage, but, it becomes extremely complex to track as histories develop. Thus, lineage seems to be a more practical tool for analysts.
+A major advantage of our approach is realized for distant provenance. A process that is equivalent functionally to recursive drill through is done automatically (i.e., if we envision the distant provenance of a tuple as a recursive tree-like structure).\\
+
+\par After developing the concept of lineage embeddings in isolation, it is essential to test it as part of a real-world implementation. We developed a Python module that adds ``lineage via embeddings" capabilities to a Postgres DBMS, by integrating our module with the ProvSQL \cite{Senellart2018} extension. The construction of the lineage vectors is based on the algorithms presented above.
+
+
+\section{Interim Findings and Hurdles}
+We conducted a series of experiments (see chapter \ref{chap:experimental_evaluation}) and came to the following interim conclusions:
+\begin{itemize}
+    \item Our explanations encode the text and not the tuples. Thus, relations with many similar tuples (text-wise) result in our system performing poorly. We assume that most of the problems listed below are symptoms of the same root cause.
+    \item Analysis of direct provenance (i.e., \textit{direct} explanations for the existence of tuples in a query result in terms of existing DB tuples, regardless of their historical raison d'être) on simple, complex (ones that might involve multiple tables with non-trivial joins and non-trivial ``where" conditions) and composite (that contain sub-queries) queries gives good results ($> 90\%$ accuracy for ``top $50\%$'' of the tuples in the lineage) generally. However, results suffer from inconsistencies sometimes, identifying tuples incorrectly as part of the linaege due to thier textual similarity to actual lineage tuples.
+    \item Distant provenance provides useful results. However, it suffers from the same problem of textual closeness.
+\end{itemize}
+
+\par In the next chapters we introduce methods that are designed to overcome these deficiencies.
