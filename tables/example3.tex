@@ -1,5 +1,6 @@
 \begin{table*}
 \centering
+\begin{adjustbox}{width=\columnwidth,center}
 \pgfplotstabletypeset[
     color cells={min=0.45,max=1.0}, format index, format table, format manufacturer, format method,
     col sep=comma,
@@ -14,6 +15,7 @@
     1,      Column Vectors (CV),   general mills sales, 1966,          0.806205 ,        0.911864 ,     0.961382 ,       1.0
     2,      CV + Bloom filters,   general mills sales, 1966,          1.0 ,        1.0 ,     1.0 ,       1.0
 }
+\end{adjustbox}
 \textbf{\caption{\label{tab:3}
                 A comparison of different approximate lineage computation methods on a single query-result tuple (\textit{general mills sales}). Lin. size is the size of the exact lineage for a result tuple (containing only tuples from the \texttt{serving\_size} table). $p^{Top}$ shows the precision of various methods for the top $p\cdot|Lineage|$ tuples in the approximate lineage. For example, 0.50$^{Top}$ is the precision for the top 983 ($=0.5\cdot1996$) tuples in the approximate lineage.
                 }

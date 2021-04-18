@@ -1,6 +1,6 @@
 \begin{table*}
 \centering
-% \begin{adjustbox}{width=\columnwidth,center}
+\begin{adjustbox}{width=\columnwidth,center}
 \pgfplotstabletypeset[
     color cells={min=0.45,max=1.0}, format index, format table, format manufacturer,
     col sep=comma,
@@ -24,7 +24,7 @@
     0,     the coca cola company,        198,          0.864 ,                  0.884  ,                  0.924    
     1,     conagra brands,               123,          0.463 ,                  0.772  ,                  0.967    
 }
-% \end{adjustbox}
+\end{adjustbox}
 \textbf{\caption{\label{tab:2}
                 \texttt{manufacturer} is the name of the manufacturer returned from the query. Lin. size is the size of the exact lineage for a result tuple (containing only tuples from the \texttt{nutrients} table). Precision$^{tuples}$, Precision$^{cols}$ and Precision$^{cols+weighting}$ display our system's precision for each tuple in the result, for ``lineage tuple vectors", ``lineage column vectors" with simple averaging, and ``lineage column vectors" with query-induced column weighting, respectively. Precision computations are done for the top $n = |Lineage\_nutrients(t)\protect\footnotemark|$ tuples in the approximate lineage for each result tuple $t$.
                 }

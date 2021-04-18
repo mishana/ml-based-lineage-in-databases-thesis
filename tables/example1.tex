@@ -1,6 +1,6 @@
 \begin{table}
 \centering
-\begin{adjustbox}{width=\columnwidth,center}
+% \begin{adjustbox}{width=\columnwidth,center}
 \pgfplotstabletypeset[
     color cells={min=0.45,max=1.0}, format index, format table, format userId,
     col sep=comma,
@@ -31,7 +31,7 @@
     7,     282405,            2,          1.000 ,                  1.0  
 
 }
-\end{adjustbox}
+% \end{adjustbox}
 \textbf{\caption{\label{tab:1}
                 \texttt{userId} indicates the unique user's identifier returned by the query. Lin. size is the size of the exact lineage for a result tuple (containing only tuples from the \texttt{tags} table). Precision$^{tuples}$ and Precision$^{cols}$ display our system's precision for each tuple in the result, for both ``lineage tuple vectors" and ``lineage column vectors" (with query-specific column weighting), respectively. Precision computations are done for the top $n = |Lineage\_tags(t)\protect\footnotemark|$ tuples in the approximate lineage for each result tuple $t$.
                 }

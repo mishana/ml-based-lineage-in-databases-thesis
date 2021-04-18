@@ -1,0 +1,14 @@
+% A simple Tree
+% Author: Stefan Kottwitz
+% https://www.packtpub.com/hardware-and-creative/latex-cookbook
+\begin{tikzpicture}[sibling distance=3em,
+  every node/.style = {shape=rectangle, rounded corners,
+    draw, align=center,
+    top color=white, bottom color=orange!20},
+  edge from parent/.style={->,draw}
+  ]]
+  \node {$\{t_6\}$}
+    child { node {$\{t_3, t_4, t_5\}$} 
+      child { node {$\{t_1, t_2, t_3\}$} } 
+      };
+\end{tikzpicture}

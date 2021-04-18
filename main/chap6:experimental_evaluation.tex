@@ -34,11 +34,24 @@ Thus, in order to test the aforementioned algorithms and implementation, we devi
 \begin{equation*}
     \operatorname{Precision}(t, n) = \frac{|ApproxLineage(t, n) \cap ExactLineage(t)|}{|ApproxLineage(t, n)|}\\
 \end{equation*}
-where $ApproxLineage(t, n)$ is the set of the top $n$ (by lineage similarity) tuples, returned as explanations (i.e., approximate lineage) for $t$ by our system. $ExactLineage(t)$ is the set of tuples that comprise the exact lineage of $t$, calculated from the semiring polynomial that is returned by the ProvSQL system. 
-The parameter $n$ is set by us at each experiment, that is, it is a parameter of the experiment. 
-Observe that $\operatorname{Precision(t, n)}$ is tunable via the parameter $n$, i.e., when $n$ is small we test for precision of the "top" explanations we found.\\
-\par Classically, we are usually interested in precision and recall (e.g., in classic statistics and classification problems). However, here the situation is slightly different, what we really are interested in is to assess the quality of our explanations by measuring ``how many of the top $n$ (by lineage similarity) tuples are actually part of the exact lineage?". By contrast, recall does not seem to be a meaningful metric in our case, as many query-result tuples might have long histories. Hence, a top-N justifications result is preferred over ``returning all the correct lineage tuples", and this is what we measure.
+where $ApproxLineage(t, n)$ is the set of the top $n$ (by lineage similarity) tuples, returned as explanations (i.e., approximate lineage) for $t$ by our system. $ExactLineage(t)$ is the set of tuples that comprise the exact \textbf{distant} lineage of $t$, calculated recursively from the semiring polynomial that is returned by the ProvSQL system.
+For example, if the direct lineage of $t_4$ and $t_5$ are the sets $\{t_1, t_2, t_3\}$ and $\{t_1\}$, respectively, and the direct lineage of a tuple $t_6$ is the set $\{t_4, t_5\}$ then the total distant lineage for the tuple $t_6$ is $\{t_1, t_2, t_3, t_4, t_5\}$.
+The parameter $n$ is set by us in each experiment, that is, it is a parameter of the experiment. 
+Observe that $\operatorname{Precision(t, n)}$ is tunable via the parameter $n$, i.e., when $n$ is small we test for precision of the ``top" explanations we found.\\
+\par Classically, we are usually interested in precision and recall (e.g., in traditional statistics and classification problems). However, here the situation is slightly different, what we really are interested in is to assess the quality of our explanations by measuring ``how many of the top $n$ (by lineage similarity) tuples are actually part of the exact lineage?". By contrast, traditional recall does not seem to be a meaningful metric in our case, as many query-result tuples might have long histories. Hence, a top-N justifications result is preferred over ``returning all the correct lineage tuples", and this is what we measure.
 
+\subsection{Distant Lineage: Per-Level Recall}
+    In order to be able to asses the quality of a distant lineage answer in a more insightful way, we need to save the ``exact distant lineage" in a hierarchical structure, and analyze it per-level. One possible implementation is a list $L$ of sets per-tuple, s.t. $L[i]$ is the set of all lineage tuples at the $i^{th}$ derivation depth level. For example, if the direct lineage of $t_4$ and $t_5$ are the sets $\{t_1, t_2, t_3\}$ and $\{t_1\}$, respectively, and the direct lineage of a tuple $t_6$ is the set $\{t_3, t_4, t_5\}$ (note that $t_3$ appears in both the $1^{st}$ and the $2^{nd}$ lineage levels of $t_6$, in this example) then the hierarchical lineage tree for the tuple $t_6$ and the hierarchical list structure that represents it look as follows: \\\\
+    \input{figures/distant_lineage_tree} \hspace{35pt}
+    \input{figures/distant_lineage_list} \\\\
+such that each rectangle is an entry in the list $L$.
+\par We expect our explanations to have a ``natural ranking" property in terms of lineage levels. That is, we expect the similarity between a target tuple and tuples in its distant lineage to be inversely proportional to the distance between them on the hierarchical lineage tree structure. Thus, we devise an explanation quality measure for explaining a single tuple $t$ and its lineage level $i$:
+\begin{equation*}
+    \operatorname{Recall}(t, i) = \frac{|ApproxLineage(t, D(t, i)) \cap L_t[i])|}{|L_t[i]|}\\
+\end{equation*}
+where $ApproxLineage(t, D(t, i))$ is the set of the top $D(t, i)$ (by lineage similarity) tuples, returned as explanations (i.e., approximate lineage) for $t$ by our system.
+$D(t, i)$ is the number of unique tuples in the lineage of $t$ up until the $i^{th}$ level (including). Formally, it is defined as follows: $D(t, i) = |\bigcup\limits_{j=1}^{i} L_t[j]|$.
+$L_t$ is the hierarchical list structure for $t$, as defined above, such that $L_t[i]$ is the set of all lineage tuples at the $i^{th}$ derivation depth level of $t$.\\
 
 \section{Examples}
 

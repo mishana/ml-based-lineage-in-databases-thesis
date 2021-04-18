@@ -1,0 +1,19 @@
+% A simple Tree
+% Author: Stefan Kottwitz
+% https://www.packtpub.com/hardware-and-creative/latex-cookbook
+\begin{tikzpicture}[sibling distance=5em,
+  edge from parent/.style={->,draw},
+  every edge/.style={->,draw}
+  ]]
+  \node(t_6) {$t_6$}
+    child { node {$t_5$} 
+      child { node {$t_1$} } 
+      }
+    child { node {$t_4$}
+      child { node {$t_1$} }
+      child { node {$t_2$} }
+      child { node(t_3) {$t_3$} }
+      };
+      
+    \draw (t_6) edge[bend left] (t_3);
+\end{tikzpicture}
