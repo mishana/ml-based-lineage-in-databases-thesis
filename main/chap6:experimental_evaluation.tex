@@ -9,7 +9,7 @@ We used two datasets from different domains (food and movies) to compare the per
 \par\textbf{Note.} \textit{max\_vectors\_num} (see section \ref{sec:proposed_solution_approx}) was chosen manually to be 4. The optimization of hyperparameters, and, specifically, \textit{max\_vectors\_num} - is the subject of ongoing research.\\
 
 % USDA BFPD and MovieLens
-\subsection{Datasets}
+\subsection{Datasets}\label{sec:datasets}
 \begin{enumerate}
     \item The USDA Branded Food Products Database (BFPDB) \cite{usda_bfpd-dataset} is the result of a Public-Private Partnership, whose goal is to enhance public health and the sharing of open data by complementing USDA Food Composition Databases with nutrient composition of branded foods and private label data, provided by the food industry. Among others, the dataset includes three tables:
     \begin{itemize}
@@ -29,7 +29,8 @@ We used two datasets from different domains (food and movies) to compare the per
 \end{enumerate}
 
 % Explain how the precision evaluation process works (test against lineage from provsql)
-\subsection{Precision Calculation} In section \ref{sec:proposed_solution_approx} we stated that we expect our explanations to approximate the exact lineage of query result tuples. 
+\subsection{Precision Calculation}\label{sec:precision}
+In section \ref{sec:proposed_solution_approx} we stated that we expect our explanations to approximate the exact lineage of query result tuples. 
 Thus, in order to test the aforementioned algorithms and implementation, we devised an explanation quality measure for explaining a single tuple $t$: 
 \begin{equation*}
     \operatorname{Precision}(t, n) = \frac{|ApproxLineage(t, n) \cap ExactLineage(t)|}{|ApproxLineage(t, n)|}\\
@@ -40,18 +41,18 @@ The parameter $n$ is set by us in each experiment, that is, it is a parameter of
 Observe that $\operatorname{Precision(t, n)}$ is tunable via the parameter $n$, i.e., when $n$ is small we test for precision of the ``top" explanations we found.\\
 \par Classically, we are usually interested in precision and recall (e.g., in traditional statistics and classification problems). However, here the situation is slightly different, what we really are interested in is to assess the quality of our explanations by measuring ``how many of the top $n$ (by lineage similarity) tuples are actually part of the exact lineage?". By contrast, traditional recall does not seem to be a meaningful metric in our case, as many query-result tuples might have long histories. Hence, a top-N justifications result is preferred over ``returning all the correct lineage tuples", and this is what we measure.
 
-\subsection{Distant Lineage: Per-Level Recall}
-    In order to be able to asses the quality of a distant lineage answer in a more insightful way, we need to save the ``exact distant lineage" in a hierarchical structure, and analyze it per-level. One possible implementation is a list $L$ of sets per-tuple, s.t. $L[i]$ is the set of all lineage tuples at the $i^{th}$ derivation depth level. For example, if the direct lineage of $t_4$ and $t_5$ are the sets $\{t_1, t_2, t_3\}$ and $\{t_1\}$, respectively, and the direct lineage of a tuple $t_6$ is the set $\{t_3, t_4, t_5\}$ (note that $t_3$ appears in both the $1^{st}$ and the $2^{nd}$ lineage levels of $t_6$, in this example) then the hierarchical lineage tree for the tuple $t_6$ and the hierarchical list structure that represents it look as follows: \\\\
+\subsection{Distant Lineage: Per-Level Recall}\label{sec:recall}
+    In order to assess the quality of a distant lineage answer in a more insightful way, we save the ``exact distant lineage" in a hierarchical structure, and analyze it per-level. One possible implementation is a list $L$ of sets per-tuple, s.t. $L[i]$ is the set of all lineage tuples at the $i^{th}$ derivation depth level. Note that $i$ starts at $0$, s.t. the $0^{th}$ lineage level is a set containing the target tuple only. For example, if the direct lineage of $t_4$ and $t_5$ are the sets $\{t_1, t_2, t_3\}$ and $\{t_1\}$, respectively, and the direct lineage of a tuple $t_6$ is the set $\{t_3, t_4, t_5\}$ (note that $t_3$ appears in both the $1^{st}$ and the $2^{nd}$ lineage levels of $t_6$, in this example) then the hierarchical lineage tree for the tuple $t_6$, and the hierarchical list structure that represents it, look as follows: \\\\
     \input{figures/distant_lineage_tree} \hspace{35pt}
     \input{figures/distant_lineage_list} \\\\
-such that each rectangle is an entry in the list $L$.
-\par We expect our explanations to have a ``natural ranking" property in terms of lineage levels. That is, we expect the similarity between a target tuple and tuples in its distant lineage to be inversely proportional to the distance between them on the hierarchical lineage tree structure. Thus, we devise an explanation quality measure for explaining a single tuple $t$ and its lineage level $i$:
+Here, each rectangle is an entry in the list $L$.
+\par We expect our explanations to have a ``natural ranking" property in terms of lineage levels. That is, we expect the similarity between a target tuple and tuples in its distant lineage to be inversely proportional to the distance between them in the hierarchical lineage tree structure. Thus, we devise an explanation quality measure for the explanation of a single tuple $t$ and its lineage level $i$:
 \begin{equation*}
     \operatorname{Recall}(t, i) = \frac{|ApproxLineage(t, D(t, i)) \cap L_t[i])|}{|L_t[i]|}\\
 \end{equation*}
 where $ApproxLineage(t, D(t, i))$ is the set of the top $D(t, i)$ (by lineage similarity) tuples, returned as explanations (i.e., approximate lineage) for $t$ by our system.
-$D(t, i)$ is the number of unique tuples in the lineage of $t$ up until the $i^{th}$ level (including). Formally, it is defined as follows: $D(t, i) = |\bigcup\limits_{j=1}^{i} L_t[j]|$.
-$L_t$ is the hierarchical list structure for $t$, as defined above, such that $L_t[i]$ is the set of all lineage tuples at the $i^{th}$ derivation depth level of $t$.\\
+$D(t, i)$ is the number of unique returned tuples in the lineage of $t$ up until the $i^{th}$ level (including). Formally, it is defined as follows: $D(t, i) = |\bigcup\limits_{j=1}^{i} L_t[j]|$.
+$L_t$ is the hierarchical list structure for $t$, as defined above, s.t. $L_t[i]$ is the set of all lineage tuples at the $i^{th}$ derivation depth level of $t$.\\
 
 \section{Examples}
 
@@ -131,6 +132,23 @@ $Lineage\_nutrients(t) = ExactLineage(t) \cap \texttt{nutrients}.tuples.$
 
 
 \section{Advanced Experiments - BFPDB Dataset}
+% Explain what this section will contain - mainly, distant lineage testing
+In this section we present results of our lineage tracking system over the USDA BPFDB dataset (see section \ref{sec:datasets}) on more advanced and complex test scenarios. In particular, we focus on tuples with multiple generations in their lifelong lineage history and analyze them in terms of direct and \textbf{distant} lineage.
+We assess the performance of our system quantitatively using precision and per-level recall (see sections \ref{sec:precision} and \ref{sec:recall}, respectively) and qualitatively by observing the ``top-$K$" returned lineage tuples (by similarity).
+
+\subsection{A Hierarchy of Materialized Views}
+% Present and explain the hierarchy - like in github but more in detail.
+We want to simulate a DBMS that contains a significant portion of tuples that depend on the contents of the DB, as a platform for testing and analyzing distant lineage. Thus, we built a hierarchy of ``materialized views", such that each ``view" is a table, constructed from tuples that were generated by a single (specific) query. See Figure \ref{fig:materialized_views} for a diagram, depicting the hierarchy of our materialized views.
+\input{figures/materialized_views}
+\par We consider those tables that do not depend on the contents of the DB during their creation  as \textit{base relations}. In our case, the base relations are: \texttt{products}, \texttt{nutrients} and \texttt{serving\_size} (see section \ref{sec:datasets} for more details). Note that each materialized view depends directly on tuples from the base relations (as defined above) or on tuples from other previously constructed materialized views.
+
+% Also, talk about comparing to "related base tables" and "related materialized views" during the testing, as opposed to a single table.
+
+\subsection{Experiments}
+% Distant Lineage and fancy stuff
+
+\subsection{Where Provenance}
+% MAYBE?
 
 
 \end{example-withrun}

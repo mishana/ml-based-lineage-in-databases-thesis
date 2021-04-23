@@ -4,11 +4,11 @@
 \begin{tikzpicture}[sibling distance=3em,
   every node/.style = {shape=rectangle, rounded corners,
     draw, align=center,
-    top color=white, bottom color=orange!20},
+    top color=white, bottom color=white},
   edge from parent/.style={->,draw}
   ]]
-  \node {$\{t_6\}$}
-    child { node {$\{t_3, t_4, t_5\}$} 
-      child { node {$\{t_1, t_2, t_3\}$} } 
+  \node [bottom color =orange!20, label={right:{\scriptsize $0^{th}$ lineage level}}] {$\{t_6\}$}
+    child { node [bottom color =orange!20, label={right:{\scriptsize $1^{st}$ lineage level}}] {$\{t_3, t_4, t_5\}$} 
+      child { node [bottom color =orange!20, label={right:{\scriptsize $2^{nd}$ lineage level}}] {$\{t_1, t_2, t_3\}$} } 
       };
 \end{tikzpicture}
