@@ -1,0 +1,43 @@
+\begin{table*}
+\centering
+% \begin{adjustbox}{width=\columnwidth,center}
+\pgfplotstabletypeset[
+    color cells={min=0.7,max=0.9, textcolor=white}, format index, format analyst, format Lineage,
+    col sep=comma,
+    /pgfplots/colormap={purple}{
+        rgb255(0cm)=(239,237,245);
+        rgb255(1cm)=(106,81,163)},
+    assign column name/.code=\pgfkeyssetvalue{/pgfplots/table/column
+        name}{{\textbf{#1}}},
+]{
+    index,     tuple-id, related-table,      {Similarity},      lineage-level,  Lineage 
+    0,     $id_1$,    nutrients,    0.864,    {3}          ,\textcolor{Green}{Yes}
+    1,     $id_2$,    products,     0.861,    {1, 3}          ,\textcolor{Green}{Yes}
+    2,     $id_3$,    products,    0.858,    {1, 3}          ,\textcolor{Green}{Yes}
+    3,     $id_4$,    products,    0.857,    {1, 3}          ,\textcolor{Green}{Yes}
+    4,     $id_5$,    products,    0.856,    {1, 3}          ,\textcolor{Green}{Yes}
+    5,     $id_6$,    products,    0.856,    {1, 3}          ,\textcolor{Green}{Yes}
+    6,     $id_7$,    products,    0.856,    {1, 3}          ,\textcolor{Green}{Yes}
+    7,     $id_8$,    products,    0.855,    {1, 3}          ,\textcolor{Green}{Yes}
+    8,     $id_9$,    products,    0.854,    {1, 3}          ,\textcolor{Green}{Yes}
+    9,     $id_{10}$,    products,    0.853,    {1, 3}          ,\textcolor{Green}{Yes}
+    10,     $id_{11}$,    products,    0.852,    {1, 3}          ,\textcolor{Green}{Yes}
+    11,     $id_{12}$,    nutrients,   0.851,    {3}          ,\textcolor{Green}{Yes}
+    12,     $id_{13}$,    products,    0.851,    {1, 3}          ,\textcolor{Green}{Yes}
+    13,     $id_{14}$,    products,    0.850,    {3}          ,\textcolor{Green}{Yes}
+    14,     $id_{15}$,    products,    0.850,    {1, 3}          ,\textcolor{Green}{Yes}
+    15,     $id_{16}$,    products,    0.848,    {3}          ,\textcolor{Green}{Yes}
+    16,     $id_{17}$,    products,    0.847,    {1, 3}          ,\textcolor{Green}{Yes}
+    17,     $id_{18}$,    products,    0.847,    {1, 3}          ,\textcolor{Green}{Yes}
+    18,     $id_{19}$,    products,    0.847,    {3}          ,\textcolor{Green}{Yes}
+    19,     $id_{20}$,    products,    0.846,    {3}          ,\textcolor{Green}{Yes}
+
+
+}
+% \end{adjustbox}
+\textbf{\caption{\label{tab:experiment1-base-tables:analyst-cv}
+                \textit{red gold} vs. related base tables with Column Vectors - an analyst's view.\\
+                Top-20 tuples from the related base relations, ranked by similarity. Tuple ID contains unique ids of the tuples in question, so that an analyst can quickly retrieve them from the DB. Related Table is the table name of the tuple's origin. Lineage Level(s) and Lineage show additional meta-data, only known in hindsight (not available to an analyst during lineage querying) to showcase .
+                }
+        }
+\end{table*}å

@@ -136,14 +136,103 @@
         every head row/.style={before row=\toprule,after row=\midrule},
         every last row/.style={after row=\bottomrule},
         every odd row/.style={before row={\rowcolor{gray!10}}},
+    },
+    format stats-table1/.style={
+        columns/Total/.style={
+            % column name={},
+            postproc cell content/.code={}
+        },
+        columns/Length-L1/.style={
+            column name={L[1]},
+            postproc cell content/.code={}
+        },
+        columns/Length-L2/.style={
+            column name={L[2]},
+            postproc cell content/.code={}
+        },
+        columns/Length-L3/.style={
+            column name={L[3]},
+            postproc cell content/.code={}
+        },
+        columns/Recall-L1/.style={
+            column name={L[1]},
+            % postproc cell content/.code={}
+        },
+        columns/Recall-L3/.style={
+            column name={L[3]},
+            % postproc cell content/.code={}
+        },
+        every head row/.style={before row=\toprule & & \multicolumn{1}{c}{\textbf{Target Tuple}} & \multicolumn{4}{c}{\textbf{Lineage Size}} & \multicolumn{4}{c}{\textbf{Precision}} & \multicolumn{2}{c}{\textbf{Recall}}\\
+        \cmidrule(lr){3-3} \cmidrule(lr){4-7} \cmidrule(lr){8-11} \cmidrule(lr){12-13}\\, after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+        every odd row/.style={before row={\rowcolor{gray!10}}},
+    },
+    format stats-table2/.style={
+        columns/Total/.style={
+            % column name={},
+            postproc cell content/.code={}
+        },
+        columns/Length-L1/.style={
+            column name={L[1]},
+            postproc cell content/.code={}
+        },
+        columns/Length-L2/.style={
+            column name={L[2]},
+            postproc cell content/.code={}
+        },
+        columns/Length-L3/.style={
+            column name={L[3]},
+            postproc cell content/.code={}
+        },
+        columns/Recall-L1/.style={
+            column name={L[1]},
+            % postproc cell content/.code={}
+        },
+        columns/Recall-L2/.style={
+            column name={L[2]},
+            % postproc cell content/.code={}
+        },
+        every head row/.style={before row=\toprule & & \multicolumn{1}{c}{\textbf{Target Tuple}} & \multicolumn{4}{c}{\textbf{Lineage Size}} & \multicolumn{4}{c}{\textbf{Precision}} & \multicolumn{2}{c}{\textbf{Recall}}\\
+        \cmidrule(lr){3-3} \cmidrule(lr){4-7} \cmidrule(lr){8-11} \cmidrule(lr){12-13}\\, after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+        every odd row/.style={before row={\rowcolor{gray!10}}},
+    },
+    format analyst/.style={
+        columns/tuple-id/.style={
+            column name={Tuple ID},
+            string type,
+            postproc cell content/.code={}
+        },
+        columns/related-table/.style={
+            column name={Related Table},
+            string type,
+            postproc cell content/.code={},
+            postproc cell  content/.append style={
+            @cell content/.add={\ttfamily}{}
+            },
+        },
+        columns/lineage-level/.style={
+            column name={Lineage Level(s)},
+            string type,
+            postproc cell content/.code={}
+        },
+        every head row/.style={before row=\toprule & \multicolumn{3}{c}{\textbf{An Analyst's View}} & \multicolumn{2}{c}{\textbf{Hindsight}}\\
+        \cmidrule(lr){2-4} \cmidrule(lr){5-6}\\, after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+        every odd row/.style={before row={\rowcolor{gray!10}}},
     }
 }
 
 \newcommand{\notimplies}{\centernot\implies}
+\newcommand{\floor}[1]{\left\lfloor #1 \right\rfloor}
 
-\theoremstyle{definition}
+% \theoremstyle{definition}
 \newtheorem{runexample}{Running Example}
 \newtheorem{example-withrun}{Example}[runexample]
+
+% \theoremstyle{definition}
+\newtheorem{runexperiment}{Running Experiment}
+\newtheorem{experiment-withrun}{Experiment}[runexperiment]
 
 \newcommand{\fncolor}[1]{\textcolor{YellowOrange}{#1}}
 \newcommand{\paramcolor}[1]{\textcolor{JungleGreen}{#1}}

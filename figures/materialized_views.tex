@@ -14,17 +14,17 @@
 %     child [missing]
 %       ;
     
-    \node(exp_4) [color=Fuchsia] {$\texttt{exp}\sb\texttt{4}$};
-    \node(exp_2) [below=of exp_4, color=Fuchsia] {$\texttt{exp}\sb\texttt{2}$};
-    \node(exp_1) [left=of exp_2, color=Fuchsia] {$\texttt{exp}\sb\texttt{1}$};
-    \node(exp_3) [right=of exp_2, color=Fuchsia] {$\texttt{exp}\sb\texttt{3}$};
+    \node(exp_4) [color=Salmon] {$\texttt{exp}\sb\texttt{4}$};
+    \node(exp_2) [below=of exp_4, color={CarnationPink}] {$\texttt{exp}\sb\texttt{2}$};
+    \node(exp_1) [left=of exp_2, color={CarnationPink}] {$\texttt{exp}\sb\texttt{1}$};
+    \node(exp_3) [right=of exp_2, color={CarnationPink}] {$\texttt{exp}\sb\texttt{3}$};
     
     \draw (exp_4) edge (exp_2);
     \draw (exp_4) edge (exp_1);
       
-    \node(protein) [below=of exp_2, color=Fuchsia] {$\texttt{protein}$};
-    \node(prepared) [below=of exp_1, left=of protein, color=Fuchsia] {$\texttt{prepared}$};
-    \node(unprepared) [below=of exp_3, right=of protein, color=Fuchsia] {$\texttt{unprepared}$};
+    \node(protein) [below=of exp_2, color=Orchid] {$\texttt{protein}$};
+    \node(prepared) [below=of exp_1, left=of protein, color=Orchid] {$\texttt{prepared}$};
+    \node(unprepared) [below=of exp_3, right=of protein, color=Orchid] {$\texttt{unprepared}$};
       
     \draw (exp_1) edge (prepared);
     \draw (exp_1) edge (protein);
@@ -34,9 +34,11 @@
     \draw (exp_3) edge (protein);
     \draw (exp_3) edge (unprepared);
     
-    \node(serving_size) [below=of protein, color=red] {$\texttt{serving\_size}$};
-    \node(products) [below=of unprepared, right=of serving_size, color=red] {$\texttt{products}$};
-    \node(nutrients) [below=of prepared, left=of serving_size, color=red] {$\texttt{nutrients}$};
+    \node(serving_size) [below=of protein, color=Fuchsia] {$\texttt{serving\_size}$};
+    \node(products) [below=of unprepared, right=of serving_size, color=Fuchsia] {$\texttt{products}$};
+    \node(nutrients) [below=of prepared, left=of serving_size, color=Fuchsia] {$\texttt{nutrients}$};
+    
+    % \node(dcd) [right=of products, color=Fuchsia] {$\texttt{derivation\_code\_description}$};
     
     % \node(products) [below=of protein, color=red] {$\texttt{products}$};
     % \node(serving_size) [below=of unprepared, right=of products, color=red] {$\texttt{serving\_size}$};
@@ -54,10 +56,22 @@
     % \draw (exp_4) edge[out=45, in=-50, looseness=4.5] (products);
     % \draw (exp_4) edge[out=120, in=200, looseness=4.5] (products);
     % \draw (exp_4) edge[bend right, looseness=1.5] (products);
+    
+    \node(sugars) [below=of serving_size, color=Orchid] {$\texttt{sugars}$};
+    \node(cholesterol) [below=of nutrients, left=of sugars, color=Orchid] {$\texttt{cholesterol}$};
+    \node(readytodrink) [below=of products, right=of sugars, color=Orchid] {$\texttt{readytodrink}$};
+    
+    \draw (readytodrink) edge (products);
+    \draw (readytodrink) edge (serving_size);
+    \draw (sugars) edge (products);
+    \draw (sugars) edge (nutrients);
+    \draw (cholesterol) edge (products);
+    \draw (cholesterol) edge (nutrients);
 \end{tikzpicture}
     \captionof{figure}{
-    Materialized Views Hierarchy - BFPDB Dataset.
+    Materialized Views Hierarchy - BFPDB Dataset.\\
     An edge connecting two tables $T_2 \rightarrow T_1$ means that there are tuples in $T_2$ that were directly created from tuples in $T_1$, by a query. For example, the materialized view $\texttt{exp}\sb\texttt{4}$ was directly created from tuples from the tables $\texttt{exp}\sb\texttt{1}$, $\texttt{exp}\sb\texttt{2}$, \texttt{nutrients} and \texttt{products}.
+    The text colors are intended as a visual aid, such that each lineage generation has a brighter color, the farther it is from the base relations.
     }\label{fig:materialized_views}
 
 \end{figure}

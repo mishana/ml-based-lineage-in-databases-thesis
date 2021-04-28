@@ -1,0 +1,24 @@
+\begin{table*}
+\centering
+\begin{adjustbox}{width=\columnwidth,center}
+\pgfplotstabletypeset[
+    color cells={min=0.32,max=1.0}, format index, format stats-table2, format manufacturer, format method,
+    col sep=comma,
+    /pgfplots/colormap={orange}{
+        rgb255(0cm)=(255,245,235);
+        rgb255(1cm)=(253,141,60)},
+    assign column name/.code=\pgfkeyssetvalue{/pgfplots/table/column
+        name}{{\textbf{#1}}},
+]{
+    
+    index,  Provenance Method,       manufacturer, Total, Length-L1, Length-L2, Length-L3,  {1.00$^{Top}$},            {0.75$^{Top}$},        {0.50$^{Top}$},        {0.25$^{Top}$}, Recall-L1, Recall-L2  
+    0,      Tuple Vectors,   red gold, 87, 1, 86, 0,     0.831 ,        0.873 ,     0.952 ,       0.952, 1.0, 0.829
+    1,      Column Vectors,   red gold, 87, 1, 86, 0,    0.964 ,        0.952 ,     0.929 ,       0.952, 1.0, 0.963
+}
+\end{adjustbox}
+\textbf{\caption{\label{tab:experiment1-materialized-views:precision-and-recall}
+                \textit{red gold} vs. materialized views ($\texttt{exp}\sb\texttt{3}$, \texttt{protein}, \texttt{prepared} and \texttt{unprepared}).\\
+                A comparison of different approximate lineage computation methods on a single query-result tuple (\textit{red gold}). Total Lineage Size is the size of the exact distant lineage for a result tuple (containing only tuples from the related materialized views). Similarly, L[$i$] is the size of the $i^{th}$ lineage level. $p^{Top}$ Precision shows the precision of various methods for the top $p\cdot|Total Distant Lineage|$ tuples in the approximate lineage. For example, 0.50$^{Top}$ is the precision for the top 43 ($=\floor{0.5\cdot87}$) tuples in the approximate lineage. L[$i$] Recall shows the $i^{th}$ lineage level recall as described in section \ref{sec:recall}.
+                }
+        }
+\end{table*}
