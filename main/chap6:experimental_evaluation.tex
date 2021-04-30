@@ -162,18 +162,27 @@ We test queries on a subset of the BFPDB dataset, that consists of all the table
 We ask for distinct \texttt{manufacturers} of products that have \textit{water}, \textit{sugar} and \textit{salt} as  ingredients, and contain \textit{protein} value information in the \texttt{nutrients} table; also, these manufacturers must produce \textit{prepared} and \textit{unprepared} products (this information is stored in the \texttt{serving\_size} table):
 \input{figures/q_advanced_experiment_1}
 
-Table \ref{tab:experiment1-base-tables:precision-and-recall} presents lineage related statistics, collected when computing the approximate lineage of the single result tuple in the output of this query (\textit{red gold}) against all the tuples from the related base tables: \texttt{products}, \texttt{nutrients} and \texttt{serving\_size}, which contain 29,322 tuples in total. Let us look at some interesting observations that are apparent from analyzing the results:
+Table \ref{tab:experiment1-base-tables:precision-and-recall} presents lineage related statistics, collected when computing the approximate lineage of the single result tuple in the output of this query (\textit{red gold}) against all the tuples from the related \textbf{base tables}: \texttt{products}, \texttt{nutrients} and \texttt{serving\_size}, which contain 29,322 tuples in total. Let us look at some interesting observations that are apparent from analyzing the results:
 \begin{enumerate}
-    \item The lineage sizes of the different levels (1-3) sum up to more than the total distant lineage size ($63 + 0 + 160 > 160$). In this case, it means that all 63 tuples from the $1^{st}$ lineage level are also a part of the $3^{rd}$ lineage level. From analyzing the query we may conclude that these are the tuples from the \texttt{products} table that affect the query result directly (via the \texttt{FROM} clause) and indirectly (via tuples from $\texttt{exp}\sb{3}$, see a path from $\texttt{exp}\sb{3}$ to \texttt{products} in Figure \ref{fig:materialized_views}).
+    \item The lineage sizes of the different levels (1-3) sum up to more than the total distant lineage size ($63 + 0 + 160 > 160$). In this case, it means that all 63 tuples from the $1^{st}$ lineage level are also a part of the $3^{rd}$ lineage level. From analyzing the query we may conclude that these are the tuples from the \texttt{products} table that affect the query result directly (via the \texttt{FROM} clause) and indirectly (via tuples from $\texttt{exp}\sb\texttt{3}$, see a path from $\texttt{exp}\sb\texttt{3}$ to \texttt{products} in Figure \ref{fig:materialized_views}).
     \item The Column Vectors (CV) method demonstrates overall superiority, compared to the Tuple Vectors (TV) method. Moreover, the  CV method has a precision of 0.9 for the top $0.75\cdot160 = 120$ tuples in the approximate lineage, and 0.74 for the top 160 tuples. That is, most of the errors are produced in the lower ranked tuples.
-    \item 
+    \item The CV method exhibits relatively high L[1] and L[3] recall scores, which are backed up by observing the Lineage Level(s) column in Table \ref{tab:experiment1-base-tables:analyst-cv}. That is, not only that all the top-20 tuples by similarity are really a part of the distant lineage, but also, the ranking preserves a level-based bias (most of the top-20 are in the $1^{st}$ lineage level). By contrast, the TV method is less impressive at this front, as is evidenced by the results in Table \ref{tab:experiment1-base-tables:analyst-tv}.
+    \item Note that a random choice of the top 160 lineage tuples would have yielded a $\frac{160}{29,322} \approx 0.006$ precision score, which is several orders of magnitude worse than the CV and TV methods. 
 \end{enumerate}
 
-and Table \ref{tab:experiment1-materialized-views:precision-and-recall} sdfsdfsdf \input{tables/experiment1_base_tables_stats}
-\input{tables/experiment1_base_tables_analyst-cv}
-\input{tables/experiment1_base_tables_analyst-tv}
+\input{tables/experiment1/base_tables_stats}
+\input{tables/experiment1/base_tables_analyst-cv}
+\input{tables/experiment1/base_tables_analyst-tv}
 
-\input{tables/experiment1_materialized_views_stats}
+Table \ref{tab:experiment1-materialized-views:precision-and-recall} presents lineage related statistics, collected when computing the approximate lineage of the single result tuple in the output of this query (\textit{red gold}) against all the tuples from the related \textbf{materialized views}: $\texttt{exp}\sb\texttt{3}$, \texttt{protein}, \texttt{prepared} and \texttt{unprepared}, which contain 10,295 tuples in total. Let us look at some interesting observations that are apparent from analyzing the results:
+\begin{enumerate}
+    \item dfgdfgdfg
+    \item Table \ref{tab:experiment1-materialized-views:analyst-cv} and Table \ref{tab:experiment1-materialized-views:analyst-tv}
+\end{enumerate}
+
+\input{tables/experiment1/materialized_views_stats}
+\input{tables/experiment1/materialized_views_analyst-cv}
+\input{tables/experiment1/materialized_views_analyst-tv}
 \end{experiment-withrun}
 
 

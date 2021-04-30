@@ -1,0 +1,42 @@
+\begin{table*}
+\centering
+% \begin{adjustbox}{width=\columnwidth,center}
+\pgfplotstabletypeset[
+    color cells={min=0.55,max=0.98, textcolor=white}, format index, format analyst, format Lineage,
+    col sep=comma,
+    /pgfplots/colormap={purple}{
+        rgb255(0cm)=(239,237,245);
+        rgb255(1cm)=(106,81,163)},
+    assign column name/.code=\pgfkeyssetvalue{/pgfplots/table/column
+        name}{{\textbf{#1}}},
+]{
+    index,     tuple-id, related-table,      {Similarity},      lineage-level,  Lineage 
+    0,     $id_1$,    $\texttt{exp}\sb\texttt{3}$,    0.975,    {1}          ,\textcolor{Green}{Yes}
+    1,     $id_2$,    protein,     0.939,    {2}          ,\textcolor{Green}{Yes}
+    2,     $id_3$,    protein,    0.937,    {2}          ,\textcolor{Green}{Yes}
+    3,     $id_4$,    protein,    0.936,    {2}          ,\textcolor{Green}{Yes}
+    $\vdots$,     ,    $\vdots$,    ,              $\vdots$,
+    17,     $id_{18}$,    unprepared,    0.922,    {2}          ,\textcolor{Green}{Yes}
+    18,     $id_{19}$,    unprepared,    0.920,    {2}          ,\textcolor{Green}{Yes}
+    19,     $id_{20}$,    unprepared,    0.917,    {2}          ,\textcolor{Green}{Yes}
+    $\vdots$,     ,    $\vdots$,    ,              $\vdots$,
+    80,     $id_{81}$,    unprepared,    0.833,    {2}          ,\textcolor{Green}{Yes}
+    81,     $id_{82}$,    unprepared,    0.827,    {2}          ,\textcolor{Green}{Yes}
+    82,     $id_{83}$,    unprepared,   0.825,    {2}          ,\textcolor{Green}{Yes}
+    83,     $id_{84}$,    unprepared,    0.817,    {2}          ,\textcolor{Green}{Yes}
+    84,     $id_{85}$,    unprepared,    0.775,    {2}          ,\textcolor{Green}{Yes}
+    85,     $id_{86}$,    unprepared,    0.670,              ,\textcolor{Red}{No}
+    86,     $id_{87}$,    unprepared,    0.668,              ,\textcolor{Red}{No}
+    87,     $id_{88}$,    unprepared,    0.667,              ,\textcolor{Red}{No}
+    88,     $id_{89}$,    unprepared,    0.664,              ,\textcolor{Red}{No}
+    89,     $id_{90}$,    unprepared,    0.664,              ,\textcolor{Red}{No}
+
+
+}
+% \end{adjustbox}
+\textbf{\caption{\label{tab:experiment1-materialized-views:analyst-cv}
+                \textit{red gold} vs. related \textbf{materialized views} with \textbf{Column Vectors} - an analyst's view.\\
+                A subset of the Top-90 tuples from the related materialized views, ranked by similarity. Tuple ID contains unique ids of the tuples in question, so that an analyst can quickly retrieve them from the DB. Related Table is the table name of the tuple's origin. Lineage Level(s) and Lineage show additional meta-data, only known in hindsight (not available to an analyst during lineage querying) to showcase the effectiveness of our system.
+                }
+        }
+\end{table*}
