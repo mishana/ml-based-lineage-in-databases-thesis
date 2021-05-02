@@ -1,21 +1,51 @@
-\chapter{Some sort of an appendix}
-\label{appendix:somesort}
+\chapter{BFPDB Materialized Views}
+\label{appendix:bfpdb_materiazlied_views}
 
-You may want to include appendices of your own volition. Also, if you've developed any computer software, that needs to go in as an appendix as well.
+Following is a detailed description of the materialized views (used in the experiments in section \ref{sec:advanced_experiments}) and the queries that created them.
 
-\section{A first section in this appendix}
+\section{\texttt{prepared}}\label{appendix:sec:prepared}
+Contains all the products-related information from the \texttt{products} table, for products that have a \textit{prepared} preparation state in the \texttt{serving\_size} table:
+\input{figures/appendix_mvws_queries/prepared}
 
-Some appendix content here. And something nice to finish things off:
+\section{\texttt{unprepared}}\label{appendix:sec:unprepared}
+Contains all the products-related information from the \texttt{products} table, for products that have a \textit{unprepared} preparation state in the \texttt{serving\_size} table:
+\input{figures/appendix_mvws_queries/unprepared}
 
-\begin{figure}[htb]
-  \centering
-  \ifpdf
-    \includegraphics[width=0.3\textwidth]{graphics/mygraphic2.png}
-  \else
-    \includegraphics[width=0.3\textwidth]{graphics/mygraphic2-for-ps.eps}
-  \fi
-  \caption{A Flower.}
-\end{figure}
+\section{\texttt{readytodrink}}\label{appendix:sec:readytodrink}
+Contains all the products-related information from the \texttt{products} table, for products that have a \textit{readytodrink} preparation state in the \texttt{serving\_size} table:
+\input{figures/appendix_mvws_queries/readytodrink}
 
-\section{Another appendix section}
-After the (last) appendix-section comes the thesis' bibliography; Its style is set with the \verb|\thesisbibstyle| command. Then there are the Hebrew parts of thesis, which don't exactly ``follow" the bibliography in a logical sense, but rather start at the beginning of the thesis when considered as a right-to-left printed booklet. Thus, the last page of the extended Hebrew abstract of the thesis comes right ``after" the last page of the bibliography if you're turning the pages in left-to-right order.
+
+\section{\texttt{protein}}\label{appendix:sec:protein}
+Contains all the products-related information from the \texttt{products} table, for products that have a \textit{protein} nutrient-related information in the \texttt{nutrients} table:
+\input{figures/appendix_mvws_queries/protein}
+
+
+\section{\texttt{sugars}}\label{appendix:sec:sugars}
+Contains all the products-related information from the \texttt{products} table, for products that have a \textit{sugars} nutrient-related information in the \texttt{nutrients} table:
+\input{figures/appendix_mvws_queries/sugars}
+
+
+\section{\texttt{cholesterol}}\label{appendix:sec:cholesterol}
+Contains all the products-related information from the \texttt{products} table, for products that have a \textit{cholesterol} nutrient-related information in the \texttt{nutrients} table:
+\input{figures/appendix_mvws_queries/cholesterol}
+
+
+\section{$\texttt{exp}\sb\texttt{1}$}\label{appendix:sec:exp1}
+Contains distinct manufacturers of products that have \textit{sugar} as an ingredient, and contain \textit{protein} nutrient information. Also, these manufacturers produce \textit{prepared} products: 
+\input{figures/appendix_mvws_queries/exp1}
+
+
+\section{$\texttt{exp}\sb\texttt{2}$}\label{appendix:sec:exp2}
+Contains distinct manufacturers of products that have \textit{water} as an ingredient, and contain \textit{protein} nutrient information. Also, these manufacturers produce \textit{unprepared} products: 
+\input{figures/appendix_mvws_queries/exp2}
+
+
+\section{$\texttt{exp}\sb\texttt{3}$}\label{appendix:sec:exp3}
+Contains distinct manufacturers of products that have \textit{water} and \textit{sugar} as an ingredient, and contain \textit{protein} nutrient information. Also, these manufacturers produce \textit{prepared} and \textit{unprepared} products:
+\input{figures/appendix_mvws_queries/exp3}
+
+
+\section{$\texttt{exp}\sb\texttt{4}$}\label{appendix:sec:exp4}
+Contains 10 distinct pairs of (product identifier, nutrient derivation code) for products that are produced by manufacturers from the $\texttt{exp}\sb\texttt{1}$ \textbf{or} $\texttt{exp}\sb\texttt{2}$ materialized views:
+\input{figures/appendix_mvws_queries/exp4}

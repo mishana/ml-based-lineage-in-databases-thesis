@@ -1,0 +1,15 @@
+% \begin{adjustbox}{width=\columnwidth,center}
+\begin{figure}[H]
+% \raggedright
+% \begin{small}
+    \texttt{
+    % \textcolor{white}{\tiny something}\\
+    \textcolor{white}{F}\sqlcolor{SELECT} p.\fieldcolor{ndb\_no}, p.\fieldcolor{manufacturer}, p.\fieldcolor{name}, p.\fieldcolor{ingredients} \\
+    \textcolor{white}{FF}\sqlcolor{FROM} products p, nutrients n\\
+    \textcolor{white}{FF}\sqlcolor{WHERE} p.\fieldcolor{ndb\_no} = n.\fieldcolor{ndb\_no} \\ 
+    \textcolor{white}{FF}\sqlcolor{AND POSITION}(\strcolor{'protein'} \sqlcolor{IN} n.\fieldcolor{nutrient\_name}) > \numcolor{0}
+    }
+    % \textbf{\caption{\label{fig:queries_usda_bpfd}Running example query for the USDA Branded Products Food Database}}
+% \end{small}
+\end{figure}
+% \end{adjustbox}

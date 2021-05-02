@@ -1,0 +1,23 @@
+% \begin{adjustbox}{width=\columnwidth,center}
+\begin{figure}[H]
+% \raggedright
+% \begin{small}
+    \texttt{
+    % \textcolor{white}{\tiny something}\\
+    \textcolor{white}{F}\sqlcolor{SELECT} $\texttt{t}\sb\texttt{2}$.\fieldcolor{manufacturer} \sqlcolor{FROM}\\
+    \textcolor{white}{FFFF}(\sqlcolor{SELECT} prt.\fieldcolor{manufacturer} \\
+    \textcolor{white}{FFFFF}\sqlcolor{FROM} protein prt, (\sqlcolor{SELECT DISTINCT} \fieldcolor{manufacturer} \sqlcolor{FROM} prepared) t\\
+    \textcolor{white}{FFFFF}\sqlcolor{WHERE POSITION}(\strcolor{'sugar'} \sqlcolor{IN} prt.\fieldcolor{ingredients}) > \numcolor{0} \\
+    \textcolor{white}{FFFFF}\sqlcolor{AND} prt.\fieldcolor{manufacturer} = t.\fieldcolor{manufacturer}\\
+    \textcolor{white}{FFFFF}\sqlcolor{GROUP BY} prt.\fieldcolor{manufacturer}) $\texttt{t}\sb\texttt{1}$,\\
+    \textcolor{white}{FFFF}(\sqlcolor{SELECT} prt.\fieldcolor{manufacturer} \\
+    \textcolor{white}{FFFFF}\sqlcolor{FROM} protein prt, (\sqlcolor{SELECT DISTINCT} \fieldcolor{manufacturer} \sqlcolor{FROM} unprepared) t\\
+    \textcolor{white}{FFFFF}\sqlcolor{WHERE POSITION}(\strcolor{'water'} \sqlcolor{IN} prt.\fieldcolor{ingredients}) > \numcolor{0} \\
+    \textcolor{white}{FFFFF}\sqlcolor{AND} prt.\fieldcolor{manufacturer} = t.\fieldcolor{manufacturer}\\
+    \textcolor{white}{FFFFF}\sqlcolor{GROUP BY} prt.\fieldcolor{manufacturer}) $\texttt{t}\sb\texttt{2}$,\\
+    \textcolor{white}{FF}\sqlcolor{WHERE} $\texttt{t}\sb\texttt{1}$.\fieldcolor{manufacturer} = $\texttt{t}\sb\texttt{2}$.\fieldcolor{manufacturer}
+    }
+    % \textbf{\caption{\label{fig:queries_usda_bpfd}Running example query for the USDA Branded Products Food Database}}
+% \end{small}
+\end{figure}
+% \end{adjustbox}
