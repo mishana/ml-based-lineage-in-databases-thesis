@@ -16,7 +16,7 @@
 \BlankLine
  \pv = \{\} $\rightarrow$ \{\}\cmtcolor{\tcp*{an empty map of: \textit{columns $\rightarrow$ sets of lineage vectors}}}
  \ForEach{column $c \in (CV_1.columns \cup CV_2.columns)$}{
-    \cmtcolor{\tcc{$CV_i.columns$ is the domain and $CV_i[c]$ is the corresponding \textit{set of lineage vectors} of tuple $t_i$ for the column $c$}}
+    \cmtcolor{\tcc{$CV_i.columns$ is the domain and $CV_i[c]$ is the corresponding \textit{set of lineage vectors} of tuple $t_i$ for the column $c \in CV_i.columns$}}
     \uIf{$c \in (CV_1.columns \cap CV_2.columns)$}{
         $\pv[c]$ = $\paramcolor{CV_1[c]} \:\fncolor{\boldsymbol\cdot}\: \paramcolor{CV_2[c]}$\cmtcolor{\tcp*{see Algorithm \ref{algo:mul_approx}}}
         % \cmtcolor{\tcp*{an inline call to $\boldsymbol\cdot$ operation defined in Algorithm \ref{algo:mul_approx}}}

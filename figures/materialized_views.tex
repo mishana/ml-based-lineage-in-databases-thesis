@@ -34,9 +34,9 @@
     \draw (exp_3) edge (protein);
     \draw (exp_3) edge (unprepared);
     
-    \node(serving_size) [below=of protein, color=Fuchsia] {$\texttt{serving\_size}$};
-    \node(products) [below=of unprepared, right=of serving_size, color=Fuchsia] {$\texttt{products}$};
-    \node(nutrients) [below=of prepared, left=of serving_size, color=Fuchsia] {$\texttt{nutrients}$};
+    \node(serving_size) [below=of protein, color=Violet] {$\texttt{serving\_size}$};
+    \node(products) [below=of unprepared, right=of serving_size, color=Violet] {$\texttt{products}$};
+    \node(nutrients) [below=of prepared, left=of serving_size, color=Violet] {$\texttt{nutrients}$};
     
     % \node(dcd) [right=of products, color=Fuchsia] {$\texttt{derivation\_code\_description}$};
     
@@ -68,8 +68,8 @@
     \draw (cholesterol) edge (products);
     \draw (cholesterol) edge (nutrients);
 \end{tikzpicture}
-    \captionof{figure}{
-    Materialized Views Hierarchy - BFPDB Dataset.\\
+    \captionof{figure}[Materialized Views Hierarchy - The BFPDB Dataset]{
+    Materialized Views Hierarchy - The BFPDB Dataset.\\
     An edge connecting two tables $T_2 \rightarrow T_1$ means that there are tuples in $T_2$ that were directly created from tuples in $T_1$, by a query. For example, the materialized view $\texttt{exp}\sb\texttt{4}$ was directly created from tuples from the tables $\texttt{exp}\sb\texttt{1}$, $\texttt{exp}\sb\texttt{2}$, \texttt{nutrients} and \texttt{products}.
     The text colors are intended as a visual aid, such that each lineage generation has a brighter color, the farther it is from the base relations.
     }\label{fig:materialized_views}

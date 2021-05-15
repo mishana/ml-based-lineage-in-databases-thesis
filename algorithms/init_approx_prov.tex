@@ -12,7 +12,7 @@
  \For{$t \in D.tuples$}{
   \cmtcolor{\tcc{$M$ is a pre-trained word embeddings model and $t$ is a DB tuple}}
   $word\_vectors_t = \{M(w)\mid w \in t\}$\;
-  \cmtcolor{\tcc{Now, perform a "smart" averaging over the word vectors of every word in $t$}}%\label{cmt}
+  \cmtcolor{\tcc{Perform a "smart" averaging over the word vectors of every word in $t$. That is, average the word vectors for each column separately, and then apply weighted average on the "column vectors".}}%\label{cmt}
   \vt = \WeightedAverage{\paramcolor{$word\_vectors_t$}}\;
 }
 % \caption{Lineage vectors: initialization}\label{fig:init_approx}

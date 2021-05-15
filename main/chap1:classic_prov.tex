@@ -9,7 +9,7 @@ Provenance - \textit{source, origin} \cite{prov_dict}.
 % General explanation
 In computing, provenance information describes the origins and the history of data within its lifetime. When talking about database management systems, the commonly used term is \textit{data provenance} \cite{cheney2009provenance}. The idea behind data provenance is keeping additional information (meta-data) allowing us to easily answer a large number of ``meta-questions".
 % Provenance as explanations for query results
-\par Data provenance helps with providing explanations for the existence of tuples in a query result. The context of these explanations is the DB state prior to the query execution. \\
+\par Data provenance helps with providing explanations for the existence of tuples in a query result. The context of these explanations is usually the DB state prior to the query execution.
 
 % Intro to notions of data provenance
 \subsection{Related Work} Over the past 15 years, provenance research has advanced in addressing both theoretical \cite{cheney2009provenance, green2007provenance, Deutch2014} 
@@ -24,33 +24,40 @@ In particular, several different notions of data provenance (\textit{lineage}, \
 % Overview and definition - Val Tannen and T.J. Green
 \subsection{Overview}\footnotemark
 \footnotetext{Portions of this section were adapted from Green et al. \cite{green2007provenance} and Karvounarakis et al. \cite{Karvounarakis:2012:SDQ:2380776.2380778}.}
-\textit{Provenance semirings} have been introduced by Green et al. \cite{green2007provenance} as a formalism for data provenance. These semirings have been shown \cite{Karvounarakis:2012:SDQ:2380776.2380778} to generalize previous works such as lineage \cite{Cui:2000:TLV:357775.357777} and why-provenance \cite{DBLP:conf/icdt/BunemanKT01}. The main idea is based on annotating every tuple in the DB with elements from some algebraic structure $(K,+,\cdot,0,1)$\footnotemark
+\textit{Provenance semirings} have been introduced by Green et al. \cite{green2007provenance} as a formalism for data provenance. These semirings have been shown \cite{Karvounarakis:2012:SDQ:2380776.2380778} to generalize previous works such as lineage \cite{Cui:2000:TLV:357775.357777} and why-provenance \cite{DBLP:conf/icdt/BunemanKT01}. The main idea is based on annotating (\textit{tagging}) every tuple in the DB with elements from some algebraic structure $(K,+,\cdot,0,1)$\footnotemark
 \footnotetext{$K$ is a set, containing two distinguished elements $0,1$; and $+,\cdot$ are binary operators on elements from $K$.}
-resulting in \textit{K-relations}\footnotemark, 
-\footnotetext{Informally, relations in which tuples are annotated with elements from $K$.}
-and extending $\mathcal{RA^+}$ (relational algebra, excluding the difference operator) to operate on $K$-relations via definitions in terms of the abstract + and $\cdot$ operations of $K$:
+resulting in tagged-tuple relations.
+A notationally convenient way of working with tagged-tuple relations is to model tagging by a function on all possible tuples, with those tuples not considered to be ``in" the relation tagged with a special value (usually, it is the $0$ element from the set $K$).
+\par Let us denote the set of all tuples over a finite set of attributes $U$ by $U$-Tup.
+A $K$-relation over a finite set of attributes $U$ is a function $R: U$-Tup $\rightarrow K$ such that its support\footnotemark\hspace{0.2mm} is finite.
+\footnotetext{$\operatorname{support}(R) = \{t\;|\;R(t) \neq 0 \}$.}
+The following definitions extend $\mathcal{RA^+}$ (relational algebra, excluding the difference operator) to operate on $K$-relations:
 \begin{itemize}
-    \item + corresponds to alternative use of data (union - $\cup$ or projection - $\Pi$);
-    \item $\cdot$ corresponds to joint use of data (join - $\bowtie$);
-    \item $0$ and $1$ are used for selection ($\sigma$) predicates.
+    \item \textbf{empty relation.} For any set of attributes $U$, there is a function $\emptyset : U$-Tup $ \rightarrow K$ such that $\emptyset(t) = 0$, $\forall t \in U$-Tup.
+    \item \textbf{union.} If $R_1, R_2 : U$-Tup $ \rightarrow K$ then $R_1 \cup R_2 : U$-Tup $ \rightarrow K$ is defined by $(R_1 \cup R_2)(t) \triangleq R_1(t) + R_2(t)$, $\forall t \in U$-Tup.
+    \item \textbf{projection.} If $R : U$-Tup $ \rightarrow K$ and $V \subseteq U$ then $\pi_VR : V$-Tup $ \rightarrow K$ is defined by $(\pi_VR)(t) \triangleq \sum\limits_{t=t'\;on\;V\;and\;R(t') \neq 0}R(t')$, $\forall t \in U$-Tup.\\
+    (here $t=t'\;on\;V$ means $t' \in U$-Tup whose restriction to $V$ is the same as $t$; note also that the sum is finite since $R$ has finite support).
+    \item \textbf{selection.} If $R : U$-Tup $ \rightarrow K$ and the selection predicate \textbf{P} maps each tuple in $U$-Tup to either $0$ or $1$, then $\sigma_\textbf{P}R : U$-Tup $ \rightarrow K$ is defined by $(\sigma_\textbf{P}R)(t) \triangleq R(t) \cdot \textbf{P}(t)$, $\forall t \in U$-Tup.
+    \item \textbf{natural join.} If $R_i : U_i$-Tup $ \rightarrow K$, i=1,2 then $R_1 \bowtie R_2$ is the $K$-relation over $U_1 \cup U_2$ defined by $(R_1 \bowtie R_2)(t) \triangleq R_1(t_1) \cdot R_2(t_2)$, where $t_1=t$ on $U_1$ and $t_2 = t$ on $U_2$, $\forall t \in U_1 \cup U_2$-Tup.
+    \item \textbf{renaming.} If $R : U$-Tup $ \rightarrow K$ and $\beta : U \rightarrow U'$ is a bijection then $\rho_\beta R$ is a $K$-relation over $U'$ defined by $(\rho_\beta R)(t) \triangleq R(t \circ \beta)$, $\forall t \in U'$-Tup.
 \end{itemize}
-Note, this method has to comply with common $\mathcal{RA^+}$ identities in order to correctly extend to $K$-relations:
+Green et al. \cite{green2007provenance} showed that the following $\mathcal{RA}$ identities:
 \begin{itemize}
     \item join and union are both associative and commutative;
     \item union has identity $\emptyset$;
     \item join is distributive over union;
-    \item $\sigma_{false}(R) = \emptyset$ and $\sigma_{true}(R) = R$.
+    \item $\sigma_{false}(R) = \emptyset$ and $\sigma_{true}(R) = R$ ($false$ and $true$ are the uniformly false and true predicates, respectively).
 \end{itemize}
-Green et al. \cite{green2007provenance} showed that these identities hold for $\mathcal{RA^+}$ on $K$-relations \textit{iff} $(K,+,\cdot,0,1)$ is a \textit{commutative semiring}.
+hold for $\mathcal{RA^+}$ on $K$-relations \textit{iff} $(K,+,\cdot,0,1)$ is a \textit{commutative semiring}.
 I.e., $(K,+,0)$ and $(K,\cdot,1)$ are commutative monoids\footnotemark,
 \footnotetext{An algebraic structure that is closed under an associative binary operation and has an identity element.} 
-$\cdot$ is distributive over + and $\forall a, 0 \cdot a = a \cdot 0 = 0$. \\
+$\cdot$ is distributive over + and $\forall a, 0 \cdot a = a \cdot 0 = 0$.
 
 % Important Cases
 \subsection{Important cases} Several important semirings that are discussed in the literature \cite{green2007provenance, Karvounarakis:2012:SDQ:2380776.2380778, Senellart2017} are:
 \begin{itemize}
-    \item $(\mathbb{B}, \vee, \wedge, false, true)$ - binary trust (set semantics);
-    \item $(\mathbb{N}, +, \cdot, 0, 1)$ - multiplicity (bag semantics);
+    \item $(\mathbb{B}, \vee, \wedge, false, true)$ - binary trust (set semantics, $\mathbb{B} = \{true, false\}$);
+    \item $(\mathbb{N}, +, \cdot, 0, 1)$ - multiplicity (bag semantics, $\mathbb{N}$ is the set of natural numbers);
     \item $(\mathbb{A}, min, max, 0, P)$ - security semiring (access control), where the total order $\mathbb{A}=P<C<S<T<0$ describes levels of security clearance: $P$ public, $C$ confidential, $S$ secret, and $T$ top-secret;
     \item $([0,1], max, \cdot, 0, 1)$ - Viterbi semiring (confidence scores, probability);
     % \item $(\mathbb{N}\cup\{\infty\}, min, +, \infty, 0)$ - tropical semiring (data pricing);
@@ -62,8 +69,8 @@ $\cdot$ is distributive over + and $\forall a, 0 \cdot a = a \cdot 0 = 0$. \\
 % what is a data-dependent process?
 A Data-Dependent Process (DDP) is a logical flow that is specified by a finite state machine (FSM) whose transitions are either governed by boolean queries over an underlying database, or otherwise correspond to external effects such as user choices, interacting applications, etc.
 % Deutch's work
-\par Deutch et al. \cite{Deutch_DDP} suggested approaching the problem of analyzing DDPs using known data provenance practices. In particular, in their study they use provenance semirings \cite{green2007provenance} to get a mathematical expression that describes an execution path over the FSM (such a path models a possible execution of a DDP). The transitions on such a path depend on queries over a database or on external user actions. Deutch et al. introduced a new method for generalizing provenance semirings to the context of DDP analysis. This is achieved by using two separate (and potentially, different) semirings - one for user actions and the other for DB tuples, and combining them by a novel \textit{tensor product} construction, as opposed to completely separating the two kinds of provenance semirings by e.g., a simple cartesian product of the two semirings. The proposed method allows to construct a generalized provenance expression (using polynomials) for a possible execution of a DDP and to specialize it using homomorphisms \cite{green2007provenance}.
-\par In terms of methodology, keeping track of provenance of a DDP along an execution path (as long as the path is finite) is similar to tracking provenance of a query result, where each edge on the path is a piece of data (with its own provenance, e.g., an intermediate result), and the whole path corresponds to a joint use of the pieces of data.
+\par Deutch et al. \cite{Deutch_DDP} suggested approaching the problem of analyzing DDPs using data provenance practices. In particular, in their study, they use provenance semirings \cite{green2007provenance} to obtain a mathematical expression that describes an execution path over the FSM (such a path models a possible execution of a DDP). The transitions on such a path depend on queries over a database or on external user actions. Deutch et al. introduced a new method for generalizing provenance semirings to the context of DDP analysis. This is achieved by using two separate (and potentially, different) semirings - one for user actions and the other for DB tuples, and combining them by a novel \textit{tensor product} construction, as opposed to completely separating the two kinds of provenance semirings by e.g., a simple cartesian product of the two semirings. The proposed method allows to construct a generalized provenance expression (using polynomials) for a possible execution of a DDP and to specialize it using homomorphisms \cite{green2007provenance}.
+\par In terms of methodology, keeping track of provenance of a DDP along an execution path (as long as the path is finite) is intuitively similar to tracking provenance of a query result, where each edge on the path is a piece of data (with its own provenance, e.g., an intermediate result), and the whole path corresponds to a joint use of the pieces of data.
 % comparison to a single-query provenance analysis
 
 
@@ -74,24 +81,24 @@ According to the official GitHub page \cite{provsql_github}:
 ``The goal of the ProvSQL project is to add support for (m-)semiring provenance and uncertainty management to PostgreSQL databases, in the form of a PostgreSQL extension/module/plugin. It is work in progress at the moment." \\
 Next, we present several concepts that are incorporated in ProvSQL and briefly discuss its implementation.
 % m-semirings
-\subsection{Semirings with monus} We previously stated in section \ref{sec:semiring provenance} that provenance semirings extend only to  $\mathcal{RA^+}$ queries. However, \cite{monus_k_relations} identified a large class of semirings that (subject to certain restrictions) can be equipped with a monus operator $-$. Thus, it is possible to generalize provenance capturing to $\mathcal{RA}$ with a difference $(\setminus)$ operation (adding support for non-monotone\footnotemark queries). 
-\footnotetext{$I \subseteq I' \notimplies Q(I) \subseteq Q(I')$.}
-This class of semirings is called \textit{m-semirings}. Furthermore, \cite{monus_k_relations} show a universal m-semiring, i.e., it is possible to obtain a provenance evaluation in any other m-semiring by applying the appropriate semiring homomorphism.
+\subsection{Semirings with monus} We previously stated in section \ref{sec:semiring provenance} that provenance semirings cover only $\mathcal{RA^+}$ queries. However, \cite{monus_k_relations} identified a large class of semirings that (subject to certain restrictions) can be equipped with a monus operator $-$. Thus, it is possible to generalize provenance capturing to $\mathcal{RA}$ with a difference $(\setminus)$ operation (adding support for non-monotone\footnotemark queries). 
+\footnotetext{Non-monotone means: $I \subseteq I' \notimplies Q(I) \subseteq Q(I')$.}
+This class of semirings is called \textit{m-semirings}. Furthermore, \cite{monus_k_relations} show a universal m-semiring, i.e., it is possible to obtain a provenance evaluation in any other m-semiring by applying an appropriate semiring homomorphism.
 % Provenance Circuits
 \subsection{Provenance Circuits}\label{sec:provenance circuits}
-As shown previously by Green et al. \cite{green2007provenance} and Karvounarakis et al. \cite{Karvounarakis:2012:SDQ:2380776.2380778}, provenance explanations can be expressed via semiring formulas (polynomials). These formulas may blow-up in terms of space consumption, and, thus, they are problematic for practical use. An alternative (more compact) representation for provenance annotations is  \textit{circuits} \cite{Deutch2014, Senellart2017}, which are constructed per-query. A provenance circuit is an inductively built directed acyclic graph (DAG), with the following properties:
+As shown previously by Green et al. \cite{green2007provenance} and Karvounarakis et al. \cite{Karvounarakis:2012:SDQ:2380776.2380778}, provenance information can be expressed via semiring formulas (polynomials). These formulas may blow-up in terms of space consumption, and, thus, they are problematic for practical use. An alternative (more compact) representation for provenance annotations is  \textit{circuits} \cite{Deutch2014, Senellart2017}, which are constructed per-query. A provenance circuit is an inductively built directed acyclic graph (DAG), with the following properties:
 \begin{itemize}
     \item The leaves contain annotations of tuples from the input DB.
     \item Inner nodes represent operators from a particular semiring (termed \textit{gates} by Senellart et al.). 
-    \item The edges (termed \textit{wires} by Senellart et al.) connect nodes to an operator, representing an intermediate calculation.
+    \item The edges (termed \textit{wires} by Senellart et al.) connect nodes to an operator, representing operands of an intermediate calculation.
     \item The sub-DAG under a given node represents the semiring formula for deriving it. 
 \end{itemize}
 % PostgreSQL Hooks
 \subsection{PostgreSQL Hooks} PostgreSQL (Postgres) hooks \cite{postgre_hooks} make it possible to extend/modify its behaviour without rebuilding Postgres, by interrupting the execution process at certain points. Similarly to Postgres itself, the hooks API is written in C. Every hook is accessible via a global function pointer, initially set to \texttt{NULL}. During an extension's loading (following a \texttt{CREATE EXTENSION} command) Postgres calls the extension's own \texttt{\_PG\_init} function (if implemented), which has access to the hooks handler pointers (at this point, a hook function can be registered). When Postgres needs to call a hook, it checks the relevant function pointer, and calls the registered function, if the pointer is set.
 % Implementation
-\input{figures/provsql_architecture}
 \subsection{Implementation} ProvSQL \cite{provsql_github} uses the \texttt{planner\_hook}, which is called after a query has been parsed, and before it is sent to the query planner. The system architecture (as part of Postgres's query execution pipeline) is depicted in Figure \ref{fig:provsql_architecture}.
 ProvSQL currently supports a wide range of non-aggregate SQL queries (for more details see \cite{provsql_github, Senellart2018}). The generated query result includes a \texttt{provsql} column of unique\footnotemark
 \footnotetext{128-bit universally unique identifiers (UUIDs) that are generated using the \texttt{uuid-ossp} PostgreSQL module.}
-tokens, identifying gates of the provenance circuit.
+tokens, identifying gates of the produced provenance circuit.
+\input{figures/provsql_architecture}
 

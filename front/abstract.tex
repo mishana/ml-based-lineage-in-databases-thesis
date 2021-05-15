@@ -18,9 +18,19 @@
 
 \abstractEnglish{
 
-In recent years, there has been extensive research on \textit{data provenance}. Previous works were concerned with annotating the results of database (DB) queries with provenance information. This information proved useful in explaining query results at various resolution levels.
-\par In this work, we aspire to track the lineage of tuples throughout their database lifetime. That is, we consider a scenario in which tuples that are produced by a query may affect other tuple insertions into the DB, as part of a normal workflow. As time goes on, provenance explanations for such tuples become deeply nested and highly complex in terms of space consumption, lineage querying time, clarity and readability.
-\par We present a novel approach for \textit{approximating} lineage tracking. We use Machine Learning (ML) and Natural Language Processing (NLP) techniques; mainly, \textit{word embedding}. We integrate our lineage computations into PostgreSQL via an extension (ProvSQL) and exhibit useful results in terms of accuracy against exact, semiring-based justifications. We argue that our proposed solution does not suffer from space complexity blow-up over time, and thus makes a provenance tracking system in such a setting feasible. A significant benefit of our approach is a ``natural ranking" of explanations.
+There has been extensive research on data provenance. Previous works were concerned with annotating the results of database (DB) queries with provenance information which is useful in explaining query results at various resolution levels. In this work, we track the lineage of tuples throughout their database lifetime. That is, we consider a scenario in which tuples (records) that are produced by a query may affect other tuple insertions into the DB, as part of a normal workflow. As time goes on, provenance explanations for such tuples become deeply nested, increasingly consuming  space, and resulting in decreased clarity and readability.
+\par We present a novel approach for approximating lineage tracking. We use Machine Learning (ML) and Natural Language Processing (NLP) techniques; mainly, word embedding. 
+The basic idea is summarizing (and approximating) the lineage of each tuple via a small set of constant-size vectors (the number of vectors per-tuple is a hyperparameter). For explicitly (and independently of DB contents)  inserted tuples -  the vectors are obtained via a pre-trained word vectors model over their underlying database domain ``text". During the execution of a query, we construct the lineage vectors of the final (and intermediate) result tuples in a similar fashion to that of semiring-based exact provenance calculations. We extend the $+$ and $\cdot$ operations to generate sets of lineage vectors, while emphasizing the ability to propagate information and preserve the compact representation. Therefore, our solution does not suffer from space complexity blow-up over time. Another significant benefit of our approach is a ``natural ranking" of explanations to the existence of a tuple in the DB.
+\par We devise a genetics-inspired improvement to our basic method. The data columns of an entity (and potentially other columns) are a tuple’s basic properties, i.e., the ``genes" that combine to form its genetic code. In this setting, finding the lineage of a tuple in the DB is analogous to finding its predecessors via DNA examination. We design an alternative lineage tracking mechanism, that of keeping track of and querying lineage (via embeddings) at the column (``gene") level. This way, we manage to better distinguish between the provenance features and the textual characteristics of a tuple.
+\par We further introduce several improvements and extensions to the basic method:
+\begin{itemize}
+    \item Emphasizing important columns with a query-dependent column weighting.
+    \item Filtering non-contributing tuples using Bloom Filters of queries.
+    \item Filtering non-contributing tuples by a tuple creation timestamp.
+    \item Similarity weighting with query dependency DAG.
+    \item Extending the method to track where provenance.
+\end{itemize}
+\par We integrate our lineage computations into the PostgreSQL system via an extension (ProvSQL) and experimentally exhibit useful results in terms of accuracy against exact, semiring-based, justifications.  In the experiments, we focus on tuples with multiple generations of tuples in their lifelong lineage and analyze them in terms of direct and distant lineage. The examples we present suggest a high usefulness potential for the proposed approximate lineage methods and the further suggested enhancements. This especially holds for the column-based vectors method which exhibits high precision and per-level recall. 
 
 
 } % end of English abstract
@@ -36,16 +46,47 @@ In recent years, there has been extensive research on \textit{data provenance}. 
 עבודות קודמות עסקו בתיוג של תוצאות שאילתות על גבי מסדי נתונים על ידי ׳׳מטא נתונים״ המעידים על היוחסין של התוצאות.
 מטא נתונים אלה הוכחו כשימושיים בהסבר של תוצאות שאילתות ברמות פירוט שונות.
 
-במחקר זה אנו שואפים להתחקות אחר המוצאות של רשומות במסדי נתונים לאורך חייהן.
+במחקר זה אנו שואפים להתחקות אחר המוצאות של רשומות במסדי נתונים לאורך חייהן, תוך הבחנה בין רשומות שהוכנסו באופן ידני ובלתי תלוי בתכולת מסד הנתונים (אלו ״אבני הבנין״ שלנו) לבין רשומות הנוצרות על ידי שאילתא (או, באופן כללי, אשר תלויות בתוכן מסד הנתונים).
 כלומר, אנחנו מניחים תסריט שבו רשומות הנוצרות על ידי שאילתא עלולות להשפיע על הכנסתן של רשומות אחרות למסד הנתונים, וזאת כחלק מתזרים עבודה תקני של המערכת.
-עם חלוף הזמן, אילנות היוחסין (וההסברים הנובעים מהם) של רשומות אלה הופכים מקוננים ומסובכים מאוד מבחינת צריכת זיכרון, זמן חישוב עבור מוצאות רשומות, בהירות וקריאות. 
+בתרחיש אמיתי - רשומות שתלויות בתכולת מסד הנתונים יווצרו באחת מהדרכים הבאות:
+\begin{itemize}
+    \item היררכיה של  
+    מבטים מתוחזקים -
+    כך שכל 
+    מבט
+    יכול להיות תלוי הן בתכולת מסד הנתונים והן
+    במבטים
+    שהוגדרו בשלב מוקדם יותר.
+    \item רשומות אשר מוכנסות למסד הנתונים באמצעות פקודת 
+    \textenglish{\texttt{INSERT INTO SELECT}}.
+    \item רשומות אשר מוכנסות למסד הנתונים באמצעות פקודת 
+    \textenglish{\texttt{UPDATE}}.
+    \item תוצאת שאילתא עם שדות שהוספו באופן ידני, אשר מוכנסת בחזרה לטבלה אחרת במסד הנתונים.
+\end{itemize}
 
+עם חלוף הזמן, אילנות היוחסין (וההסברים הנובעים מהם) של רשומות אלה הופכים מקוננים ומסובכים מאוד מבחינת צריכת זיכרון, זמן חישוב עבור מוצאות רשומות, בהירות וקריאות. 
 אנו מציגים גישה חדשה לחישוב מקורב של מוצאות רשומות תוך שימוש בטכניקות של למידת מכונה ועיבוד שפה טבעית (ובעיקר, שיכון מילים במרחב אוקלידי).
+
+הרעיון המרכזי הוא לסכם (באופן מקורב) את היוחסין של כל רשומה על ידי קבוצה סופית של וקטורים (מספר הוקטורים פר-רשומה הוא היפרפרמטר של המערכת).
+עבור רשומות המוכנסות למסד הנתונים באופן ידני - הוקטורים מחושבים באמצעות מודל מאומן מראש של וקטורי מילה על גבי ה״טקסט״ של הרשומות.
+בזמן תהליך ביצוע של שאילתא על גבי מסד הנתונים, אנו מחשבים את וקטורי היוחסין של הרשומות החדשות בתוצאה של השאילתא באופן דומה לחישוב מדוייק המבוסס חצאי-חוגים (מבנה אלגברי).
+אנו מכלילים את פעולות החיבור והכפל לעבודה על קבוצות של וקטורי יוחסין, תוך שימת דגש על היכולת לפעפע את מידע היוחסין ושמירה על הייצוג הקומפקטי של מספר סופי וחסום של וקטורי יוחסין פר-רשומה.
+\newpage
+כתוצאה, אנחנו מקבלים קבוצות של וקטורי יוחסין עבור רשומות בתוצאה של שאילתא. רשומות חדשות אלה (והמידע בעניין מוצאותיהן) עשויות להתווסף למסד הנתונים בשלב מאוחר יותר (כתלות ביישום הספציפי).
+
+אנו מציגים שיפור משמעותי לשיטה הבסיסית (שפיתחנו) בהשראת אנאלוגיה לתחום הגנטי.
+נניח ורשומה מייצגת את הקוד הגנטי של יישות (אורגניזם חי בעולם מסדי הנתונים).
+העמודות של יישות הן המאפיינים הבסיסיים שלה, כלומר, הגנים שמרכיבים את הקוד הגנטי שלה.
+תחת הנחות אלה, מציאת המוצאות של רשומה במסד הנתונים שקולה למציאת האבות הקדמונים שלה באמצעות בדיקות דנ״א.
+אם כך, אנו מציעים לתחזק ולחפש מוצאות של רשומות באמצעות וקטורי יוחסין ברמת העמודות (גנים) ולא ברמת רשומות שלמות. בצורה זו, אנו מצליחים להבחין בצורה טובה יותר בין תכונות היוחסין לבין המאפיינים הטקסטואליים של רשומה.
+
+לאחר תיאור הרעיון המרכזי, אנו מציגים שיפורים והרחבות לשיטה, שנועדו להפוך אותה לפרקטית ושימושית עבור אנאליסט. אותו אנאליסט, שירצה להשתמש בוקטורי היוחסין על מנת למצוא את מוצאותיה של רשומה ספציפית במסד הנתונים, יוכל לעשות זאת על ידי השוואה בין וקטורי היוחסין של הרשומה לוקטורי היוחסין של קבוצת עניין במסד הנתונים (כל קבוצה של רשומות), ולדרג אותן לפי ״קירבה״ - באופן דומה למתודולוגיה של חיפוש מילים קרובות סמנטית באמצעות השוואת וקטורי מילה.
+
 אנו משלבים את החישוב המקורב של מוצאות רשומות במערכת לניהול מסדי נתונים
 \textenglish{PostgreSQL}
 באמצעות ההרחבה
 \textenglish{ProvSQL}
-ומציגים תוצאות בעלות תועלת מבחינת דיוק בהשוואה לחישוב מדויק המבוסס חצאי-חוגים (מבנה אלגברי).
+ומציגים תוצאות בעלות תועלת מבחינת דיוק בהשוואה לחישוב מדויק המבוסס חצאי-חוגים.
 אנו טוענים כי הפיתרון המוצע אינו סובל מניפוח יתר בסיבוכיות מקום לאורך זמן,
 ולכן הופך מערכת לחקר יוחסין של רשומות ברת ביצוע תחת האילוצים שתוארו לעיל.
 יתרון משמעותי של השיטה שלנו הוא ״דירוג טבעי״ של מוצאות רשומות.

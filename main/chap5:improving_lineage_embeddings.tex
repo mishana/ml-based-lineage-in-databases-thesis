@@ -135,7 +135,7 @@
     where $w_\texttt{A}$ and $w_\texttt{B}$ are respective column weights such that $w_\texttt{B} > w_\texttt{A}$ as column \texttt{B} is mentioned in the query. $\operatorname{sim}(t.\texttt{A}, t'.\texttt{A})$ is the calculated similarity between the lineage vectors for column \texttt{A} of $t$ and $t'$ (similarly for column \texttt{B}). Observe that although column \texttt{A} is not a column of interest in the example, it is a mutual ``gene" of tuples $t$ and $t'$, and, thus it still holds lineage information that is valuable to the similarity calculation.
 \end{enumerate}
 
-\subsection{Note} This technique is applicable mainly for direct provenance. In the context of distant provenance we can use it to get ``immediate contributors" but also take into account lineage tuples identified without it (they will naturally tend to be ranked lower).
+\subsection{Note} This technique is applicable mainly for direct provenance. In the context of distant provenance we can use it to get ``immediate contributors" but also take into account lineage tuples identified without this technique (they will naturally tend to be ranked lower).
  
 
 
@@ -154,7 +154,7 @@
 
 \subsection{Notes} 
 \begin{itemize}
-    \item This basic filtering technique is not applicable to the querying of distant provenance, as it (obviously) looks for tuples that were not directly involved in the evaluation of a query. Extending this basic method to handle indirect provenance is the subject of current research.
+    \item This basic filtering technique is not applicable to the querying of distant provenance, as it (obviously) looks for tuples that were not directly involved in the evaluation of a query. Extending this basic method to handle indirect provenance is the subject of current research. A possible direction is a recursive algorithm that takes into account the query that produced each already discovered (presumed lineage) tuple.
     \item Bloom Filters are probabilistic, but they do not produce false negatives. Thus, they can be reliably used to filter out non-lineage tuples (in our case, a false negative is a tuple $t$ that \textbf{was} involved in the evaluation of a query $q$, but $q \notin t.bloom\_filter$). 
     \item In this work, we emphasize a size-bounded provenance representation. Therefore, it seems that using a Scalable Bloom filter (per-tuple) contradicts this notion, as its size is ultimately bounded by the number of queries served by the system. Therefore, we devise a ``switch \& reset policy" for these bloom filters:
     \begin{enumerate}
@@ -181,7 +181,7 @@
     \end{itemize}
     \item When comparing a tuple $t$ (and its lineage embeddings) to a set of other tuples $T'$, we can precede similarity calculations with the following step:
     \begin{enumerate}
-        \item If $t'.timestamp > t.timestamp$ ($t' \in T'$) then $t'$ is newer than $t$ and cannot be a part of its lineage.
+        \item If $t'.timestamp > t.timestamp$ ($t' \in T'$) then $t'$ is newer than $t$ and therefore cannot be a part of its lineage.
     \end{enumerate}
 \end{enumerate}
 
@@ -189,30 +189,31 @@
 \section{Weighting with Query Dependency DAG}
 \subsection{Rationale} We would like to distinguish between very similar/nearly identical tuples (text-wise) during both direct and distant lineage querying (Bloom filters are one way to achieve this for direct lineage). 
 Additionally, we want to enhance the natural ranking of lineage tuples by amplifying the ``generational gaps". The idea is that tuples from earlier generations in the distant lineage tree structure (of a query-inserted tuple) are to be assigned a lower similarity score during distant lineage querying. 
-The technique is keeping track of dependencies between queries in a DAG structure and weighting the similarity scores of query-inserted tuples (during lineage querying) inversely proportional to the distance between their inserting queries in the query dependency DAG. We say that a query $q$ \textit{depends on} a query $p$ if a tuple $t$ that was created by $p$ was meaningfully involved in the evaluation of $q$.
+The technique is keeping track of dependencies between queries in a DAG structure and weighting the similarity scores of query-inserted tuples (during lineage querying) inversely proportional to the distance, between their inserting queries to the query that computed the explained tuple, in the query dependency DAG. We say that a query $q$ \textit{depends on} a query $p$ if a tuple $t_p$ that was created by $p$ was meaningfully involved in the evaluation of $q$ (i.e., $t_p$ is in the distant lineage of some result tuple $t_q$ in the result of $q$).
 This approach enables us to give lower similarity scores to tuples that were not involved meaningfully in the evaluation of a query (directly or remotely) and amplify the natural ranking of our results in terms of query creation dependencies.\\
 
 \subsection{Implementation}
 \begin{enumerate}
-    \item If there is a tuple $t$ that is involved meaningfully in the evaluation of a query $q$: we say that $q$ \textit{depends on} the query $p$ that inserted $t$ into the DB.
+    \item If there is a tuple $t_p$ that is involved meaningfully in the evaluation of a query $q$: we say that $q$ \textit{depends on} the query $p$ that inserted $t_p$ into the DB.
     \item Initialize an empty query dependency DAG $G = (V, E)$ with a maximum number of nodes $S$ and a maximum height $H$ (hyperparameters), such that $V$ is a set of queries and $E = \{(q, p) \in V\! \times\!V\; |\; q\: depends\: on\: p\}$. 
     % \item Maintain a hash table of queries, for a quick look-up of nodes in the query dependency graph.
     % \item Maintain a linked list of queries that is sorted by query execution order (oldest to newest). This list helps us to quickly find the ``oldest" queries that need to be removed from the graph, when the size limit $S$ is reached.
-    \item When comparing a tuple $t$ (and its lineage embeddings) that was created by a query $q$ (as recorded with this tuple) to another tuple $t'$ in the DB, we can \textbf{replace} similarity calculations with the following steps:
+    \item When comparing a tuple $t_q$ (and its lineage embeddings) that was created by a query $q$ (as recorded with this tuple) to another tuple $t_p$ in the DB, we can \textbf{replace} similarity calculations with the following steps:
     \begin{enumerate}
         \item Denote the sub-tree of $q$ in $G$ (i.e., rooted at $q$) as $G_q = (V_q, E_q)$.
-        \item Denote the query that created the tuple $t'$ (as recorded with this tuple) as $p$.
-        \item If $p \in V_q$ then multiply the similarity for $t'$ by $w_d \leq 1$, which is inversely proportional to the distance $d$ from $q$ to $p$ in $G_q$. One possible implementation for the distance-dependent weighting is $w_d = max\{\frac{1}{2}, 1 - \frac{(d - 1)}{10}\}$, such that $w_1 = 1$, $w_2 = \frac{9}{10}$, etc., and $\forall 1\leq d\leq H: w_d \geq \frac{1}{2}$. Other implementations exist as well. 
-        \item If $p \notin V_q$ then multiply the similarity for $t'$ by $w_{outsider} < w_{d=H}$ (a hyperparameter).
+        \item Denote the query that created the tuple $t_p$ (as recorded with this tuple) as $p$.
+        \item If $p \in V_q$ then multiply the similarity for $t_p$ by $w_d \leq 1$, which is inversely proportional to the distance $d$ from $q$ to $p$ in $G_q$. One possible implementation for the distance-dependent weighting is $w_d = max\{\frac{1}{2}, 1 - \frac{(d - 1)}{10}\}$, such that $w_1 = 1$, $w_2 = \frac{9}{10}$, etc., and $\forall 1\leq d\leq H: w_d \geq \frac{1}{2}$. Other implementations exist as well. 
+        \item If $p \notin V_q$ then multiply the similarity for $t_p$ by 0 < $w_{outsider} < w_{d=H}$ (a hyperparameter). Note that since we defined limits on the maximum number of nodes $S$ and maximum height $H$, some nodes will need to be removed when those limits are reached (see details below). Thus, this method might start producing false negatives at some point; and to not lose those tuples completely, we choose to multiply their similarity by some small, non-zero constant, instead of plain filtering them.
     \end{enumerate}
 \end{enumerate}
 
 \subsection{Notes} 
 \begin{itemize}
-    \item With each node in the graph we keep additional information about its height. This information is maintained and updated upon new edge additions to $G$.
+    \item With each node in the graph $G$ we keep additional information about its height. This information is maintained and updated upon new edge additions to $G$.
     \item Maintain a hash table of queries, for a quick look-up of nodes in the query dependency graph.
     \item Maintain a doubly linked list of queries that is sorted by query execution order (oldest to newest). This list helps us to quickly find the ``oldest" queries that need to be removed from the graph, when the cardinality limit $S$ is reached.
     \item When the height limit $H$ is reached, we eliminate ``deep" leaves (those are the oldest queries in a given branch).
+    \item In this work we put emphasis on a lineage tracking system with constant additional space per tuple. The query dependency DAG goes by the same philosophy and is limited in size by the hyperparameters $S$ and $H$.
 \end{itemize}
 
 
@@ -220,24 +221,26 @@ This approach enables us to give lower similarity scores to tuples that were not
 
 \subsection{Rationale}
 % use case for an analyst
-Sometimes, an analyst might be interested only in a \textbf{subset of base tables} for lineage analysis of tuples that were created by a query. That is, an analyst's workflow may be comprised of the following steps:
+We consider those tables that do not depend on the contents of the DB during their creation as \textit{base tables}.
+At times, an analyst might be interested only in a \textbf{subset of base tables} for lineage analysis of tuples that were created by a query. That is, an analyst's workflow may be comprised of the following steps:
 \begin{enumerate}
     \item Choose a tuple of interest $t$ that was created by a query - for analysis.
     \item Compare the tuple $t$ (via lineage vectors) to tuples from a pre-defined subset of the base tables (e.g., $\{{A, B}\} \subset \{{A,B,C,D,E}\}$, where $A,B,C,D,E$ are base relations in the DB).
-    \item Find the Top-$K$ source tuples (by similarity) that influenced the creation of $t$. 
+    \item Find the Top-$K$ ($K$ is a parameter) source tuples (by similarity) that were meaningfully involved in the creation of $t$. 
 \end{enumerate}
 
-This workflow seems useful and worthy of consideration. Note that it entails a relaxed assumption about lineage analysis in our system, and we would like to exploit it to produce better (i.e., more precise) answers.
+This workflow seems useful and worthy of consideration. Note that it entails a relaxed assumption about the lineage analysis requirements in our system, and we would like to exploit it to produce better (i.e., more precise) answers.
 % how it (should) helps precision
-\par A modern DB may include a large number of base tables, and new tuples that are created from base tables (by a query). As time goes on and the queries become more complex and involve (directly or indirectly) more base tables - we anticipate a growing amount of ``noise'' in the lineage vectors that we maintain and construct.
+\par A modern DB may include a large number of base tables, and new tuples that are created from base tables (by a query). As time goes on and the queries become more complex and involve (directly or indirectly) more base tables - we anticipate a growing amount of ``noise'' in the lineage vectors that we maintain.
 Given an assumption that an analyst is only interested in a (relatively small) subset of the base tables for lineage analysis, we hypothesize that it is possible to diminish the amount of ``noise'' that we propagate over time (via the lineage vectors) by limiting lineage tracking to tuples from base tables that are of interest to the analyst, and tuples that are created from them (by queries).
 
 \subsection{Implementation}
 This technique can be implemented as a wrapper to the addition and multiplication operations on lineage vectors, as presented previously in Algorithms \ref{algo:add_approx} and \ref{algo:mul_approx}: 
 \begin{enumerate}
     \item Denote the subset of base tables that is of interest to the analyst as $S$.
+    \item For each tuple $t$, define $t.related\_tables = \{T'\; |\; \exists t' \in T': t'$ is in the distant lineage of $t\}$. That is, all the tables that were involved (directly or indirectly) in the evaluation of $t$.
     \item Suppose we are given two tuples $t_1$ and $t_2$ with corresponding sets of lineage vectors $LV_1$ and $LV_2$ (either tuple vectors, or column vectors for a specific column) and an operation $op \in \{+, \cdot\}$, such that we are interested in calculating $LV_1 \; op \; LV_2$.
-    \item If $t_1.related\_tables \cap S \neq \emptyset$ and $t_2.related\_tables \cap S \neq \emptyset$, then we proceed as usual, meaning, return $LV_1 \; op \; LV_2$. 
+    \item If $t_1.related\_tables \cap S \neq \emptyset$ and $t_2.related\_tables \cap S \neq \emptyset$, then we proceed as usual, namely, return $LV_1 \; op \; LV_2$. 
     \item Otherwise, if only one of $t_1, t_2$ has related tables in $S$, i.e., suppose without loss of generality that $t_1.related\_tables \cap S \neq \emptyset$ and $t_2.related\_tables \cap S = \emptyset$ then we return $LV_1$.
     That is, we propagate forward only the relevant lineage data.
     \item Otherwise, if both $t1$ and $t2$ are of no interest to an analyst, then the output value is of no relevance either, and no vector calculation is performed.
@@ -245,26 +248,26 @@ This technique can be implemented as a wrapper to the addition and multiplicatio
 
 \subsection{Notes}
 \begin{itemize}
-    \item Borrowing from semiring theory, this technique can be analogized to tagging each ``irrelevant" base tuple as additive and multiplicative identity in terms of lineage vectors operations.
-    \item Propagating the ``related tables" information is essential for the correctness of this method.
+    \item Borrowing from semiring theory, this technique is analogous to tagging each ``irrelevant" base tuple as additive and multiplicative identity in terms of lineage vectors operations.
+    \item Propagating the ``related tables" information (during lineage vectors computation) is essential for the correctness of this method.
     \item Suppose there are analysts $A_1, ..., A_m$ each with their own set of base tables of interest $B_1, ..., B_m$.
     Then, we may conceivably apply this technique separately to each $A_i$ and $B_i$ (of course, with the implied storage overhead).
 \end{itemize}
 
 
 \section{Where Provenance}
-Recording lineage vectors per fully named columns (see chapter \ref{chap:per_column_lineage_vectors}) enables implementing a form of \textit{where provenance}. By where provenance we mean the following. Given a tuple $t$ in relation $T$ of the DB, a native column \texttt{A} in $t$ and a value $v_\texttt{A}$ for $t$ in column $T.\texttt{A}$, determine the likely tuples $t’$, the \textit{where tuples} in the DB, from which the value $v_\texttt{A}$ originated. If the \texttt{SELECT} clause of $q$, the query that inserted $t$ into the DB, indicates an assigned constant, then no such where tuples exist. 
-\par The technique for locating likely where tuples explaining $v_\texttt{A}$ is as follows. Let $CV_t$ be the mapping associated with the tuple $t$:
+Recording lineage vectors per fully named columns (see chapter \ref{chap:per_column_lineage_vectors}) enables implementing a form of \textit{where provenance} (we are only interested in non-distant provenance here). By where provenance we mean the following. Given a tuple $t$ in relation $T$ of the DB, a native column \texttt{A} in $t$ and a value $v_\texttt{A}$ for $t$ in column $T.\texttt{A}$, determine the likely tuples $t’$, the \textit{where tuples} in the DB, from which the value $v_\texttt{A}$ originated. If the \texttt{SELECT} clause of $q$, the query that inserted $t$ into the DB, indicates an assigned constant, then no such where tuples exist. 
+\par Otherwise, the technique for locating likely where tuples explaining $v_\texttt{A}$ is as follows. Let $CV_t$ be the mapping associated with the tuple $t$:
 \begin{enumerate}
-    \item Find the where tuples \textit{candidates} from analyzing the structure of $q$, the query that inserted $t$ into the DB. That is, if $q$ indicates in the \texttt{SELECT} clause that $T'.\texttt{A}'$ is assigned to $T.\texttt{A}$, then the candidates are the tuples $t' \in T'$ that agree with $t$ on the value of $v_\texttt{A}$ (i.e., $v'_{\texttt{A}'}$ = $v_\texttt{A}$, where $v'_{\texttt{A}'}$ is the value for $t'$ in column $T'.\texttt{A}'$). 
+    \item Find the where tuples \textit{candidates} by analyzing the structure of $q$, the query that inserted $t$ into the DB. That is, if $q$ indicates in the \texttt{SELECT} clause that $T'.\texttt{A}'$ is assigned to $T.\texttt{A}$, then the candidates are the tuples $t' \in T'$ that agree with $t$ on the value of $v_\texttt{A}$ (i.e., $v'_{\texttt{A}'}$ = $v_\texttt{A}$, where $v'_{\texttt{A}'}$ is the value for $t'$ in column $T'.\texttt{A}'$). 
     Note that: 
     \begin{itemize}
         \item If the \texttt{SELECT} clause of $q$ contains other columns from $T'$, e.g., the column $T'.\texttt{B}'$ is assigned to $T.\texttt{B}$, then additional filtering of candidate where tuples is possible, as these tuples must agree with $t$ on the respective value $v_\texttt{B}$ of tuple $t$ for column $T.\texttt{B}$ as well. 
-        \item If $q$ indicates in the \texttt{SELECT} clause that $T.\texttt{A}$ is assigned to from combining multiple columns, e.g., $T'_1.\texttt{A}'_1$ $*$ $T'_2.\texttt{A}'_2$ is assigned to $T.\texttt{A}$, then the candidates are the tuples $t'_1 \in T'_1$ and $t'_2 \in T'_2$ that (when combined) agree with $t$ on the value of $v_\texttt{A}$ (i.e., $v'_{\texttt{A}'_1} * v'_{\texttt{A}'_2}$ = $v_\texttt{A}$, where $v'_{\texttt{A}'_i}$ is the value for $t'_i$ in column $T'_i.\texttt{A}'_i$). 
+        \item If $q$ indicates in the \texttt{SELECT} clause that $T.\texttt{A}$ is assigned to by combining multiple columns, e.g., $T'_1.\texttt{A}'_1$ $*$ $T'_2.\texttt{A}'_2$ is assigned to $T.\texttt{A}$, then the candidates are the tuples $t'_1 \in T'_1$ and $t'_2 \in T'_2$ that (when combined) agree with $t$ on the value of $v_\texttt{A}$ (i.e., $v'_{\texttt{A}'_1} * v'_{\texttt{A}'_2}$ = $v_\texttt{A}$, where $v'_{\texttt{A}'_i}$ is the value for $t'_i$ in column $T'_i.\texttt{A}'_i$). 
     \end{itemize}
     \item A where tuple needs be directly involved in the computation of $t$, namely used by the query $q$ that inserted $t$ into the DB.
     This information is encoded both in $t'$'s Bloom Filter of queries and the query dependency DAG (some redundancy, though the Bloom Filter is more precise in this regard).
     So, if $q \notin t'.bloom\_filter$ or if $t’$ was inserted by a query $p$ and $(q,p)$ is not an edge in the query dependency DAG, $t’$ cannot be a where tuple explaining $v_\texttt{A}$ in $T.\texttt{A}$.
-    \item To test closeness between $t$ and a candidate where tuple $t'$, we simply calculate $\operatorname{sim}$($t$, $t’$), the similarity between these two tuples, using the mappings $CV_t$ and $CV_{t’}$ associated with $t$ and $t'$, respectively (as explained in chapter \ref{chap:per_column_lineage_vectors}).
+    \item To test closeness between $t$ and a candidate where tuple $t'$, we simply calculate $\operatorname{sim}$($t$, $t’$), the similarity between these two tuples, using the mappings $CV_t$ and $CV_{t'}$ associated with $t$ and $t'$, respectively (as explained in chapter \ref{chap:per_column_lineage_vectors}). Intuitively, it is more beneficial to consider the full mappings $CV_t$ and $CV_{t'}$, when testing closeness between $t$ and $t'$, instead of just comparing $CV_t[T.A]$ and $CV_{t'}[T'.A']$. The reason is that the full mappings usually contain additional useful information, based on which the candidates can be compared and better differentiated.
 \end{enumerate}
 % If tuple $t’$ in the DB does not have $T.\texttt{A}$ in $CV_{t’}$ then $t’$ is definitely not a where tuple for column $T.\texttt{A} \in t$. Also, a where tuple needs be directly involved in the computation of $t$, namely used by the query $q$ that inserted $t$ into the DB. So, if $t’$ was inserted by a query $p$ and $(q,p)$ is not an edge in the query dependency DAG, $t’$ cannot be a where tuple explaining $v$ in $T.\texttt{A}$. Otherwise, if tuple $t$ obtained its value $v$ for $T.\texttt{A}$ based, directly or indirectly, on $v’$, the value of $t’$ for column $T.\texttt{A}$, then the vector set $CV_t[T.\texttt{A}]$ is ``close" to the vector set $CV_{t’}[T.\texttt{A}]$. This holds due to the way column vector sets permute through the computation. To test closeness, we simply calculate $\operatorname{sim}$($CV_t[T.\texttt{A}]$, $CV_{t’}[T.\texttt{A}]$), the similarity between these two sets of vectors.

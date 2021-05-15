@@ -36,7 +36,7 @@
   start chain=going below,]
     %  \node[punktchain, fill=yellow!20] (input) {Input query};
      \node[punktchain, join, fill=red!20] (parser) {Query Parser};
-     \node[punktchain, join] (A) {Ignore direct references to \texttt{provsql} column};
+     \node[punktchain, join] (A) {Ignore direct references\footnotemark to the \texttt{provsql} column};
      \node[punktchain, join] (B) {Add a new result column `\texttt{provsql}' to the parsed query tree};
      \node[punktchain, join] (C) {Register special SQL functions that will operate on the \texttt{provsql} column during query execution};
     \node[punktchain, join, fill=red!20] (planner) {Query Planner};
@@ -53,9 +53,11 @@
   \draw[tuborg, decoration={brace}] let \p1=(A.north), \p2=(C.south) in
     ($(4.45, \y1)$) -- ($(4.45, \y2)$) node[tubnode] {\texttt{provsql\_planner\_hook}};
   \end{tikzpicture}
-   \textbf{\caption{\label{fig:provsql_architecture}ProvSQL system architecture.}}
+   \textbf{\caption{\label{fig:provsql_architecture}ProvSQL system architecture.\\
+   The red rectangles are a part of Postgres's built in execution pipeline. The white rectangles are ProvSQL's implementation of a \texttt{planner\_hook}, which we use for the provenance-related calculations.}}
 \normalsize
 \end{figure}
+\footnotetext{Explicit mentions of the \texttt{provsql} column in the query (in any of the \texttt{SELECT}, \texttt{FROM} or \texttt{WHERE} clauses).}
 %%% Local Variables: 
 %%% mode: latex
 %%% TeX-master: t

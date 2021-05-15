@@ -9,7 +9,7 @@
 %\end{figure}
 
 \subsection*{Data Lineage}
-The focus of this work is providing explanations (or justifications) for the existence of tuples in a Database Management System (DBMS). These explanations are also known as \textit{data provenance} \cite{cheney2009provenance}.
+The focus of this work is providing explanations (or justifications) for the existence of tuples in a Database Management System (DBMS, DB). These explanations are also known as \textit{data provenance} \cite{cheney2009provenance}.
 Provenance in the literature \cite{Ives2008, Deutch2015} often refers to forms of ``justifying'' query results. That is, the provenance context is the state of the database (DB) just before the query execution. The specific type of provenance on which we focus is \textit{lineage} \cite{Cui:2000:TLV:357775.357777}, namely a collection of DB tuples whose existence led to the existence of tuple \textit{t} in a query result. 
 
 
@@ -20,7 +20,7 @@ In a real-life setting - tuples that are inserted via a query can be one of the 
     \item A hierarchy of materialized views - where each view can depend both on the DB and on previously defined views.
     \item Tuples that are inserted via a SQL \texttt{INSERT INTO SELECT} statement.
     \item Tuples that are inserted via a SQL \texttt{UPDATE} statement.
-    \item A query result with explicitly added data fields, that is added back to another table in the DB. For example, get names of customers retrieved from an \texttt{orders} table, calculate some non-database-resident ``psychological profile" for each customer and insert both to a \texttt{customer\_profile} table for future recommendations.
+    \item A query result with explicitly added data fields, that is added back to some table in the DB. For example, get names of customers retrieved from an \texttt{orders} table, calculate some non-database-resident ``customer profile" for each customer and insert both into a \texttt{customer\_profile} table for providing future recommendations.
 \end{itemize}
 
 
@@ -31,21 +31,21 @@ As time goes on, provenance information for tuples that are inserted via a query
 \subsection*{Main Contributions}
 \par The main contributions of this work are as follows:
 \begin{enumerate}
-    \item The efficient, with constant additional space per tuple, usage of word vectors to encode \textit{lifelong} lineage.
+    \item The space-efficient, with constant additional space per tuple, usage of word vectors to encode \textit{lifelong} lineage.
     \item A family of algorithms and enhancements that render the approach practical for both direct (i.e., current DB state) and indirect (i.e., all history) lineage computations.
-    \item Thorough experimentation which exhibits high usefulness potential.
+    \item Experimentation which exhibits high usefulness potential.
 \end{enumerate}
 
 
 \subsection*{Organization}
-The rest of this work is organized as follows.
-Previous work on provenance is surveyed in depth in Chapter 2.
+The rest of this thesis is organized as follows.
+Previous work on provenance is surveyed in Chapter 2.
 In Chapter 3 we discuss relational embeddings and the motivation to use them for lineage encoding.
 In Chapter 4 we introduce basic algorithms for creating per-tuple lineage encoding vectors.
 In Chapter 5 we adapt these basic algorithms to per-column lineage encoding vectors.
 Chapter 6 discusses improvements to the previously presented algorithms.
-In Chapter 7 we present thorough experimental results.
-In Chapter 8 we provide further discussion on a few topics presented in this paper.
+In Chapter 7 we present experimental results.
+In Chapter 8 we provide further discussion on a few topics presented in this thesis.
 We conclude in Chapter 9, in which we also outline directions for future research.
 
 % \subsection*{An unnumbered subsection}

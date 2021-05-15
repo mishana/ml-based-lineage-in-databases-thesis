@@ -1,13 +1,13 @@
 \chapter{Conclusions and Future Directions}
 \label{chap:conclusions}
 
-We briefly surveyed classic approaches to provenance implementation in DBMSs, and described a state-of-the-art ``exact provenance tracking" system (ProvSQL). We then presented a novel approach, in which we approximate lineage (a specific type of provenance) using embedding techniques; drawing inspiration from word vectors in the NLP domain. Finally, we showed a few preliminary experimental results of our approximate lineage computation, and provided insights as to its performance when compared to the exact lineage obtained from the  ProvSQL system. 
-\par The examples we presented suggest a high usefulness potential for our proposed approximate lineage methods.
-This especially holds for the query induced column weighting method which exhibits high precision. We are currently in the process of evaluating additional queries over the current example DBs as well as additional DBs. 
+We briefly surveyed classic approaches to provenance implementation in DBMSs, and described a state-of-the-art ``exact provenance tracking" system (ProvSQL). We then presented a novel approach, in which we approximate lineage (a specific type of provenance) using embedding techniques; drawing inspiration from word vectors in the NLP domain. Finally, we showed a few preliminary and advanced experimental results of our approximate lineage computation, and provided insights as to its performance when compared to the exact lineage obtained from the  ProvSQL system. 
+\par The examples we presented suggest a high usefulness potential for our proposed approximate lineage methods and the further suggested enhancements.
+This especially holds for the Column Vectors method which exhibits high precision and per-level recall. We are currently in the process of evaluating additional DBs. 
 \par Next, we describe promising directions of research that we plan to explore in the area of approximate provenance computation.
 
 % Why word embeddings
-\section{Word Embedding vs. the field}
+\section{Word Embedding vs. The Field}
 Comparisons to other, possibly simple methods, is needed; yet, obvious ideas seem inferior to word embedding. For example, one could think of achieving the same functionality using simple data-type dependent featurization like numerical scaling and one-hot encoding.
 This ``simpler approach" makes assumptions about the problem domain, e.g., the vocabulary. Thus, rendering the update of such vocabulary impractical, as opposed to word embeddings via \textsc{Word2Vec} that can be modified to support incremental training.
 Most importantly, word embeddings support similarity queries by grouping closely ``semantically" similar words in a low dimensional space. This property lies at the heart of our lineage-approximation work, as it enables encoding lineage in a low-dimensional space with similar ``grouping" properties. One-hot encoding can not help achieve any of these characteristics.
