@@ -136,7 +136,7 @@ A detailed outline of the ``textification" and training processes follows:
 \begin{enumerate}
     \item Generate a \texttt{Key} column with unique values for each table in the DB.
     \item Extract two corpora from the DB, one with columns (except the \texttt{Key} columns) as sentences, and the other with tuples as sentences.
-    \item Transform each numerical value in the generated corpora by concatenating the relevant column name to the number. Other methods of dealing with numerical values exist as well, and are discussed in chapter \ref{chap:discussion}.
+    \item Transform each numerical value in the generated corpora by concatenating the relevant column name to the number. Other methods of dealing with numerical values exist as well, and are discussed in section \ref{sec:relational_embedding}.
     \item Transform each sentence in the generated corpora by injecting the corresponding \texttt{Key} value repeatedly after every $k$ (a separate hyperparameter for the columns corpus and the tuples corpus) words in the sentence. The idea is to encode more information about each tuple in its corresponding \texttt{Key} value vector.
     \item Incrementally train a \textsc{Word2Vec} model on the generated corpora. First, train on the columns corpus and then on the tuples corpus. One may question why we have the same model for both the tuple-based (see chapter \ref{chap:per_tuple_lineage_vectors}) and the column-based (see chapter \ref{chap:per_column_lineage_vectors}) lineage vectors. The answer is that experimentally the models that are restricted to only the tuples corpus or only the columns corpus yield inferior results.
 \end{enumerate}
@@ -160,7 +160,7 @@ where $ps$ is the set of pair-wise similarities between a pair of vectors, one t
 \footnotetext{This logic holds for both tuple-based vectors and column-based vectors (i.e., for each column separately).}
 
 
-\section{Related Work}
+\section{Related Work}\label{sec:relational_embedding}
 % Relational Embeddings
 \textbf{Relational embedding} is a very active area of research \cite{DBLP:journals/corr/abs-1803-01384, sigmod2020_keynote, pie2020_keynote}.
 When converting a relational DB to unstructured text (see section \ref{sec:latent_wv_model}) special care is required to support numerical values correctly. Bordawekar and Shmueli \cite{DBLP:journals/corr/BordawekarS16} take the route of tokenizing numerical values from the DB by preceding each number with a ``range designator" (e.g., 1-10, 50-100, SMALL, BIG, etc.) in the generated corpus. In \cite{DBLP:journals/corr/abs-1712-07199} Bordawekar, Bandyopadhyay and Shmueli use clustering techniques to represent numerical values textually. In contrast, in this work we deal with numerical values by concatenating the relevant column name to each number in the generated corpus. This way, we ensure our model separates between numerical values of different fields, as they are conceptually different, semantically speaking (for example, we want the value 300 for a \texttt{nutrient\_code} field in a \texttt{nutrients} table to have a different learned vector than the value 300 for a \texttt{household\_serving\_size} field in a \texttt{serving\_size} table, from the USDA BFPDB \cite{usda_bfpd-dataset} dataset). In the specific database example with which we experimented, this simple technique proved sufficient.

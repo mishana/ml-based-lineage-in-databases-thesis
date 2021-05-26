@@ -1,40 +1,51 @@
 \chapter{Conclusions and Future Directions}
 \label{chap:conclusions}
 
-We briefly surveyed classic approaches to provenance implementation in DBMSs, and described a state-of-the-art ``exact provenance tracking" system (ProvSQL). We then presented a novel approach, in which we approximate lineage (a specific type of provenance) using embedding techniques; drawing inspiration from word vectors in the NLP domain. Finally, we showed a few preliminary and advanced experimental results of our approximate lineage computation, and provided insights as to its performance when compared to the exact lineage obtained from the  ProvSQL system. 
+We briefly surveyed classic approaches to provenance implementation in DBMSs, and described a state-of-the-art ``exact provenance tracking" system (ProvSQL). We then presented a novel approach, in which we approximate lineage (a specific type of provenance) using embedding techniques; drawing inspiration from word vectors in the NLP domain. Finally, we showed preliminary and advanced experimental results of our approximate lineage computation, and provided insights as to its performance when compared to the exact lineage obtained from the  ProvSQL system. 
 \par The examples we presented suggest a high usefulness potential for our proposed approximate lineage methods and the further suggested enhancements.
-This especially holds for the Column Vectors method which exhibits high precision and per-level recall. We are currently in the process of evaluating additional DBs. 
-\par Next, we describe promising directions of research that we plan to explore in the area of approximate provenance computation.
+This especially holds for the Column Vectors method which exhibits high precision and per-level recall.
+\par Our method implicitly produces a ``natural ranking" of explanations. It is unclear how to get this kind of ranking from semiring provenance polynomials (it might require significant additional manual work). To this end, there is a work by Deutch et al. \cite{Deutch2015} that ranks derivation trees for Datalog programs; the ranking is  based on weights assigned to the deriving Datalog rules and tuples from the underlying database. In contrast, we deal with simpler SQL queries and we look at a much simpler notion: lineage, providing a succinct good-enough and useful one.
 
 % Why word embeddings
 \section{Word Embedding vs. The Field}
 Comparisons to other, possibly simple methods, is needed; yet, obvious ideas seem inferior to word embedding. For example, one could think of achieving the same functionality using simple data-type dependent featurization like numerical scaling and one-hot encoding.
-This ``simpler approach" makes assumptions about the problem domain, e.g., the vocabulary. Thus, rendering the update of such vocabulary impractical, as opposed to word embeddings via \textsc{Word2Vec} that can be modified to support incremental training.
-Most importantly, word embeddings support similarity queries by grouping closely ``semantically" similar words in a low dimensional space. This property lies at the heart of our lineage-approximation work, as it enables encoding lineage in a low-dimensional space with similar ``grouping" properties. One-hot encoding can not help achieve any of these characteristics.
+This ``simpler approach" makes assumptions about the problem domain, e.g., the vocabulary. Thus, rendering the update of such vocabulary impractical, as opposed to word embeddings via \textsc{Word2Vec} that can be modified to support incremental training \cite{w2v_incremental}.
+Most importantly, word embeddings support similarity queries by grouping closely ``semantically" similar words in a low dimensional space. This property lies at the heart of our lineage-approximation work, as it enables encoding lineage in a low-dimensional space with similar ``grouping" properties. One-hot encoding can not help achieve any of these characteristics.\\
+
+\par Next, we describe promising research directions which we plan to explore in the area of approximate provenance computation.
+
+% % Why word embeddings
+% \section{Word Embedding vs. The Field}
+% Comparisons to other, possibly simple methods, is needed; yet, obvious ideas seem inferior to word embedding. For example, one could think of achieving the same functionality using simple data-type dependent featurization like numerical scaling and one-hot encoding.
+% This ``simpler approach" makes assumptions about the problem domain, e.g., the vocabulary. Thus, rendering the update of such vocabulary impractical, as opposed to word embeddings via \textsc{Word2Vec} that can be modified to support incremental training.
+% Most importantly, word embeddings support similarity queries by grouping closely ``semantically" similar words in a low dimensional space. This property lies at the heart of our lineage-approximation work, as it enables encoding lineage in a low-dimensional space with similar ``grouping" properties. One-hot encoding can not help achieve any of these characteristics.
 
 % Distant Provenance - experimentation
 \section{Long-term scenarios and analysis}
-This paper presents a novel approach to approximating lineage and initial experimentation results. Thorough Distant Provenance experimentation and results are at the heart of ongoing research. Some pressing matters that need be addressed and tested are:
+This thesis presents a novel approach to approximating lineage and initial experimentation results. Thorough distant lineage experimentation and results are at the heart of ongoing research. Some interesting research issues that need be addressed and tested are:
 \begin{itemize}
     \item \texttt{DELETE} and \texttt{UPDATE} SQL statements. Clearly, deleted tuples may still be part of the lineage of DB tuples. Thus, deletion should be a ``marking as deleted" rather than actual elimination. Update may be viewed as  deletion followed by insertion. This may be a necessary implementation given that lineage vectors may need be associated with both pre- and post-update states of the DB.  
-    \item How well does the Bloom Filter extension work in scenarios where the overhead of exact tracking approaches makes their usage impractical?
-    \item How fast does the accuracy degrade as tuple history gets more complicated?
+    \item How well does the Bloom Filter extension work in scenarios where the overhead of exact lineage tracking approaches makes their usage impractical?
+    \item How fast does the accuracy degrade as tuple history become more complex?
     \item Show a scenario where the performance of the exact approach makes it completely unusable but the approximate solution is able to produce useful outputs.
     \item Analyze the relationship between the complexity of tuple history and the hyperparameter \textit{max\_vectors\_num}.
     \item How does the overhead of increasing \textit{max\_vectors\_num} compare to the overhead of Bloom Filter information with regard to final precision?
 \end{itemize}
 
+% % A totally different approach for generating a single explanation
+% \section{NN Learned Explanations} 
+% This is a different approach for generating a \textit{single} explanation. In this approach, we try to \textit{learn} a small explanation using a neural network. The input is a tuple t (fields and values) and the query (represented smartly \cite {DBLP:conf/cidr/KipfKRLBK19,DBLP:journals/corr/abs-2004-07009}) and the output are tuple(s) (say, maximum one per relation), explaining t being part of the query result. This approach may be adapted to generate a small constant number of such explanations.
+
 % Looking at ways to generate small partial explanations
 \section{Partial Explanations} 
+In this work, we aspire to approximate the exact lineage explanations by giving a top-$N$ lineage answer, when $N$ is a user (analyst) defined parameter. Another way to deal with the growing complexity of lineage answers is giving partial explanations. 
 There are ways to generate \textit{small partial explanations}:
 \begin{itemize}
-    \item Using ProvSQL and keeping, say, just two (hopefully, typical) explanations. This implies that if we want to ``dig deeper", we need to work recursively.
-    \item Doing the same with vector-based methods; the main advantage over ProvSQL: recursive drill through is done automatically.
+    \item \textbf{Using ProvSQL} and keeping, say, just two (hopefully, typical) explanations. This implies that if we want to ``dig deeper", we need to work recursively.
+    \item Doing the same with \textbf{vector-based methods}; the main advantage over ProvSQL: recursive drill through is done automatically.
+    \item \textbf{NN Learned Explanations} - this is a different approach for generating a \textit{single} explanation. In this approach, we try to \textit{learn} a small explanation using a neural network. The input is a tuple $t$ (fields and values) and the query (represented smartly \cite {DBLP:conf/cidr/KipfKRLBK19,DBLP:journals/corr/abs-2004-07009}) and the output are tuple(s) (say, maximum one per relation), explaining $t$ being part of the query result. This approach may be adapted to generate a small constant number of such explanations.
 \end{itemize}
 
-% A totally different approach for generating a single explanation
-\section{NN Learned Explanations} 
-This is a different approach for generating a \textit{single} explanation. In this approach, we try to \textit{learn} a small explanation using a neural network. The input is a tuple t (fields and values) and the query (represented smartly \cite {DBLP:conf/cidr/KipfKRLBK19,DBLP:journals/corr/abs-2004-07009}) and the output are tuple(s) (say, maximum one per relation), explaining t being part of the query result. This approach may be adapted to generate a small constant number of such explanations.
 
 % \subsection{Where Provenance}
 % Recording lineage vectors per fully named columns (see section \ref{sec:column-vectors}) enables implementing a form of \textit{where provenance}. By where provenance we mean the following. Given a tuple $t$ in relation $T$ of the DB, a column \texttt{A} in $t$ and a value $v$ for $t$ in column $T.\texttt{A}$, determine the likely tuples $t’$, the \textit{where tuples} in the DB, from which the value $v$ originated. If the \texttt{SELECT} clause of $q$, the query that inserted $t$ into the DB, indicates an assigned constant, then no such where tuples exist. 

@@ -219,6 +219,43 @@
         \cmidrule(lr){2-4} \cmidrule(lr){5-6}\\, after row=\midrule},
         every last row/.style={after row=\bottomrule},
         every odd row/.style={before row={\rowcolor{gray!10}}},
+    },
+    format samples-table/.style={
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+        every odd row/.style={before row={\rowcolor{gray!10}}},
+    },
+    format samples-nutrients/.style={
+        columns/ndb-no/.style={
+            column name={\texttt{ndb\_no}},
+            string type,
+            postproc cell content/.code={}
+        },
+        columns/derivation-code/.style={
+            column name={\texttt{derivation\_code}},
+            string type,
+            postproc cell content/.code={}
+        },
+        columns/nutrient-code/.style={
+            column name={\texttt{nutrient\_code}},
+            string type,
+            postproc cell content/.code={}
+        },
+        columns/nutrient-name/.style={
+            column name={\texttt{nutrient\_name}},
+            string type,
+            postproc cell content/.code={}
+        },
+        columns/out-val/.style={
+            column name={\texttt{out\_val}},
+            string type,
+            postproc cell content/.code={}
+        },
+        columns/out-uom/.style={
+            column name={\texttt{out\_uom}},
+            string type,
+            postproc cell content/.code={}
+        },
     }
 }
 

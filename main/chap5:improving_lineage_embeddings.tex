@@ -166,6 +166,7 @@
         \item In order to maintain the invariant of ``no false negatives" when querying the old Bloom filter of a tuple $t$ - it is important to keep track of the oldest query id that is tracked by the old filter. That is, say the current old filter of $t$ encodes information only for queries $q$ with $q.id \geq t.oldest\_query\_id$\footnotemark; then given a tuple $t'$ which was created by a query $q'$ with $q'.id < t.oldest\_query\_id$ - we do not test for the existence of $q'$ in $t.bloom\_filter$ (otherwise, we risk returning a false negative).
         \footnotetext{We view query id's as timestamps.}
     \end{enumerate}
+    \item Bloom Filters are a universal enhancement that can be applied to any lineage-approximation technique. They complement beautifully the word embedding based lineage vectors, but are far from being a ``silver bullet" on their own. In particular, in the extreme case where most (or even all) the tuples of a table \texttt{A} participate in the evaluation of a query $q$, the Bloom Filters (almost) will not help when comparing a tuple from the result of $q$ to tuples from table \texttt{A}.
 \end{itemize}
 
 
@@ -213,7 +214,7 @@ This approach enables us to give lower similarity scores to tuples that were not
     \item Maintain a hash table of queries, for a quick look-up of nodes in the query dependency graph.
     \item Maintain a doubly linked list of queries that is sorted by query execution order (oldest to newest). This list helps us to quickly find the ``oldest" queries that need to be removed from the graph, when the cardinality limit $S$ is reached.
     \item When the height limit $H$ is reached, we eliminate ``deep" leaves (those are the oldest queries in a given branch).
-    \item In this work we put emphasis on a lineage tracking system with constant additional space per tuple. The query dependency DAG goes by the same philosophy and is limited in size by the hyperparameters $S$ and $H$.
+    \item In this work we emphasize a lineage tracking system with constant additional space per tuple. The query dependency DAG adheres to the same philosophy and is limited in size by the hyperparameters $S$ and $H$.
 \end{itemize}
 
 
@@ -221,7 +222,7 @@ This approach enables us to give lower similarity scores to tuples that were not
 
 \subsection{Rationale}
 % use case for an analyst
-We consider those tables that do not depend on the contents of the DB during their creation as \textit{base tables}.
+We consider those tables that do not depend on the contents of the DB when these tables are created, and thereafter, as \textit{base tables}. Note that tuples can be manually inserted to and deleted from base tables, but, not in a programmatic manner over the DB, e.g., a SQL \texttt{INSERT} statement that is based on the DB contents.
 At times, an analyst might be interested only in a \textbf{subset of base tables} for lineage analysis of tuples that were created by a query. That is, an analyst's workflow may be comprised of the following steps:
 \begin{enumerate}
     \item Choose a tuple of interest $t$ that was created by a query - for analysis.

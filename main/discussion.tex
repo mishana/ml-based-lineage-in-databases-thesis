@@ -20,10 +20,10 @@
 %     \item Analogous to tuple vectors but everything is done at the column level (see section \ref{sec:column-vectors}).
 % \end{itemize}
 
-% Bloom Filters and timestamps
-\section{Bloom-Filters and Timestamps} Bloom-Filters and timestamps are universal enhancements that can be applied to any lineage-approximation technique. They complement beautifully the word embedding based lineage vectors, but are far from being a ``silver bullet" on their own.
-In particular, in the extreme case where most (or even all) the tuples of a table \texttt{A} participated in the evaluation of a query $q$, the Bloom Filters (almost) will not help when comparing a tuple from the result of $q$ to tuples from table \texttt{A}.
+% % Bloom Filters and timestamps
+% \section{Bloom-Filters and Timestamps} Bloom-Filters and timestamps are universal enhancements that can be applied to any lineage-approximation technique. They complement beautifully the word embedding based lineage vectors, but are far from being a ``silver bullet" on their own.
+% In particular, in the extreme case where most (or even all) the tuples of a table \texttt{A} participated in the evaluation of a query $q$, the Bloom Filters (almost) will not help when comparing a tuple from the result of $q$ to tuples from table \texttt{A}.
 
-% Natural Ranking
-\section{A Natural Ranking of Explanations}
-Our method implicitly produces a ``natural ranking" of explanations. It is unclear how to get this kind of ranking from semiring provenance polynomials (it might require significant additional manual work). To this end, there is a work by Deutch et al. \cite{Deutch2015} that ranks derivation trees for Datalog programs. In contrast, we deal with simpler SQL queries and we look at a much simpler notion: lineage, providing a succinct good-enough and useful one.
+% % Natural Ranking
+% \section{A Natural Ranking of Explanations}
+% Our method implicitly produces a ``natural ranking" of explanations. It is unclear how to get this kind of ranking from semiring provenance polynomials (it might require significant additional manual work). To this end, there is a work by Deutch et al. \cite{Deutch2015} that ranks derivation trees for Datalog programs. In contrast, we deal with simpler SQL queries and we look at a much simpler notion: lineage, providing a succinct good-enough and useful one.

@@ -31,24 +31,26 @@ A notationally convenient way of working with tagged-tuple relations is to model
 \par Let us denote the set of all tuples over a finite set of attributes $U$ by $U$-Tup.
 A $K$-relation over a finite set of attributes $U$ is a function $R: U$-Tup $\rightarrow K$ such that its support\footnotemark\hspace{0.2mm} is finite.
 \footnotetext{$\operatorname{support}(R) = \{t\;|\;R(t) \neq 0 \}$.}
-The following definitions extend $\mathcal{RA^+}$ (relational algebra, excluding the difference operator) to operate on $K$-relations:
+The following definitions view an $\mathcal{RA^+}$ (relational algebra, excluding the difference operator) expression $E$ as a $K$-relation, namely a function. The definition is recursive on the structure of $\mathcal{RA^+}$ expression $E$:
 \begin{itemize}
     \item \textbf{empty relation.} For any set of attributes $U$, there is a function $\emptyset : U$-Tup $ \rightarrow K$ such that $\emptyset(t) = 0$, $\forall t \in U$-Tup.
     \item \textbf{union.} If $R_1, R_2 : U$-Tup $ \rightarrow K$ then $R_1 \cup R_2 : U$-Tup $ \rightarrow K$ is defined by $(R_1 \cup R_2)(t) \triangleq R_1(t) + R_2(t)$, $\forall t \in U$-Tup.
     \item \textbf{projection.} If $R : U$-Tup $ \rightarrow K$ and $V \subseteq U$ then $\pi_VR : V$-Tup $ \rightarrow K$ is defined by $(\pi_VR)(t) \triangleq \sum\limits_{t=t'\;on\;V\;and\;R(t') \neq 0}R(t')$, $\forall t \in U$-Tup.\\
     (here $t=t'\;on\;V$ means $t' \in U$-Tup whose restriction to $V$ is the same as $t$; note also that the sum is finite since $R$ has finite support).
     \item \textbf{selection.} If $R : U$-Tup $ \rightarrow K$ and the selection predicate \textbf{P} maps each tuple in $U$-Tup to either $0$ or $1$, then $\sigma_\textbf{P}R : U$-Tup $ \rightarrow K$ is defined by $(\sigma_\textbf{P}R)(t) \triangleq R(t) \cdot \textbf{P}(t)$, $\forall t \in U$-Tup.
-    \item \textbf{natural join.} If $R_i : U_i$-Tup $ \rightarrow K$, i=1,2 then $R_1 \bowtie R_2$ is the $K$-relation over $U_1 \cup U_2$ defined by $(R_1 \bowtie R_2)(t) \triangleq R_1(t_1) \cdot R_2(t_2)$, where $t_1=t$ on $U_1$ and $t_2 = t$ on $U_2$, $\forall t \in U_1 \cup U_2$-Tup.
+    \item \textbf{natural join\footnotemark.} If $R_i : U_i$-Tup $ \rightarrow K$, i=1,2 then $R_1 \bowtie R_2$ is the $K$-relation over $U_1 \cup U_2$ defined by $(R_1 \bowtie R_2)(t) \triangleq R_1(t_1) \cdot R_2(t_2)$, where $t_1=t$ on $U_1$ and $t_2 = t$ on $U_2$, $\forall t \in U_1 \cup U_2$-Tup.
+    \footnotetext{By renaming attributes that appear in both arguments we can use join to compute cartesian product ($\times$), the basic $\mathcal{RA}$ operator.}
     \item \textbf{renaming.} If $R : U$-Tup $ \rightarrow K$ and $\beta : U \rightarrow U'$ is a bijection then $\rho_\beta R$ is a $K$-relation over $U'$ defined by $(\rho_\beta R)(t) \triangleq R(t \circ \beta)$, $\forall t \in U'$-Tup.
 \end{itemize}
-Green et al. \cite{green2007provenance} showed that the following $\mathcal{RA}$ identities:
+As defined above, the operations of $\mathcal{RA^+}$ preserve the finiteness of supports, therefore they map $K$-relations to $K$-relations. Hence, the preceding definitions (of making $\mathcal{RA^+}$ to operate on $K$-relations) define an algebra on $K$-relations.
+Green et al. \cite{green2007provenance} showed that the following $\mathcal{RA}$ properties:
 \begin{itemize}
     \item join and union are both associative and commutative;
     \item union has identity $\emptyset$;
     \item join is distributive over union;
     \item $\sigma_{false}(R) = \emptyset$ and $\sigma_{true}(R) = R$ ($false$ and $true$ are the uniformly false and true predicates, respectively).
 \end{itemize}
-hold for $\mathcal{RA^+}$ on $K$-relations \textit{iff} $(K,+,\cdot,0,1)$ is a \textit{commutative semiring}.
+hold for the positive algebra on $K$-relations \textit{iff} $(K,+,\cdot,0,1)$ is a \textit{commutative semiring}.
 I.e., $(K,+,0)$ and $(K,\cdot,1)$ are commutative monoids\footnotemark,
 \footnotetext{An algebraic structure that is closed under an associative binary operation and has an identity element.} 
 $\cdot$ is distributive over + and $\forall a, 0 \cdot a = a \cdot 0 = 0$.

@@ -1,0 +1,21 @@
+\begin{table}[H]
+\centering
+% \begin{adjustbox}{width=\columnwidth,center}
+\pgfplotstabletypeset[
+    format index, format samples-table, format samples-nutrients,
+    col sep=comma,
+    assign column name/.code=\pgfkeyssetvalue{/pgfplots/table/column
+        name}{{\textbf{#1}}},
+]{
+    index,     {ndb-no}, {nutrient-code},  {nutrient-name},  {derivation-code}                
+    0,     45127286,            301,          calcium ca,                  lccd 
+    1,     45375142,            307,          sodium na,                  lcsa
+    2,     45375117,            601,          cholesterol,                  lccd 
+    3,     45375228,            269,          sugars total,                  lcsa     
+    4,     45321384,            605,          fatty acids total trans,                  lcsa
+}
+% \end{adjustbox}
+% \textbf{\caption{\label{tab:bpfdb_samples:nutrients}
+%                 }
+%         }
+\end{table}
