@@ -53,8 +53,10 @@
   \draw[tuborg, decoration={brace}] let \p1=(A.north), \p2=(C.south) in
     ($(4.45, \y1)$) -- ($(4.45, \y2)$) node[tubnode] {\texttt{provsql\_planner\_hook}};
   \end{tikzpicture}
-   \textbf{\caption{\label{fig:provsql_architecture}ProvSQL system architecture.\\
-   The red rectangles are a part of Postgres's built in execution pipeline. The white rectangles are ProvSQL's implementation of a \texttt{planner\_hook}, which we use for the provenance-related calculations.}}
+   \captionof{figure}[ProvSQL system architecture]{
+   ProvSQL system architecture.\\
+   The red rectangles are a part of Postgres's built in execution pipeline. The white rectangles are ProvSQL's implementation of a \texttt{planner\_hook}, which we use for the provenance-related calculations.
+    }\label{fig:provsql_architecture}
 \normalsize
 \end{figure}
 \footnotetext{Explicit mentions of the \texttt{provsql} column in the query (in any of the \texttt{SELECT}, \texttt{FROM} or \texttt{WHERE} clauses).}
