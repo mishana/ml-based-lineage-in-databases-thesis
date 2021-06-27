@@ -30,7 +30,8 @@ The basic idea is summarizing (and approximating) the lineage of each tuple via 
     \item Similarity weighting with query dependency DAG.
     \item Extending the method to track where provenance.
 \end{itemize}
-\par We integrate our lineage computations into the PostgreSQL system via an extension (ProvSQL) and experimentally exhibit useful results in terms of accuracy against exact, semiring-based, justifications.  In the experiments, we focus on tuples with multiple generations of tuples in their lifelong lineage and analyze them in terms of direct and distant lineage. The examples we present suggest a high usefulness potential for the proposed approximate lineage methods and the further suggested enhancements. This especially holds for the column-based vectors method which exhibits high precision and per-level recall. 
+\par We integrate our lineage computations into the PostgreSQL system via an extension (ProvSQL) and experimentally exhibit useful results in terms of accuracy against exact, semiring-based, justifications.  In the experiments, we focus on tuples with multiple generations of tuples in their lifelong lineage and analyze them in terms of direct and distant lineage. The examples we present suggest a high usefulness potential for the proposed approximate lineage methods and the further suggested enhancements. This especially holds for the column-based vectors method which exhibits high precision and per-level recall.
+\par Finally, to practically realize our methods, we need to search efficiently for a set of vectors that maximizes set-wise similarity. We outline such a search algorithm, which is based on encoding a set of vectors via a ``long" single vector. 
 
 
 } % end of English abstract
@@ -90,6 +91,8 @@ The basic idea is summarizing (and approximating) the lineage of each tuple via 
 ולכן הופך מערכת לחקר יוחסין של רשומות ברת ביצוע תחת האילוצים שתוארו לעיל.
 יתרון משמעותי של השיטה שלנו הוא ״דירוג טבעי״ של מוצאות רשומות.
 
+לסיום, כדי לתמוך במימוש יעיל, אנו זקוקים לשיטה של חיפוש קבוצה של וקטורים הקרובה ביותר לקבוצה נתונה. 
+אנו מציגים שיטת חיפוש כזו המבוססת על הרעיון של ייצוג של קבוצת וקטורים באמצעות וקטור ״ארוך״ בודד.
 
 % בית הספר ללימודי מוסמכים מנחה מספר הנחיות לגבי התקציר בעברית:
 % \begin{itemize}

@@ -1,0 +1,22 @@
+\newcommand{\sqlcolor}[1]{\textcolor{Bittersweet}{#1}}
+\newcommand{\fieldcolor}[1]{\textcolor{Fuchsia}{#1}}
+\newcommand{\strcolor}[1]{\textcolor{ForestGreen}{#1}}
+\newcommand{\numcolor}[1]{\textcolor{TealBlue}{#1}}
+
+% \begin{adjustbox}{width=\columnwidth,center}
+\begin{figure}[h]
+% \raggedright
+% \begin{small}
+    \texttt{
+    % \textcolor{white}{\tiny something}\\
+    \textcolor{white}{F}\sqlcolor{SELECT} p.\fieldcolor{manufacturer}, t.\fieldcolor{name}\\
+    \textcolor{white}{FF}\sqlcolor{FROM} (\sqlcolor{SELECT DISTINCT} sgr.\fieldcolor{name} \\
+    \textcolor{white}{FFFFFFFF}\sqlcolor{FROM} $\texttt{exp}\sb\texttt{2}$, sugars sgr\\
+    \textcolor{white}{FFFFFFFF}\sqlcolor{WHERE} $\texttt{exp}\sb\texttt{2}$.\fieldcolor{manufacturer} = sgr.\fieldcolor{manufacturer}\\
+    \textcolor{white}{FFFFFFFF}\sqlcolor{AND POSITION}(\strcolor{'rice'} \sqlcolor{IN} sgr.\fieldcolor{name}) > \numcolor{0}) t, products p\\
+    \textcolor{white}{FF}\sqlcolor{WHERE} t.\fieldcolor{name} = p.\fieldcolor{name} \\ 
+    \textcolor{white}{FF}\sqlcolor{GROUP BY} p.\fieldcolor{manufacturer}, t.\fieldcolor{name}
+    }
+    % \textbf{\caption{\label{fig:queries_usda_bpfd}Running example query for the USDA Branded Products Food Database}}
+% \end{small}
+\end{figure}

@@ -1,0 +1,26 @@
+\begin{table*}
+\centering
+\begin{adjustbox}{width=\columnwidth,center}
+\pgfplotstabletypeset[
+    color cells={min=0.32,max=1.0}, format index, format stats-table2-exp2, format manufacturer, format method,
+    col sep=comma,
+    /pgfplots/colormap={orange}{
+        rgb255(0cm)=(255,245,235);
+        rgb255(1cm)=(253,141,60)},
+    assign column name/.code=\pgfkeyssetvalue{/pgfplots/table/column
+        name}{{\textbf{#1}}},
+]{
+    
+    index,  Provenance Method,       manufacturer, name, Total, Length-L1, Length-L2, Length-L3, Length-L4,  {1.00$^{Top}$},            {0.75$^{Top}$},        {0.50$^{Top}$},        {0.25$^{Top}$}, Recall-L1, Recall-L2, Recall-L3
+    0, Tuple Vectors, campbell soup company, v8 beverage carrot mango, 44, 1, 3, 40, 0, 0.5, 0.5, 0.609, 0.583, 0, 0.333, 0.450
+    1, , campbell soup company, v8 vfusion beverage peach mango, 44, 1, 3, 40, 0, 0.545, 0.529, 0.609, 0.583, 1, 0.667, 0.5
+    0, Column Vectors, campbell soup company, v8 beverage carrot mango, 44, 1, 3, 40, 0, 0.909, 0.912, 0.957, 1, 1, 0.667, 0.900
+    1, , campbell soup company, v8 vfusion beverage peach mango, 44, 1, 3, 40, 0, 0.773, 0.824, 0.957, 0.917, 1, 0.667, 0.750
+}
+\end{adjustbox}
+\textbf{\caption{\label{tab:experiment2-materialized-views:precision-and-recall}
+                Experiment \ref{advanced-experiment:2} query results vs. related materialized views ($\texttt{exp}\sb\texttt{2}$, \texttt{protein}, \texttt{unprepared} and \texttt{readytodrink}).
+                A comparison of different approximate lineage computation methods on the query-result tuples. Total Lineage Size is the size of the exact distant lineage for a result tuple (containing only tuples from the related materialized views). Similarly, L[$i$] Lineage Size is the size of the $i^{th}$ lineage level. $p^{Top}$ Precision shows the precision of various methods for the top $p\cdot|Total Distant Lineage|$ tuples in the approximate lineage. For example, 0.50$^{Top}$ is the precision for the top 21 ($=0.5\cdot43$) tuples in the approximate lineage. L[$i$] Recall shows the $i^{th}$ lineage level recall as described in section \ref{sec:recall}.
+                }
+        }
+\end{table*}

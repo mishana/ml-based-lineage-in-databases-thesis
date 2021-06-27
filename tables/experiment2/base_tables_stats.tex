@@ -1,0 +1,26 @@
+\begin{table*}
+\centering
+\begin{adjustbox}{width=\columnwidth,center}
+\pgfplotstabletypeset[
+    color cells={min=0.32,max=1.0}, format index, format stats-table1-exp2, format manufacturer, format method,
+    col sep=comma,
+    /pgfplots/colormap={orange}{
+        rgb255(0cm)=(255,245,235);
+        rgb255(1cm)=(253,141,60)},
+    assign column name/.code=\pgfkeyssetvalue{/pgfplots/table/column
+        name}{{\textbf{#1}}},
+]{
+    
+    index,  Provenance Method,       manufacturer, name, Total, Length-L1, Length-L2, Length-L3, Length-L4,  {1.00$^{Top}$},            {0.75$^{Top}$},        {0.50$^{Top}$},        {0.25$^{Top}$}, Recall-L1, Recall-L3, Recall-L4
+    0, Tuple Vectors, campbell soup company, v8 beverage carrot mango, 82, 2, 0, 4, 80, 0.195, 0.194, 0.238, 0.286, 1, 1, 0.175
+    1, , campbell soup company, v8 vfusion beverage peach mango, 82, 2, 0, 4, 80, 0.183, 0.226, 0.262, 0.333, 1, 1, 0.163
+    0, Column Vectors, campbell soup company, v8 beverage carrot mango, 82, 2, 0, 4, 80, 0.805, 0.774, 0.810, 0.905, 1, 0.5, 0.813
+    1, , campbell soup company, v8 vfusion beverage peach mango, 82, 2, 0, 4, 80, 0.805, 0.774, 0.786, 0.810, 1, 0.5, 0.813
+}
+\end{adjustbox}
+\textbf{\caption{\label{tab:experiment2-base-tables:precision-and-recall}
+                Experiment \ref{advanced-experiment:2} query results vs. related base tables (\texttt{products}, \texttt{nutrients} and \texttt{serving\_size}).
+                A comparison of different approximate lineage computation methods on the query-result tuples. Total Lineage Size is the size of the exact distant lineage for a result tuple (containing only tuples from the related base tables). Similarly, L[$i$] Lineage Size is the size of the $i^{th}$ lineage level. $p^{Top}$ Precision shows the precision of various methods for the top $p\cdot|Total Distant Lineage|$ tuples in the approximate lineage. For example, 0.50$^{Top}$ is the precision for the top 41 ($=0.5\cdot82$) tuples in the approximate lineage. L[$i$] Recall shows the $i^{th}$ lineage level recall as described in section \ref{sec:recall}.
+                }
+        }
+\end{table*}

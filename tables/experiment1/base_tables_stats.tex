@@ -2,7 +2,7 @@
 \centering
 \begin{adjustbox}{width=\columnwidth,center}
 \pgfplotstabletypeset[
-    color cells={min=0.32,max=1.0}, format index, format stats-table1, format manufacturer, format method,
+    color cells={min=0.32,max=1.0}, format index, format stats-table1-exp1, format manufacturer, format method,
     col sep=comma,
     /pgfplots/colormap={orange}{
         rgb255(0cm)=(255,245,235);
@@ -17,7 +17,7 @@
 }
 \end{adjustbox}
 \textbf{\caption{\label{tab:experiment1-base-tables:precision-and-recall}
-                \textit{red gold} vs. related base tables (\texttt{products}, \texttt{nutrients} and \texttt{serving\_size}).\\
+                Experiment \ref{advanced-experiment:1} \textit{red gold} vs. related base tables (\texttt{products}, \texttt{nutrients} and \texttt{serving\_size}).
                 A comparison of different approximate lineage computation methods on a single query-result tuple (\textit{red gold}). Total Lineage Size is the size of the exact distant lineage for a result tuple (containing only tuples from the related base tables). Similarly, L[$i$] Lineage Size is the size of the $i^{th}$ lineage level. $p^{Top}$ Precision shows the precision of various methods for the top $p\cdot|Total Distant Lineage|$ tuples in the approximate lineage. For example, 0.50$^{Top}$ is the precision for the top 80 ($=0.5\cdot160$) tuples in the approximate lineage. L[$i$] Recall shows the $i^{th}$ lineage level recall as described in section \ref{sec:recall}.
                 }
         }

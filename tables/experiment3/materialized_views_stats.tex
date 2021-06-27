@@ -1,0 +1,30 @@
+\begin{table*}
+\centering
+\begin{adjustbox}{width=\columnwidth,center}
+\pgfplotstabletypeset[
+    color cells={min=0.32,max=1.0}, format index, format stats-table2-exp3, format manufacturer, format method,
+    col sep=comma,
+    /pgfplots/colormap={orange}{
+        rgb255(0cm)=(255,245,235);
+        rgb255(1cm)=(253,141,60)},
+    assign column name/.code=\pgfkeyssetvalue{/pgfplots/table/column
+        name}{{\textbf{#1}}},
+]{
+    
+    index,  Provenance Method,       manufacturer, name, Total, Length-L1, Length-L2, Length-L3,  {1.00$^{Top}$},            {0.75$^{Top}$},        {0.50$^{Top}$},        {0.25$^{Top}$}, Recall-L1, Recall-L2
+    0, Tuple Vectors, conagra brands, healthy choice microwaveable chicken and rice soup, 1836, 2, 1834, 0, 0.397, 0.406, 0.417, 0.448, 0.5, 0.396
+    1, , conagra brands, marie callenders cheesy chicken and rice dinners, 1836, 2, 1834, 0, 0.328, 0.345, 0.366, 0.433, 0.5, 0.328
+    2, , general mills sales inc, annies homegrown organic vegan mac elbow rice pasta sauce, 2035, 2, 2033, 0, 0.408, 0.431, 0.435, 0.387, 0.5, 0.408
+    3, , general mills sales inc, old el paso spanish rice, 2035, 2, 2033, 0, 0.331, 0.356, 0.393, 0.446, 0.5, 0.331
+    0, Column Vectors, conagra brands, healthy choice microwaveable chicken and rice soup, 1836, 2, 1834, 0, 0.924, 0.931, 0.926, 0.924, 0.5, 0.924
+    1, , conagra brands, marie callenders cheesy chicken and rice dinners, 1836, 2, 1834, 0, 0.925, 0.933, 0.935, 0.917, 0.5, 0.925
+    2, , general mills sales inc, annies homegrown organic vegan mac elbow rice pasta sauce, 2035, 2, 2033, 0, 0.814, 0.818, 0.789, 0.750, 0.5, 0.814
+    3, , general mills sales inc, old el paso spanish rice, 2035, 2, 2033, 0, 0.808, 0.806, 0.783, 0.743, 0.5, 0.808
+}
+\end{adjustbox}
+\textbf{\caption{\label{tab:experiment3-materialized-views:precision-and-recall}
+                Experiment \ref{advanced-experiment:3} query results vs. related materialized views ($\texttt{exp}\sb\texttt{2}$, \texttt{protein}, \texttt{sugars} and \texttt{unprepared}).
+                A comparison of different approximate lineage computation methods on the query-result tuples. Total Lineage Size is the size of the exact distant lineage for a result tuple (containing only tuples from the related materialized views). Similarly, L[$i$] Lineage Size is the size of the $i^{th}$ lineage level. $p^{Top}$ Precision shows the precision of various methods for the top $p\cdot|Total Distant Lineage|$ tuples in the approximate lineage. For example, 0.50$^{Top}$ is the precision for the top 918 ($=0.5\cdot1836$) tuples in the approximate lineage for the first result tuple. L[$i$] Recall shows the $i^{th}$ lineage level recall as described in section \ref{sec:recall}.
+                }
+        }
+\end{table*}

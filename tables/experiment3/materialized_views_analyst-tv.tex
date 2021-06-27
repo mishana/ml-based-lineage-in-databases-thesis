@@ -1,0 +1,43 @@
+\begin{table*}
+\centering
+% \begin{adjustbox}{width=\columnwidth,center}
+\pgfplotstabletypeset[
+    color cells={min=0.55,max=0.98, textcolor=white}, format index, format analyst, format Lineage,
+    col sep=comma,
+    /pgfplots/colormap={purple}{
+        rgb255(0cm)=(239,237,245);
+        rgb255(1cm)=(106,81,163)},
+    assign column name/.code=\pgfkeyssetvalue{/pgfplots/table/column
+        name}{{\textbf{#1}}},
+]{
+    index,     tuple-id, related-table,      {Similarity},      lineage-level,  Lineage 
+    0,     $id_1$,    sugars,    0.965,    {1}          ,\textcolor{Green}{Yes}
+    1,     $id_2$,    protein,     0.964,              ,\textcolor{Red}{No}
+    2,     $id_3$,    unprepared,    0.957,    {2}          ,\textcolor{Green}{Yes}
+    3,     $id_4$,    sugars,    0.809,              ,\textcolor{Red}{No}
+    4,     $id_5$,    $\texttt{exp}\sb\texttt{2}$,    0.809,    {1}          ,\textcolor{Green}{Yes}
+    5,     $id_6$,    protein,    0.768,             ,\textcolor{Red}{No}
+    6,     $id_7$,    unprepared,    0.755,         {2}    ,\textcolor{Green}{Yes}
+    7,     $id_8$,    $\texttt{exp}\sb\texttt{2}$,    0.720,              ,\textcolor{Red}{No}
+    8,     $id_9$,    sugars,    0.661,           ,\textcolor{Red}{No}
+    9,     $id_{10}$,    sugars,    0.658,              ,\textcolor{Red}{No}
+    10,     $id_{11}$,    sugars,    0.654,              ,\textcolor{Red}{No}
+    11,     $id_{12}$,    protein,   0.653,     {2}        ,\textcolor{Green}{Yes}
+    12,     $id_{13}$,    protein,    0.653,    {2}          ,\textcolor{Green}{Yes}
+    13,     $id_{14}$,    protein,    0.653,     {2}        ,\textcolor{Green}{Yes}
+    14,     $id_{15}$,    sugars,    0.653,              ,\textcolor{Red}{No}
+    15,     $id_{16}$,    sugars,    0.650,              ,\textcolor{Red}{No}
+    16,     $id_{17}$,    sugars,    0.649,     ,\textcolor{Red}{No}
+    17,     $id_{18}$,    $\texttt{exp}\sb\texttt{2}$,    0.647,              ,\textcolor{Red}{No}
+    18,     $id_{19}$,    sugars,    0.645,              ,\textcolor{Red}{No}
+    19,     $id_{20}$,    protein,    0.642,    {2}          ,\textcolor{Green}{Yes}
+
+
+}
+% \end{adjustbox}
+\textbf{\caption{\label{tab:experiment3-materialized-views:analyst-tv}
+                Experiment \ref{advanced-experiment:3} result tuple No.\texttt{2} vs. related \textbf{materialized views} with \textbf{Tuple Vectors} - an analyst's view.
+                Top-20 tuples from the related base tables, ranked by similarity. Tuple ID contains unique ids of the tuples in question, so that an analyst can quickly retrieve them from the DB. Origin Table is the table name of the tuple's origin. Lineage Level(s) and Lineage show additional meta-data, only known in hindsight (not available to an analyst during lineage querying) to showcase the effectiveness of the Tuple Vectors method.
+                }
+        }
+\end{table*}

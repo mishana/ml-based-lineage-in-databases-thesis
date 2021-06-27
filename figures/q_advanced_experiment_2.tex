@@ -1,0 +1,19 @@
+\newcommand{\sqlcolor}[1]{\textcolor{Bittersweet}{#1}}
+\newcommand{\fieldcolor}[1]{\textcolor{Fuchsia}{#1}}
+\newcommand{\strcolor}[1]{\textcolor{ForestGreen}{#1}}
+\newcommand{\numcolor}[1]{\textcolor{TealBlue}{#1}}
+
+% \begin{adjustbox}{width=\columnwidth,center}
+\begin{figure}[h]
+% \raggedright
+% \begin{small}
+    \texttt{
+    % \textcolor{white}{\tiny something}\\
+    \textcolor{white}{F}\sqlcolor{SELECT} p.\fieldcolor{manufacturer}, exp$\sb\texttt{4}$.\fieldcolor{name}\\
+    \textcolor{white}{FF}\sqlcolor{FROM} exp$\sb\texttt{4}$, products p\\
+    \textcolor{white}{FF}\sqlcolor{WHERE} exp$\sb\texttt{4}$.\fieldcolor{name} = p.\fieldcolor{name} \\ 
+    \textcolor{white}{FF}\sqlcolor{GROUP BY} p.\fieldcolor{manufacturer}, exp$\sb\texttt{4}$.\fieldcolor{name}
+    }
+    % \textbf{\caption{\label{fig:queries_usda_bpfd}Running example query for the USDA Branded Products Food Database}}
+% \end{small}
+\end{figure}

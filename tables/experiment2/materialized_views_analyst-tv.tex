@@ -1,0 +1,43 @@
+\begin{table*}
+\centering
+% \begin{adjustbox}{width=\columnwidth,center}
+\pgfplotstabletypeset[
+    color cells={min=0.55,max=0.98, textcolor=white}, format index, format analyst, format Lineage,
+    col sep=comma,
+    /pgfplots/colormap={purple}{
+        rgb255(0cm)=(239,237,245);
+        rgb255(1cm)=(106,81,163)},
+    assign column name/.code=\pgfkeyssetvalue{/pgfplots/table/column
+        name}{{\textbf{#1}}},
+]{
+    index,     tuple-id, related-table,      {Similarity},      lineage-level,  Lineage 
+    0,     $id_1$,    protein,    0.967,    {3}          ,\textcolor{Green}{Yes}
+    1,     $id_2$,    readytodrink,     0.964,    {2}          ,\textcolor{Green}{Yes}
+    2,     $id_3$,    $\texttt{exp}\sb\texttt{4}$,    0.960,    {1}          ,\textcolor{Green}{Yes}
+    3,     $id_4$,    protein,    0.957,        {3}      ,\textcolor{Green}{Yes}
+    4,     $id_5$,    readytodrink,    0.956,    {2}          ,\textcolor{Green}{Yes}
+    5,     $id_6$,    $\texttt{exp}\sb\texttt{2}$,    0.905,    {2}         ,\textcolor{Green}{Yes}
+    6,     $id_7$,    $\texttt{exp}\sb\texttt{4}$,    0.899,             ,\textcolor{Red}{No}
+    7,     $id_8$,    protein,    0.767,   {3}           ,\textcolor{Green}{Yes}
+    8,     $id_9$,    readytodrink,    0.754,           ,\textcolor{Red}{No}
+    9,     $id_{10}$,    readytodrink,    0.752,              ,\textcolor{Red}{No}
+    10,     $id_{11}$,    readytodrink,    0.749,              ,\textcolor{Red}{No}
+    11,     $id_{12}$,    readytodrink,   0.747,             ,\textcolor{Red}{No}
+    12,     $id_{13}$,    protein,    0.741,    {3}          ,\textcolor{Green}{Yes}
+    13,     $id_{14}$,    readytodrink,    0.739,             ,\textcolor{Red}{No}
+    14,     $id_{15}$,    readytodrink,    0.735,              ,\textcolor{Red}{No}
+    15,     $id_{16}$,    protein,    0.725,      {3}        ,\textcolor{Green}{Yes}
+    16,     $id_{17}$,    protein,    0.724,  {3}   ,\textcolor{Green}{Yes}
+    17,     $id_{18}$,    protein,    0.724,    {3}          ,\textcolor{Green}{Yes}
+    18,     $id_{19}$,    readytodrink,    0.722,              ,\textcolor{Red}{No}
+    19,     $id_{20}$,    protein,    0.721,    {3}          ,\textcolor{Green}{Yes}
+
+
+}
+% \end{adjustbox}
+\textbf{\caption{\label{tab:experiment2-materialized-views:analyst-tv}
+                Experiment \ref{advanced-experiment:2} result tuple No.\texttt{0} vs. related \textbf{materialized views} with \textbf{Tuple Vectors} - an analyst's view.
+                Top-20 tuples from the related base tables, ranked by similarity. Tuple ID contains unique ids of the tuples in question, so that an analyst can quickly retrieve them from the DB. Origin Table is the table name of the tuple's origin. Lineage Level(s) and Lineage show additional meta-data, only known in hindsight (not available to an analyst during lineage querying) to showcase the effectiveness of the Tuple Vectors method.
+                }
+        }
+\end{table*}

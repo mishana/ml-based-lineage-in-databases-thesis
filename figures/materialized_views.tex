@@ -20,7 +20,7 @@
     \node(exp_3) [right=of exp_2, color={CarnationPink}] {$\texttt{exp}\sb\texttt{3}$};
     
     \draw (exp_4) edge (exp_2);
-    \draw (exp_4) edge (exp_1);
+    % \draw (exp_4) edge (exp_1);
       
     \node(protein) [below=of exp_2, color=Orchid] {$\texttt{protein}$};
     \node(prepared) [below=of exp_1, left=of protein, color=Orchid] {$\texttt{prepared}$};
@@ -51,8 +51,9 @@
     \draw (unprepared) edge (products);
     \draw (unprepared) edge (serving_size);
     
-    \draw (exp_4) edge[out=135, in=135, looseness=1.5] (nutrients);
-    \draw (exp_4) edge[out=45, in=45, looseness=1.5] (products);
+    % \draw (exp_4) edge[out=135, in=135, looseness=1.5] (nutrients);
+    % \draw (exp_4) edge[out=45, in=45, looseness=1.5] (products);
+    
     % \draw (exp_4) edge[out=45, in=-50, looseness=4.5] (products);
     % \draw (exp_4) edge[out=120, in=200, looseness=4.5] (products);
     % \draw (exp_4) edge[bend right, looseness=1.5] (products);
@@ -67,10 +68,12 @@
     \draw (sugars) edge (nutrients);
     \draw (cholesterol) edge (products);
     \draw (cholesterol) edge (nutrients);
+    
+    \draw (exp_4) edge[out=45, in=25, looseness=1.5] (readytodrink);
 \end{tikzpicture}
     \captionof{figure}[Materialized Views Hierarchy - The BFPDB Dataset]{
     Materialized Views Hierarchy - The BFPDB Dataset.\\
-    An edge connecting two tables $T_2 \rightarrow T_1$ means that there are tuples in $T_2$ that were directly created from tuples in $T_1$, by a query. For example, the materialized view $\texttt{exp}\sb\texttt{4}$ was directly created from tuples from the tables $\texttt{exp}\sb\texttt{1}$, $\texttt{exp}\sb\texttt{2}$, \texttt{nutrients} and \texttt{products}.
+    An edge connecting two tables $T_2 \rightarrow T_1$ means that there are tuples in $T_2$ that were directly created from tuples in $T_1$, by a query. For example, the materialized view $\texttt{exp}\sb\texttt{4}$ was directly created from tuples from the tables $\texttt{exp}\sb\texttt{2}$ and \texttt{readytodrink}.
     The text colors are intended as a visual aid, such that each lineage generation has a brighter color, the farther it is from the base relations.
     }\label{fig:materialized_views}
 

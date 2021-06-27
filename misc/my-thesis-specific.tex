@@ -136,7 +136,7 @@
         every last row/.style={after row=\bottomrule},
         every odd row/.style={before row={\rowcolor{gray!10}}},
     },
-    format stats-table1/.style={
+    format stats-table1-exp1/.style={
         columns/Total/.style={
             % column name={},
             postproc cell content/.code={}
@@ -166,7 +166,7 @@
         every last row/.style={after row=\bottomrule},
         every odd row/.style={before row={\rowcolor{gray!10}}},
     },
-    format stats-table2/.style={
+    format stats-table2-exp1/.style={
         columns/Total/.style={
             % column name={},
             postproc cell content/.code={}
@@ -256,6 +256,162 @@
             string type,
             postproc cell content/.code={}
         },
+    },
+    format stats-table1-exp2/.style={
+        columns/name/.style={
+            string type,
+            postproc cell content/.code={}
+        },
+        columns/Total/.style={
+            % column name={},
+            postproc cell content/.code={}
+        },
+        columns/Length-L1/.style={
+            column name={L[1]},
+            postproc cell content/.code={}
+        },
+        columns/Length-L2/.style={
+            column name={L[2]},
+            postproc cell content/.code={}
+        },
+        columns/Length-L3/.style={
+            column name={L[3]},
+            postproc cell content/.code={}
+        },
+        columns/Length-L4/.style={
+            column name={L[4]},
+            postproc cell content/.code={}
+        },
+        columns/Recall-L1/.style={
+            column name={L[1]},
+            % postproc cell content/.code={}
+        },
+        columns/Recall-L3/.style={
+            column name={L[3]},
+            % postproc cell content/.code={}
+        },
+        columns/Recall-L4/.style={
+            column name={L[4]},
+            % postproc cell content/.code={}
+        },
+        every head row/.style={before row=\toprule & & \multicolumn{2}{c}{\textbf{Target Tuple}} & \multicolumn{5}{c}{\textbf{Lineage Size}} & \multicolumn{4}{c}{\textbf{Precision}} & \multicolumn{3}{c}{\textbf{Recall}}\\
+        \cmidrule(lr){3-4} \cmidrule(lr){5-9} \cmidrule(lr){10-13} \cmidrule(lr){14-16}\\, after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+        every odd row/.style={before row={\rowcolor{gray!10}}},
+    },
+    format stats-table2-exp2/.style={
+        columns/name/.style={
+            string type,
+            postproc cell content/.code={}
+        },
+        columns/Total/.style={
+            % column name={},
+            postproc cell content/.code={}
+        },
+        columns/Length-L1/.style={
+            column name={L[1]},
+            postproc cell content/.code={}
+        },
+        columns/Length-L2/.style={
+            column name={L[2]},
+            postproc cell content/.code={}
+        },
+        columns/Length-L3/.style={
+            column name={L[3]},
+            postproc cell content/.code={}
+        },
+        columns/Length-L4/.style={
+            column name={L[4]},
+            postproc cell content/.code={}
+        },
+        columns/Recall-L1/.style={
+            column name={L[1]},
+            % postproc cell content/.code={}
+        },
+        columns/Recall-L2/.style={
+            column name={L[2]},
+            % postproc cell content/.code={}
+        },
+        columns/Recall-L3/.style={
+            column name={L[3]},
+            % postproc cell content/.code={}
+        },
+        every head row/.style={before row=\toprule & & \multicolumn{2}{c}{\textbf{Target Tuple}} & \multicolumn{5}{c}{\textbf{Lineage Size}} & \multicolumn{4}{c}{\textbf{Precision}} & \multicolumn{3}{c}{\textbf{Recall}}\\
+        \cmidrule(lr){3-4} \cmidrule(lr){5-9} \cmidrule(lr){10-13} \cmidrule(lr){14-16}\\, after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+        every odd row/.style={before row={\rowcolor{gray!10}}},
+    },
+    format stats-table1-exp3/.style={
+        columns/name/.style={
+            string type,
+            postproc cell content/.code={}
+        },
+        columns/Total/.style={
+            % column name={},
+            postproc cell content/.code={}
+        },
+        columns/Length-L1/.style={
+            column name={L[1]},
+            postproc cell content/.code={}
+        },
+        columns/Length-L2/.style={
+            column name={L[2]},
+            postproc cell content/.code={}
+        },
+        columns/Length-L3/.style={
+            column name={L[3]},
+            postproc cell content/.code={}
+        },
+        columns/Recall-L1/.style={
+            column name={L[1]},
+            % postproc cell content/.code={}
+        },
+        columns/Recall-L2/.style={
+            column name={L[2]},
+            % postproc cell content/.code={}
+        },
+        columns/Recall-L3/.style={
+            column name={L[3]},
+            % postproc cell content/.code={}
+        },
+        every head row/.style={before row=\toprule & & \multicolumn{2}{c}{\textbf{Target Tuple}} & \multicolumn{4}{c}{\textbf{Lineage Size}} & \multicolumn{4}{c}{\textbf{Precision}} & \multicolumn{3}{c}{\textbf{Recall}}\\
+        \cmidrule(lr){3-4} \cmidrule(lr){5-8} \cmidrule(lr){9-12} \cmidrule(lr){13-15}\\, after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+        every odd row/.style={before row={\rowcolor{gray!10}}},
+    },
+    format stats-table2-exp3/.style={
+        columns/name/.style={
+            string type,
+            postproc cell content/.code={}
+        },
+        columns/Total/.style={
+            % column name={},
+            postproc cell content/.code={}
+        },
+        columns/Length-L1/.style={
+            column name={L[1]},
+            postproc cell content/.code={}
+        },
+        columns/Length-L2/.style={
+            column name={L[2]},
+            postproc cell content/.code={}
+        },
+        columns/Length-L3/.style={
+            column name={L[3]},
+            postproc cell content/.code={}
+        },
+        columns/Recall-L1/.style={
+            column name={L[1]},
+            % postproc cell content/.code={}
+        },
+        columns/Recall-L2/.style={
+            column name={L[2]},
+            % postproc cell content/.code={}
+        },
+        every head row/.style={before row=\toprule & & \multicolumn{2}{c}{\textbf{Target Tuple}} & \multicolumn{4}{c}{\textbf{Lineage Size}} & \multicolumn{4}{c}{\textbf{Precision}} & \multicolumn{2}{c}{\textbf{Recall}}\\
+        \cmidrule(lr){3-4} \cmidrule(lr){5-8} \cmidrule(lr){9-12} \cmidrule(lr){13-14}\\, after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+        every odd row/.style={before row={\rowcolor{gray!10}}},
     }
 }
 

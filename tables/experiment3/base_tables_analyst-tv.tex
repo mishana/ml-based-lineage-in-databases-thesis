@@ -1,0 +1,43 @@
+\begin{table*}
+\centering
+% \begin{adjustbox}{width=\columnwidth,center}
+\pgfplotstabletypeset[
+    color cells={min=0.7,max=0.8, textcolor=white}, format index, format analyst, format Lineage,
+    col sep=comma,
+    /pgfplots/colormap={purple}{
+        rgb255(0cm)=(239,237,245);
+        rgb255(1cm)=(106,81,163)},
+    assign column name/.code=\pgfkeyssetvalue{/pgfplots/table/column
+        name}{{\textbf{#1}}},
+]{
+    index,     tuple-id, related-table,      {Similarity},      lineage-level,  Lineage 
+    0,     $id_1$,    products,    0.969,    {1, 2, 3}          ,\textcolor{Green}{Yes}
+    1,     $id_2$,    nutrients,     0.898,    {2}          ,\textcolor{Green}{Yes}
+    2,     $id_3$,    nutrients,    0.865,              ,\textcolor{Red}{No}
+    3,     $id_4$,    nutrients,    0.848,              ,\textcolor{Red}{No}
+    4,     $id_5$,    nutrients,    0.845,             ,\textcolor{Red}{No}
+    5,     $id_6$,    nutrients,    0.833,          ,\textcolor{Red}{No}
+    6,     $id_7$,    nutrients,    0.831,              ,\textcolor{Red}{No}
+    7,     $id_8$,    nutrients,    0.830,              ,\textcolor{Red}{No}
+    8,     $id_9$,    nutrients,    0.826,              ,\textcolor{Red}{No}
+    9,     $id_{10}$,    nutrients,    0.824,               ,\textcolor{Red}{No}
+    10,     $id_{11}$,    nutrients,    0.818,              ,\textcolor{Red}{No}
+    11,     $id_{12}$,    nutrients,   0.812,               ,\textcolor{Red}{No}
+    12,     $id_{13}$,    nutrients,    0.810,              ,\textcolor{Red}{No}
+    13,     $id_{14}$,    serving\_size,    0.810,       {3}       ,\textcolor{Green}{Yes}
+    14,     $id_{15}$,    nutrients,    0.801,              ,\textcolor{Red}{No}
+    15,     $id_{16}$,    nutrients,    0.791,              ,\textcolor{Red}{No}
+    16,     $id_{17}$,    nutrients,    0.760,              ,\textcolor{Red}{No}
+    17,     $id_{18}$,    nutrients,    0.751,              ,\textcolor{Red}{No}
+    18,     $id_{19}$,    nutrients,    0.750,              ,\textcolor{Red}{No}
+    19,     $id_{20}$,    nutrients,    0.742,              ,\textcolor{Red}{No}
+
+
+}
+% \end{adjustbox}
+\textbf{\caption{\label{tab:experiment3-base-tables:analyst-tv}
+                Experiment \ref{advanced-experiment:3} result tuple No.\texttt{2} vs. related \textbf{base tables} with \textbf{Tuple Vectors} - an analyst's view.
+                Top-20 tuples from the related base tables, ranked by similarity. Tuple ID contains unique ids of the tuples in question, so that an analyst can quickly retrieve them from the DB. Origin Table is the table name of the tuple's origin. Lineage Level(s) and Lineage show additional meta-data, only known in hindsight (not available to an analyst during lineage querying) to showcase the effectiveness of the Tuple Vectors method.
+                }
+        }
+\end{table*}
